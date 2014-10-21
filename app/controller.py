@@ -213,19 +213,20 @@ class Application:
 
         except (KeyError, IndexError) as e:
             response_type = 'xml'
-            self.logger.error(u'Error: ' + e.message)
-            output += u'<error>Parámetro de entrada requerido: {}</error>'.format(e.message)
+            self.logger.error(u'Error: ' + str(e.message))
+            output += '<error><![CDATA[Error inesperado: {}]]></error>'.format(e.message)
 
         except Exception as e:
             response_type = 'xml'
-            self.logger.error(u'Error: ' + e.message)
-            output += '<error>Error inesperado: {}</error>'.format(e.message)
+            self.logger.error(u'Error: ' + str(e.message))
+            output += '<error><![CDATA[Error inesperado: {}]]></error>'.format(e.message)
 
         self.logger.info('Finalizado\n')
         logging.shutdown()
 
         for k, v in [('&lt;', '<'), ('&gt;', '>')]:
-            output = output.replace(k, v)
+            pass
+            # output = output.replace(k, v)
 
         start_response(
             '200 OK',
@@ -314,7 +315,7 @@ class Application:
         ).format(
             'NBSFPY-' + datetime.today().strftime('%Y%m%d%H%M'),
             datetime.today().strftime('%Y%m%d'),
-            1, # Consulta
+            1,  # Consulta
             numeroCliente,
             '0',
             'NBSFPY',
