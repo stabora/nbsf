@@ -225,8 +225,7 @@ class Application:
         logging.shutdown()
 
         for k, v in [('&lt;', '<'), ('&gt;', '>')]:
-            pass
-            # output = output.replace(k, v)
+            output = output.replace(k, v)
 
         start_response(
             '200 OK',
