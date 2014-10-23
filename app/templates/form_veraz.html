@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Consulta Veraz{% endblock %}
+
+{% block content %}
+<form class="form-horizontal" role="form" id="form-veraz" action="consultaVeraz" method="POST">
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Nro. documento:</label>
+		<div class="col-sm-10">
+			<input class="form-control" type="text" name="numeroDocumento" \>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Nombre:</label>
+		<div class="col-sm-10">
+			<input class="form-control" type="text" name="nombre" size="50" \>
+  	</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Sexo:</label>
+		<div class="col-sm-10">
+			<label class="radio-inline">
+			  <input type="radio" name="sexo" value="M"> Masculino
+			</label>
+			<label class="radio-inline">
+			  <input type="radio" name="sexo" value="F"> Femenino
+			</label>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Respuesta:</label>
+		<div class="col-sm-10">
+			<label class="radio-inline">
+			  <input type="radio" name="respuesta" value="xml" checked="true"> XML
+			</label>
+			<label class="radio-inline">
+			  <input type="radio" name="respuesta" value="html"> HTML
+			</label>
+		</div>
+	</div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+			<button class="btn btn-default" type="submit" name="submit">Consultar</button>
+    </div>
+  </div>
+</form>
+{% endblock %}
