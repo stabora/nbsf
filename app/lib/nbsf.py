@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 from datetime import datetime
 from ConfigParser import SafeConfigParser
 from base64 import b64decode
+from xml.dom import minidom
 
 
 class NBSF:
@@ -11,7 +13,6 @@ class NBSF:
     baseDir = os.path.dirname(os.path.dirname(__file__))
     config = SafeConfigParser()
     config.read(os.path.join(baseDir, 'config.ini'))
-
 
     @staticmethod
     def get_proxies():
@@ -103,3 +104,19 @@ class NBSF:
             sexo,
             numeroDocumento,
         )
+
+    @staticmethod
+    def get_html_respuestaVeraz(env, xml):
+        xml_obj = minidom.parseString(xml)
+
+        variables = {}
+        texto_informe = ''
+
+        for variable in xml_obj.getElementsByTagName('variable'):
+            variables[variable.getElementsByTagName('nombre')[0].firstChild.data] = variable.getElementsByTagName('valor')[0].firstChild.data
+
+        texto_informe = xml_obj.getElementsByTagName('informe')[0].getElementsByTagName('texto')[0].firstChild.data.encode('ascii', 'xmlcharrefreplace')
+        texto_informe = re.sub(r'\n', '', texto_informe)
+        texto_informe = re.sub(r'[0-9]{3}[A-Z][0-9]{8}[A-Z\*][0-9]{2}[0-9A-Z]{2}[0-9]{1,2}', '<br>', texto_informe)
+
+        return env.get_template('veraz_respuesta.html').render(variables=variables, texto_informe=texto_informe)

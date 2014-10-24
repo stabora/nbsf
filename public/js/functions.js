@@ -1,41 +1,45 @@
-$(document).ready(function() {
-  $('#form-veraz').bootstrapValidator({
-      feedbackIcons: {
-          valid: 'glyphicon glyphicon-ok',
-          invalid: 'glyphicon glyphicon-remove',
-          validating: 'glyphicon glyphicon-refresh'
-      },
-			fields: {
-            numeroDocumento: {
-                message: 'The username is not valid',
-                validators: {
-                    notEmpty: {
-                        message: 'The username is required and cannot be empty'
-                    },
-                }
-            },
-            nombre: {
-                message: 'The username is not valid',
-                validators: {
-                    notEmpty: {
-                        message: 'The username is required and cannot be empty'
-                    },
-                }
-            },
-        }
-  });
+$(document).ready(function()
+{
+	$('form[name=consulta-veraz-disabled]').bootstrapValidator({
+		live: 'disabled',
+		feedbackIcons: {
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+
+		fields: {
+			numeroDocumento: { validators: { integer: { message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } },
+			nombre: { validators: { notEmpty: { message: 'Ingrese un valor' } } }, 
+			sexo: { validators: { notEmpty: { message: 'Seleccione una opción' } } }
+		}
+	});
+
 
 	$('input[name=numeroDocumento]')
-	.focus()
-	.blur(function() {
-			if($(this).val()) {
+		.focus()
+		.blur(function()
+		{
+			if($(this).val())
+			{
 				$.get(
 					'/nbsf/consultaPadron?numeroDocumento=' + $(this).val(),
-					function(data) {
-						$('input[name=nombre]').val($(data).find('Nombre1').text().replace(' ', ', '));
+					function(data)
+					{
+						nombre = $(data).find('Nombre1').text().replace(' ', ', ')
+
+						if(nombre)
+						{
+							$('input[name=nombre]').val(nombre);
+						}
+
 						sexo = $(data).find('Sexo1').text();
-						$('input:radio[name=sexo][value=' + sexo + ']').prop('checked', true)
+
+						if(sexo)
+						{
+							$('input:radio[name=sexo][value=' + sexo + ']').prop('checked', true)
+						}
 					});
 			}
-	});
+		});
 });
