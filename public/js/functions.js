@@ -1,18 +1,25 @@
 $(document).ready(function()
 {
-	$('form[name=consulta-veraz-disabled]').bootstrapValidator({
-		live: 'disabled',
-		feedbackIcons: {
+	form = $('form[name=consulta-veraz]')
+	.bootstrapValidator(
+	{
+		feedbackIcons:
+		{
 			valid: 'glyphicon glyphicon-ok',
 			invalid: 'glyphicon glyphicon-remove',
 			validating: 'glyphicon glyphicon-refresh'
 		},
 
-		fields: {
+		fields:
+		{
 			numeroDocumento: { validators: { integer: { message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } },
-			nombre: { validators: { notEmpty: { message: 'Ingrese un valor' } } }, 
+			nombre: { validators: { notEmpty: { message: 'Ingrese un valor' } } },
 			sexo: { validators: { notEmpty: { message: 'Seleccione una opción' } } }
 		}
+	});
+
+	form.on('success.field.bv', function(e, data) {
+		data.bv.disableSubmitButtons(false);
 	});
 
 
@@ -40,6 +47,9 @@ $(document).ready(function()
 							$('input:radio[name=sexo][value=' + sexo + ']').prop('checked', true)
 						}
 					});
+
+				form.data('bootstrapValidator').resetForm();
 			}
 		});
+;
 });

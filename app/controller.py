@@ -14,7 +14,7 @@ from jinja2 import Environment, FileSystemLoader
 if os.path.dirname(__file__) not in sys.path:
     sys.path.append(os.path.dirname(__file__))
 
-from lib.nbsf import NBSF
+from lib.util import Util
 from lib.db import Db
 
 
@@ -50,13 +50,13 @@ class Application:
                 numeroDocumento = escape(str(self.params['numeroDocumento'][0]))
                 nombre = escape(str(self.params['nombre'][0]))
                 sexo = self.params['sexo'][0]
-                response_type = self.params.get('respuesta', 'xml')[0]
+                response_type = self.params.get('formato')[0]
                 response_type = response_type if response_type in ('xml', 'html') else 'xml'
 
                 if response_type == 'xml':
                     charset = 'iso-8859-1'
 
-                par_xml = NBSF.get_xml_consultaVeraz(nombre, sexo, numeroDocumento)
+                par_xml = Util.get_xml_consultaVeraz(nombre, sexo, numeroDocumento)
 
                 self.logger.info('Params: ' + str(self.params))
                 self.logger.info('Tx: ' + par_xml)
@@ -73,7 +73,7 @@ class Application:
                     proxies=self.proxies
                 )
 
-                output = response.content if response_type == 'xml' else NBSF.get_html_respuestaVeraz(self.env, response.content)
+                output = response.content if response_type == 'xml' else Util.get_html_respuestaVeraz(self.env, response.content)
 
                 self.logger.info('Rx: ' + re.sub('\s*\n\s*', '', output))
 
@@ -88,7 +88,7 @@ class Application:
                 response_type = 'xml'
 
                 numeroDocumento = escape(str(self.params['numeroDocumento'][0]))
-                xml_ped = NBSF.get_xml_consultaPadron(numeroDocumento)
+                xml_ped = Util.get_xml_consultaPadron(numeroDocumento)
 
                 session = requests.Session()
 
@@ -104,7 +104,7 @@ class Application:
                     data=payload
                 )
 
-                output += response.content
+                output = response.content
                 self.logger.info('Rx: ' + re.sub('\s*\n\s*', '', output))
 
                 Db.guardar_consulta(
@@ -118,7 +118,7 @@ class Application:
                 response_type = 'xml'
 
                 numeroCliente = escape(str(self.params['numeroCliente'][0]))
-                xml_ped = NBSF.get_xml_consultaCliente(numeroCliente)
+                xml_ped = Util.get_xml_consultaCliente(numeroCliente)
 
                 session = requests.Session()
 
@@ -134,7 +134,7 @@ class Application:
                     data=payload
                 )
 
-                output += response.content
+                output = response.content
                 self.logger.info('Rx: ' + re.sub('\s*\n\s*', '', output))
 
                 Db.guardar_consulta(
@@ -151,12 +151,12 @@ class Application:
         except (KeyError, IndexError) as e:
             response_type = 'xml'
             self.logger.error(u'Error: ' + str(e.message))
-            output += '<error><![CDATA[Error inesperado: {}]]></error>'.format(e.message)
+            output = '<error><![CDATA[Error inesperado: {}]]></error>'.format(e.message)
 
         except Exception as e:
             response_type = 'xml'
             self.logger.error(u'Error: ' + str(e.message))
-            output += '<error><![CDATA[Error inesperado: {}]]></error>'.format(e.message)
+            output = '<error><![CDATA[Error inesperado: {}]]></error>'.format(e.message)
 
         self.logger.info('Finalizado\n')
         logging.shutdown()
@@ -210,7 +210,7 @@ class Application:
         else:
             self.params = urlparse.parse_qs(environ.get('wsgi.input').read())
 
-        self.proxies = NBSF.get_proxies()
+        self.proxies = Util.get_proxies()
 
         self.env = Environment(
             autoescape=True,

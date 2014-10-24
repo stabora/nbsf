@@ -2,3 +2,10 @@ body
 {
 	margin: 10px 30px 100px 10px;
 }
+
+.no-background
+{
+	background: transparent;
+	color: #000;
+	border: none;
+}

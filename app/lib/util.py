@@ -8,7 +8,7 @@ from base64 import b64decode
 from xml.dom import minidom
 
 
-class NBSF:
+class Util:
 
     baseDir = os.path.dirname(os.path.dirname(__file__))
     config = SafeConfigParser()
@@ -18,15 +18,15 @@ class NBSF:
     def get_proxies():
         proxies = {}
 
-        if NBSF.config.get('proxy', 'host'):
+        if Util.config.get('proxy', 'host'):
             for protocol in ('http', 'https'):
                 proxies.update({
                     protocol: (
                         'http://' +
-                        NBSF.config.get('proxy', 'user') + ':' +
-                        b64decode(NBSF.config.get('proxy', 'pass')) + '@' +
-                        NBSF.config.get('proxy', 'host') + ':' +
-                        NBSF.config.get('proxy', 'port')
+                        Util.config.get('proxy', 'user') + ':' +
+                        b64decode(Util.config.get('proxy', 'pass')) + '@' +
+                        Util.config.get('proxy', 'host') + ':' +
+                        Util.config.get('proxy', 'port')
                     )
                 })
 
@@ -96,9 +96,9 @@ class NBSF:
             '</consulta>'
             '</mensaje>'
         ).format(
-            NBSF.config.get('veraz', 'matriz'),
-            NBSF.config.get('veraz', 'usuario'),
-            NBSF.config.get('veraz', 'password'),
+            Util.config.get('veraz', 'matriz'),
+            Util.config.get('veraz', 'usuario'),
+            Util.config.get('veraz', 'password'),
             datetime.today().strftime('%Y-%m-%d %H:%M:%S'),
             nombre,
             sexo,
