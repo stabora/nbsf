@@ -36,7 +36,8 @@ class Application:
 
             if self.method == 'consultaVerazForm':
                 response_type = 'html'
-                output = self.env.get_template('veraz_form.html').render()
+                template_params = {'base_url': self.config.get('app', 'base_url')}
+                output = self.env.get_template('veraz_form.html').render(template_params)
 
             elif self.method == 'consultaVeraz':
                 if not self.params:
@@ -146,7 +147,8 @@ class Application:
 
             else:
                 response_type = 'html'
-                output = self.env.get_template('home.html').render()
+                template_params = {'base_url': self.config.get('app', 'base_url')}
+                output = self.env.get_template('home.html').render(template_params)
 
         except (KeyError, IndexError) as e:
             response_type = 'xml'

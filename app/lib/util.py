@@ -119,4 +119,10 @@ class Util:
         texto_informe = re.sub(r'\n', '', texto_informe)
         texto_informe = re.sub(r'[0-9]{3}[A-Z][0-9]{8}[A-Z\*][0-9]{2}[0-9A-Z]{2}[0-9]{1,2}', '<br>', texto_informe)
 
-        return env.get_template('veraz_respuesta.html').render(variables=variables, texto_informe=texto_informe)
+        template_params = {
+            'base_url': Util.config.get('app', 'base_url'),
+            'variables': variables,
+            'texto_informe': texto_informe
+        }
+
+        return env.get_template('veraz_respuesta.html').render(template_params)
