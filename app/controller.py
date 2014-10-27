@@ -51,7 +51,7 @@ class Application:
                 numeroDocumento = escape(str(self.params['numeroDocumento'][0]))
                 nombre = escape(str(self.params['nombre'][0]))
                 sexo = self.params['sexo'][0]
-                response_type = self.params.get('formato')[0]
+                response_type = self.params.get('formato', 'xml')[0]
                 response_type = response_type if response_type in ('xml', 'html') else 'xml'
 
                 if response_type == 'xml':
