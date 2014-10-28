@@ -22,6 +22,10 @@ $(document).ready(function()
 		data.bv.disableSubmitButtons(false);
 	});
 
+	form.on('success.form.bv', function(e, data) {
+		$('button[name=consultar]').toggleClass('active');
+	});
+
 
 	$('input[name=numeroDocumento]')
 		.focus()
@@ -51,5 +55,4 @@ $(document).ready(function()
 				form.data('bootstrapValidator').resetForm();
 			}
 		});
-;
 });

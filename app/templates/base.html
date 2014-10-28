@@ -5,17 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>NBSF - {% block title %}{% endblock %}</title>
-
-		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="{{ base_url }}/public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ base_url }}/public/css/bootstrapValidator.min.css"/>
+    <link rel="stylesheet" href="{{ base_url }}/public/css/font-awesome.min.css">
 
     <!--[if lt IE 9]>
       <script src="{{ base_url }}/public/js/html5shiv.min.js"></script>
       <script src="{{ base_url }}/public/js/respond.min.js"></script>
     <![endif]-->
 
-    <!-- Bootstrap validator CSS -->
-    <link rel="stylesheet" href="{{ base_url }}/public/css/bootstrapValidator.min.css"/>
 		<link rel="stylesheet" href="{{ base_url }}/public/css/styles.css">
 
 		{% block header %}{% endblock %}
@@ -31,13 +29,9 @@
 
 		<div class="footer"></div>
 
-    <!-- jQuery  -->
-    <script src="{{ base_url }}/public/js/jquery.min.js"></script>
-    <!-- Bootstrap -->
-		<script src="{{ base_url }}/public/js/bootstrap.min.js"></script>
-    <!-- Bootstrap validator -->
+    <script type="text/javascript" src="{{ base_url }}/public/js/jquery.min.js"></script>
+		<script type="text/javascript" src="{{ base_url }}/public/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ base_url }}/public/js/bootstrapValidator.min.js"></script>
-
     <script type="text/javascript" src="{{ base_url }}/public/js/functions.js"></script>
   </body>
 </html>
