@@ -34,16 +34,16 @@ class Application:
         try:
             output = ''
 
-            if self.method == 'consultaVerazForm':
+            if self.method == 'consultarVerazForm':
                 response_type = 'html'
                 template_params = {'base_url': self.config.get('app', 'base_url')}
                 output = self.env.get_template('veraz_form.html').render(template_params)
 
-            elif self.method == 'consultaVeraz':
+            elif self.method == 'consultarVeraz':
                 if not self.params:
                     start_response(
                         '301 Redirect',
-                        [('Location', 'http://' + self.hostname + '/' + self.baseUri + '/consultaVerazForm')]
+                        [('Location', 'http://' + self.hostname + '/' + self.baseUri + '/consultarVerazForm')]
                     )
 
                     return output
@@ -57,7 +57,7 @@ class Application:
                 if response_type == 'xml':
                     charset = 'iso-8859-1'
 
-                par_xml = Util.get_xml_consultaVeraz(nombre, sexo, numeroDocumento)
+                par_xml = Util.get_xml_consultarVeraz(nombre, sexo, numeroDocumento)
 
                 self.logger.info('Params: ' + str(self.params))
                 self.logger.info('Tx: ' + par_xml)
@@ -85,11 +85,11 @@ class Application:
                     ip=self.client_ip
                 )
 
-            elif self.method == 'consultaPadron':
+            elif self.method == 'consultarPadron':
                 response_type = 'xml'
 
                 numeroDocumento = escape(str(self.params['numeroDocumento'][0]))
-                xml_ped = Util.get_xml_consultaPadron(numeroDocumento)
+                xml_ped = Util.get_xml_consultarPadron(numeroDocumento)
 
                 session = requests.Session()
 
@@ -115,11 +115,18 @@ class Application:
                     ip=self.client_ip
                 )
 
-            elif self.method == 'consultaCliente':
+            elif self.method in ('consultarCliente', 'desbloquearCliente'):
                 response_type = 'xml'
 
+                if self.method == 'desbloquearCliente':
+                    usuario = escape(str(self.params['usuario'][0]))
+                    operacion = 8  # Desbloqueo rechazado
+                else:
+                    usuario = None
+                    operacion = 1  # Consulta
+
                 numeroCliente = escape(str(self.params['numeroCliente'][0]))
-                xml_ped = Util.get_xml_consultaCliente(numeroCliente)
+                xml_ped = Util.get_xml_pedCliConsBlqDesblq(numeroCliente, operacion, usuario)
 
                 session = requests.Session()
 
@@ -135,7 +142,7 @@ class Application:
                     data=payload
                 )
 
-                output = response.content
+                output = response.content.decode('utf-8')
                 self.logger.info('Rx: ' + re.sub('\s*\n\s*', '', output))
 
                 Db.guardar_consulta(

@@ -34,7 +34,7 @@ $(document).ready(function()
 			if($(this).val())
 			{
 				$.get(
-					'/nbsf/consultaPadron?numeroDocumento=' + $(this).val(),
+					'/nbsf/consultarPadron?numeroDocumento=' + $(this).val(),
 					function(data)
 					{
 						nombre = $(data).find('Nombre1').text().replace(' ', ', ')

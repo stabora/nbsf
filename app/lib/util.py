@@ -33,7 +33,7 @@ class Util:
         return proxies
 
     @staticmethod
-    def get_xml_consultaPadron(numeroDocumento):
+    def get_xml_consultarPadron(numeroDocumento):
         return (
             '<PedConsPad>'
             '<IDPedido>{}</IDPedido>'
@@ -45,7 +45,7 @@ class Util:
         )
 
     @staticmethod
-    def get_xml_consultaCliente(numeroCliente):
+    def get_xml_pedCliConsBlqDesblq(numeroCliente, operacion, usuario=None):
         return (
             '<PedCliConsBlqDesblq>'
             '<IDPed>{}</IDPed>'
@@ -59,14 +59,14 @@ class Util:
         ).format(
             'NBSFPY-' + datetime.today().strftime('%Y%m%d%H%M'),
             datetime.today().strftime('%Y%m%d'),
-            1,  # Consulta
+            operacion,
             numeroCliente,
             '0',
-            'NBSFPY',
+            'NBSFPY' if usuario is None else usuario,
         )
 
     @staticmethod
-    def get_xml_consultaVeraz(nombre, sexo, numeroDocumento):
+    def get_xml_consultarVeraz(nombre, sexo, numeroDocumento):
         return (
             '<mensaje>'
             '<identificador>'
