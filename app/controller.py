@@ -42,7 +42,7 @@ class Application:
         except (KeyError, IndexError) as e:
             self.response_type = 'xml'
             self.logger.error(u'Error: ' + str(e.message))
-            output = '<error><![CDATA[Error inesperado: {}]]></error>'.format(e.message)
+            output = u'<error><![CDATA[Parámetro requerido: {}]]></error>'.format(e.message)
 
         except Exception as e:
             self.response_type = 'xml'
