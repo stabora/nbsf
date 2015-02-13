@@ -175,7 +175,7 @@ class Application:
             'Consulta': xml_ped
         }
 
-        self.logger.info('numeroDocumento: ' + numeroDocumento)
+        self.logger.info('Params: ' + str(self.params))
         self.logger.info('Tx: ' + xml_ped)
 
         response = session.post(
@@ -195,17 +195,36 @@ class Application:
 
         return output
 
+    def consultarClienteForm(self):
+        self.response_type = 'html'
+        template_params = {'base_url': self.config.get('app', 'base_url')}
+
+        return self.env.get_template('consultarCliente_form.html').render(template_params)
+
     def consultarCliente(self):
+        if not self.params:
+            return self.consultarClienteForm()
+
         return self.cliConsBlqDesblq(1)  # 1 = Consulta
 
     def desbloquearCliente(self):
         return self.cliConsBlqDesblq(8)  # 8 = Desbloqueo rechazado
 
-    def consultarCupoCUAD(self):
-        self.response_type = 'xml'
+    def consultarCupoCUADForm(self):
+        self.response_type = 'html'
+        template_params = {'base_url': self.config.get('app', 'base_url')}
 
-        cuit = escape(str(self.params['cuit'][0]))
-        xml_ped = Util.get_xml_consultarCupoCUAD(cuit)
+        return self.env.get_template('cuad_form.html').render(template_params)
+
+    def consultarCupoCUAD(self):
+        if not self.params:
+            return self.consultarCupoCUADForm()
+
+        numeroCuit = escape(str(self.params['numeroCuit'][0]))
+        self.response_type = self.params.get('formato', 'xml')[0]
+        self.response_type = self.response_type if self.response_type in ('xml', 'html') else 'xml'
+
+        xml_ped = Util.get_xml_consultarCupoCUAD(numeroCuit)
 
         session = requests.Session()
 
@@ -213,7 +232,7 @@ class Application:
             'messageRequest': xml_ped
         }
 
-        self.logger.info('cuit: ' + cuit)
+        self.logger.info('Params: ' + str(self.params))
         self.logger.info('Tx: ' + xml_ped)
 
         response = session.post(
@@ -221,7 +240,8 @@ class Application:
             data=payload
         )
 
-        output = Util.format_replaceXMLEntities(response.content[76:-9].decode('utf-8'))
+        output = Util.format_replaceXMLEntities(response.content[122:-9])
+        output = output.decode('utf-8') if self.response_type == 'xml' else Util.get_html_respuestaCUAD(self.env, output)
         self.logger.info('Rx: ' + re.sub('\s*\n\s*', '', output))
 
         Db.guardar_consulta(
@@ -250,7 +270,7 @@ class Application:
             'Consulta': xml_ped
         }
 
-        self.logger.info('numeroCliente: ' + numeroCliente)
+        self.logger.info('Params: ' + str(self.params))
         self.logger.info('Tx: ' + xml_ped)
 
         response = session.post(

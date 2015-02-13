@@ -7,6 +7,7 @@ from ConfigParser import SafeConfigParser
 from base64 import b64decode
 from xml.dom import minidom
 from random import randint
+from lxml import etree
 
 
 class Util:
@@ -182,3 +183,20 @@ class Util:
         }
 
         return env.get_template('veraz_respuesta.html').render(template_params)
+
+    @staticmethod
+    def get_html_respuestaCUAD(env, xml):
+        xml_obj = etree.fromstring(xml)
+        periodo = xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Periodo', 'n/d')
+        periodo = periodo[4:6] + ' / ' + periodo[0:4] if len(periodo) == 6 else periodo
+
+        template_params = {
+            'base_url': Util.config.get('app', 'base_url'),
+            'variables': {
+                'Nombre': xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}NombreApellido', xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Descripcion')),
+                u'Período': periodo,
+                'Monto': xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Monto', 'n/d')
+            }
+        }
+
+        return env.get_template('cuad_respuesta.html').render(template_params)
