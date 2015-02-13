@@ -254,7 +254,8 @@ class Application:
         return output
 
     def cliConsBlqDesblq(self, operacion):
-        self.response_type = 'xml'
+        self.response_type = self.params.get('formato', 'xml')[0]
+        self.response_type = self.response_type if self.response_type in ('xml', 'html') else 'xml'
 
         if operacion == 8:  # Desbloqueo rechazado
             usuario = escape(str(self.params['usuario'][0]))
@@ -278,7 +279,8 @@ class Application:
             data=payload
         )
 
-        output = Util.format_replaceXMLEntities(response.content.decode('utf-8'))
+        output = Util.format_replaceXMLEntities(response.content)
+        output = output if self.response_type == 'xml' else Util.get_html_respuestaDatosCliente(self.env, output)
         self.logger.info('Rx: ' + re.sub('\s*\n\s*', '', output))
 
         Db.guardar_consulta(

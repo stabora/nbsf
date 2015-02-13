@@ -5,7 +5,6 @@ import re
 from datetime import datetime
 from ConfigParser import SafeConfigParser
 from base64 import b64decode
-from xml.dom import minidom
 from random import randint
 from lxml import etree
 
@@ -164,15 +163,15 @@ class Util:
 
     @staticmethod
     def get_html_respuestaVeraz(env, xml):
-        xml_obj = minidom.parseString(xml)
+        xml_obj = etree.fromstring(xml)
 
         variables = {}
         texto_informe = ''
 
-        for variable in xml_obj.getElementsByTagName('variable'):
-            variables[variable.getElementsByTagName('nombre')[0].firstChild.data] = variable.getElementsByTagName('valor')[0].firstChild.data
+        for variable in xml_obj.findall('.//variable'):
+            variables[variable.findtext('nombre')] = variable.findtext('valor')
 
-        texto_informe = xml_obj.getElementsByTagName('informe')[0].getElementsByTagName('texto')[0].firstChild.data.encode('ascii', 'xmlcharrefreplace')
+        texto_informe = xml_obj.findtext('.//informe/texto').encode('ascii', 'xmlcharrefreplace')
         texto_informe = re.sub(r'\n', '', texto_informe)
         texto_informe = re.sub(r'[0-9]{3}[A-Z][0-9]{8}[A-Z\*][0-9]{2}[0-9A-Z]{2}[0-9]{1,2}', '<br>', texto_informe)
 
@@ -200,3 +199,21 @@ class Util:
         }
 
         return env.get_template('cuad_respuesta.html').render(template_params)
+
+    @staticmethod
+    def get_html_respuestaDatosCliente(env, xml):
+        xml_obj = etree.fromstring(xml)
+        root = xml_obj.find('.//{http://tempuri.org/}ResCliConsBlqDesblq')
+        variables = {}
+
+        for respuesta in root.getchildren():
+            if 'Respuesta' in respuesta.tag:
+                for nodo in respuesta.getchildren():
+                    variables[re.sub(r'\{[a-z.:/]+\}', '', nodo.tag)] = '' if nodo.text is None else nodo.text
+
+        template_params = {
+            'base_url': Util.config.get('app', 'base_url'),
+            'variables': variables
+        }
+
+        return env.get_template('consultarCliente_respuesta.html').render(template_params)
