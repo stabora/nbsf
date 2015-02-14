@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Consulta Veraz{% endblock %}
+{% block title %}Consultar Veraz{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" name="consulta-veraz" action="consultaVeraz" method="POST">
+<form class="form-horizontal" name="consulta-veraz" action="consultarVeraz" method="POST">
 	<div class="form-group col-sm-3">
 		<input class="form-control" type="text" name="numeroDocumento" placeholder="Nro. de documento" \>
 	</div>
@@ -21,14 +21,7 @@
 		</label>
 	</div>
 
-	<div class="form-group col-sm-10">
-		<label class="radio-inline">
-			<input type="radio" name="formato" value="html" checked="true"> Formato HTML
-		</label>
-		<label class="radio-inline">
-			<input type="radio" name="formato" value="xml"> Formato XML
-		</label>
-	</div>
+	{% include "form_tipo_respuesta.html" %}
 
 	<div class="form-group col-sm-10">
 		<button type="submit" class="btn btn-primary has-spinner" name="consultar">

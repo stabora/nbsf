@@ -1,2 +1,6 @@
 app/log*
+<<<<<<< HEAD
 /nbproject/private
+=======
+*.py[cod]
+>>>>>>> 2e4b5d629b4e82396fa541e5434a54bcd48bd98a

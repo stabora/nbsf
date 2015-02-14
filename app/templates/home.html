@@ -3,5 +3,18 @@
 {% block title %}Servicio de consultas{% endblock %}
 
 {% block content %}
-<pre>Bienvenido!</pre>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Consultas habilitadas</h3>
+	</div>
+
+	<div class="list-group">
+	</div>
+
+	<ul class="list-group">
+		<a class="list-group-item" href="{{ base_url }}/consultarClienteForm">Consultar datos del cliente</a>
+		<a class="list-group-item" href="{{ base_url }}/consultarCupoCUADForm">Consultar cupo CUAD (APP)</a>
+		<a class="list-group-item" href="{{ base_url }}/consultarVerazForm">Consultar Veraz</a>
+	</ul>
+</div>
 {% endblock %}
