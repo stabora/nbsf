@@ -3,6 +3,13 @@ body
 	margin: 10px 30px 100px 10px;
 }
 
+.container h1
+{
+  font-size: 1.6em;
+  border-bottom: 1px dotted #cacaca;
+  padding-bottom: 10px;
+}
+
 .container h1 img
 {
   margin: 0 0 7px 0;

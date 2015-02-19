@@ -292,5 +292,21 @@ class Application:
 
         return output
 
+    def consultarCuotaMAForm(self):
+        self.response_type = 'html'
+        template_params = {'base_url': self.config.get('app', 'base_url')}
+
+        return self.env.get_template('cuotaMA_form.html').render(template_params)
+
+    def consultarCuotaMA(self):
+        if not self.params:
+            return self.consultarCuotaMAForm()
+
+        self.response_type = 'html'
+        uidPrestamo = escape(str(self.params['uidPrestamo'][0]))
+        output = Util.get_html_respuestaCuotaMA(self.env, uidPrestamo)
+
+        return output
+
 
 application = Application()

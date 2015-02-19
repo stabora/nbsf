@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Consultar cuota m&aacute;xima mercado abierto - Respuesta{% endblock %}
+
+{% block content %}
+<ul class="nav nav-tabs">
+	<li class="active"><a href="#cuotas" data-toggle="tab">Cuta m&aacute;xima</a></li>
+	<li><a href="#parametros" data-toggle="tab">Par&aacute;metros</a></li>
+	<li><a href="#valores_param_x" data-toggle="tab">Valores Param X</a></li>
+	<li><a href="#valores_param_y" data-toggle="tab">Valores Param Y</a></li>
+	<li><a href="?">Volver</a></li>
+</ul>
+
+<div class="tab-content">
+	<div class="tab-pane active" id="cuotas">
+	  <h3></h3>
+
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">Cuotas</h3>
+		  </div>
+
+			<table class="table table-striped table-condensed table-hover">
+				{% for nombre, valor in cuotas|dictsort %}
+				<tr>
+					<td class="active"><strong>{{ nombre }}</strong></td>
+					<td>{{ valor }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+	<div class="tab-pane" id="parametros">
+	  <h3></h3>
+
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">Par&aacute;metros</h3>
+		  </div>
+
+			<table class="table table-striped table-condensed table-hover">
+				{% for nombre, valor in parametros|dictsort %}
+				<tr>
+					<td class="active"><strong>{{ nombre }}</strong></td>
+					<td>{{ valor }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+	<div class="tab-pane" id="valores_param_x">
+	  <h3></h3>
+
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">Valores Param X</h3>
+		  </div>
+
+			<table class="table table-striped table-condensed table-hover">
+				{% for registro in valoresParamX %}
+				<tr>
+					<td class="active"><strong>{{ registro['SUBCOD'] }} - {{ registro['DESCRIPCION'] }}</strong></td>
+					<td>{{ registro['VALOR'] }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+	<div class="tab-pane" id="valores_param_y">
+	  <h3></h3>
+
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">Valores Param Y</h3>
+		  </div>
+
+			<table class="table table-striped table-condensed table-hover">
+				{% for registro in valoresParamY %}
+				<tr>
+					<td class="active"><strong>{{ registro['SUBCOD'] }} - {{ registro['DESCRIPCION'] }}</strong></td>
+					<td>{{ registro['VALOR'] }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
