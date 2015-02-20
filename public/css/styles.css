@@ -1,28 +1,70 @@
+/* General */
+
+html
+{
+  position: relative;
+  min-height: 100%;
+}
+
 body
 {
-	margin: 10px 30px 100px 10px;
-}
-
-.container h1
-{
-  font-size: 1.6em;
-  border-bottom: 1px dotted #cacaca;
-  padding-bottom: 10px;
-}
-
-.container h1 img
-{
-  margin: 0 0 7px 0;
+	margin-top: 80px;
+  margin-bottom: 60px;
 }
 
 .no-background
 {
-	background: transparent;
-	color: #000;
-	border: none;
+  background: transparent;
+  color: #000;
+  border: none;
 }
 
-.spinner {
+
+/* Layout */
+
+.container
+{
+  width: auto;
+  max-width: 1024px;
+}
+
+.page-header
+{
+  margin-top: 0;
+}
+
+.page-header h1
+{
+  font-size: 1.4em;
+  padding-left: 5px;
+  margin-top: 0;
+}
+
+.navbar-brand
+{
+  padding-top: 5px;
+}
+
+.footer
+{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  background-color: #f5f5f5;
+}
+
+.footer p
+{
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+
+/* Spinner */
+
+.spinner
+{
   display: inline-block;
   opacity: 0;
   width: 0;
@@ -33,15 +75,18 @@ body
   transition: opacity 0.25s, width 0.25s;
 }
 
-.has-spinner.active {
+.has-spinner.active
+{
   cursor: progress;
 }
 
-.has-spinner.active .spinner {
+.has-spinner.active .spinner
+{
   opacity: 1;
   width: auto;
 }
 
-.has-spinner.btn.active .spinner {
+.has-spinner.btn.active .spinner
+{
     width: 16px;
 }

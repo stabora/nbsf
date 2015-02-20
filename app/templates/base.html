@@ -1,39 +1,64 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>NBSF - {% block title %}{% endblock %}</title>
 		<link rel="stylesheet" href="{{ base_url }}/public/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ base_url }}/public/css/bootstrapValidator.min.css"/>
-    <link rel="stylesheet" href="{{ base_url }}/public/css/font-awesome.min.css">
-    <link rel="shortcut icon" type="image/png" href="{{ base_url }}/public/images/favicon.png"/>
-
-    <!--[if lt IE 9]>
-      <script src="{{ base_url }}/public/js/html5shiv.min.js"></script>
-      <script src="{{ base_url }}/public/js/respond.min.js"></script>
-    <![endif]-->
-
+		<link rel="stylesheet" href="{{ base_url }}/public/css/bootstrapValidator.min.css"/>
+		<link rel="stylesheet" href="{{ base_url }}/public/css/font-awesome.min.css">
 		<link rel="stylesheet" href="{{ base_url }}/public/css/styles.css">
+		<link rel="shortcut icon" type="image/png" href="{{ base_url }}/public/images/favicon.png"/>
+
+		<!--[if lt IE 9]>
+			<script src="{{ base_url }}/public/js/html5shiv.min.js"></script>
+			<script src="{{ base_url }}/public/js/respond.min.js"></script>
+		<![endif]-->
 
 		{% block header %}{% endblock %}
-  </head>
+	</head>
 
-  <body>
-  	<div class="container">
-	  	<h1><a href="{{ base_url }}"><img src="{{ base_url }}/public/images/favicon.png"></a> NBSF - {{ self.title() }}</h1>
+	<body>
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="container">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	        <span class="sr-only">Navegaci&oacute;n</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
 
-      <br>
+				<div class="navbar-header">
+					<a class="navbar-brand" href="{{ base_url }}"><img src="{{ base_url }}/public/images/favicon.png" alt="NBSF" title="Inicio"></a>
+					<p class="navbar-text">Nuevo Banco de Santa Fe</p>
+				</div>
+
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					{% include "includes/navigation.inc.html" %}
+				</div>
+			</div>
+		</nav>
+
+		<div class="container">
+			{% if self.title() %}
+			<div class="page-header">
+			  <h1>{{ self.title() }}</h1>
+			</div>
+			{% endif %}
 
 			{% block content %}{% endblock %}
 		</div>
 
-		<div class="footer"></div>
+		<footer class="footer">
+			<div class="container">
+				<p class="text-muted">Nuevo Banco de Santa Fe - Servicio de consultas</p>
+			</div>
+		</footer>
 
-    <script type="text/javascript" src="{{ base_url }}/public/js/jquery.min.js"></script>
+		<script type="text/javascript" src="{{ base_url }}/public/js/jquery.min.js"></script>
 		<script type="text/javascript" src="{{ base_url }}/public/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="{{ base_url }}/public/js/bootstrapValidator.min.js"></script>
-    <script type="text/javascript" src="{{ base_url }}/public/js/functions.js"></script>
-  </body>
+		<script type="text/javascript" src="{{ base_url }}/public/js/bootstrapValidator.min.js"></script>
+		<script type="text/javascript" src="{{ base_url }}/public/js/functions.js"></script>
+	</body>
 </html>

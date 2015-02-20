@@ -3,7 +3,8 @@
 {% block title %}Consultar Veraz - Respuesta{% endblock %}
 
 {% block content %}
-<ul class="nav nav-tabs">
+{% if variables %}
+<ul class="nav nav-pills">
 	<li class="active"><a href="#variables" data-toggle="tab">Variables</a></li>
 	<li><a href="#informe" data-toggle="tab">Informe</a></li>
 	<li><a href="?">Volver</a></li>
@@ -43,4 +44,15 @@
 		</div>
 	</div>
 </div>
+{% else %}
+
+<div class="alert alert-danger" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  <span class="sr-only">Error:</span>
+  Documento no encontrado
+</div>
+
+<a href="?" class="btn btn-primary">Volver</a>
+
+{% endif %}
 {% endblock %}

@@ -3,7 +3,8 @@
 {% block title %}Consultar cuota m&aacute;xima mercado abierto - Respuesta{% endblock %}
 
 {% block content %}
-<ul class="nav nav-tabs">
+{% if cuotas %}
+<ul class="nav nav-pills">
 	<li class="active"><a href="#cuotas" data-toggle="tab">Cuta m&aacute;xima</a></li>
 	<li><a href="#parametros" data-toggle="tab">Par&aacute;metros</a></li>
 	<li><a href="#valores_param_x" data-toggle="tab">Valores Param X</a></li>
@@ -88,4 +89,16 @@
 		</div>
 	</div>
 </div>
+
+{% else %}
+
+<div class="alert alert-danger" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  <span class="sr-only">Error:</span>
+  Solicitud inexistente
+</div>
+
+<a href="?" class="btn btn-primary">Volver</a>
+
+{% endif %}
 {% endblock %}

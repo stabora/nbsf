@@ -207,8 +207,16 @@ class Application:
 
         return self.cliConsBlqDesblq(1)  # 1 = Consulta
 
+    def desbloquearClienteForm(self):
+        template_params = {'base_url': self.config.get('app', 'base_url')}
+
+        return self.env.get_template('desbloquearCliente_form.html').render(template_params)
+
     def desbloquearCliente(self):
-        return self.cliConsBlqDesblq(8)  # 8 = Desbloqueo rechazado
+        if not self.params:
+            return self.desbloquearClienteForm()
+
+        return self.cliConsBlqDesblq(8).decode('utf-8')  # 8 = Desbloqueo rechazado
 
     def consultarCupoCUADForm(self):
         self.response_type = 'html'

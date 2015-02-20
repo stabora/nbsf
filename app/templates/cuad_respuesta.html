@@ -3,7 +3,8 @@
 {% block title %}Consultar cupo CUAD - Respuesta{% endblock %}
 
 {% block content %}
-<ul class="nav nav-tabs">
+{% if variables %}
+<ul class="nav nav-pills">
 	<li class="active"><a href="#variables" data-toggle="tab">Variables</a></li>
 	<li><a href="?">Volver</a></li>
 </ul>
@@ -26,4 +27,15 @@
 		</table>
 	</div>
 </div>
+{% else %}
+
+<div class="alert alert-danger" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  <span class="sr-only">Error:</span>
+  Empleado no encontrado
+</div>
+
+<a href="?" class="btn btn-primary">Volver</a>
+
+{% endif %}
 {% endblock %}

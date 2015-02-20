@@ -170,16 +170,17 @@ class Util:
     @staticmethod
     def get_html_respuestaVeraz(env, xml):
         xml_obj = etree.fromstring(xml)
-
+        codigo_error = xml_obj.findtext('.//codigoError')
         variables = {}
         texto_informe = ''
 
-        for variable in xml_obj.findall('.//variable'):
-            variables[variable.findtext('nombre')] = variable.findtext('valor')
+        if codigo_error == "0":
+            for variable in xml_obj.findall('.//variable'):
+                variables[variable.findtext('nombre')] = variable.findtext('valor')
 
-        texto_informe = xml_obj.findtext('.//informe/texto').encode('ascii', 'xmlcharrefreplace')
-        texto_informe = re.sub(r'\n', '', texto_informe)
-        texto_informe = re.sub(r'[0-9]{3}[A-Z][0-9]{8}[A-Z\*][0-9]{2}[0-9A-Z]{2}[0-9]{1,2}', '<br>', texto_informe)
+            texto_informe = xml_obj.findtext('.//informe/texto').encode('ascii', 'xmlcharrefreplace')
+            texto_informe = re.sub(r'\n', '', texto_informe)
+            texto_informe = re.sub(r'[0-9]{3}[A-Z][0-9]{8}[A-Z\*][0-9]{2}[0-9A-Z]{2}[0-9]{1,2}', '<br>', texto_informe)
 
         template_params = {
             'base_url': Util.config.get('app', 'base_url'),
@@ -192,16 +193,22 @@ class Util:
     @staticmethod
     def get_html_respuestaCUAD(env, xml):
         xml_obj = etree.fromstring(xml)
-        periodo = xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Periodo', 'n/d')
-        periodo = periodo[4:6] + ' / ' + periodo[0:4] if len(periodo) == 6 else periodo
+        nombre = xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}NombreApellido')
+        variables = {}
 
-        template_params = {
-            'base_url': Util.config.get('app', 'base_url'),
-            'variables': {
-                'Nombre': xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}NombreApellido', xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Descripcion')),
+        if nombre:
+            periodo = xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Periodo', 'n/d')
+            periodo = periodo[4:6] + ' / ' + periodo[0:4] if len(periodo) == 6 else periodo
+
+            variables = {
+                'Nombre': nombre,
                 u'Período': periodo,
                 'Monto': xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Monto', 'n/d')
             }
+
+        template_params = {
+            'base_url': Util.config.get('app', 'base_url'),
+            'variables': variables
         }
 
         return env.get_template('cuad_respuesta.html').render(template_params)
@@ -210,12 +217,14 @@ class Util:
     def get_html_respuestaDatosCliente(env, xml):
         xml_obj = etree.fromstring(xml)
         root = xml_obj.find('.//{http://tempuri.org/}ResCliConsBlqDesblq')
+        codigo_respuesta = root.findtext('.//{http://tempuri.org/}CodEstadoPed')
         variables = {}
 
-        for respuesta in root.getchildren():
-            if 'Respuesta' in respuesta.tag:
-                for nodo in respuesta.getchildren():
-                    variables[re.sub(r'\{[a-z.:/]+\}', '', nodo.tag)] = '' if nodo.text is None else nodo.text
+        if codigo_respuesta == "100":
+            for respuesta in root.getchildren():
+                if 'Respuesta' in respuesta.tag:
+                    for nodo in respuesta.getchildren():
+                        variables[re.sub(r'\{[a-z.:/]+\}', '', nodo.tag)] = '' if nodo.text is None else nodo.text
 
         template_params = {
             'base_url': Util.config.get('app', 'base_url'),
@@ -274,9 +283,6 @@ class Util:
             parametros[u'Bureau pago mínimo TTCC'] = datos[0]['BUREAU_TTCC_PAGO_MINIMO']
             parametros[u'Bureau cuotas préstamos'] = datos[0]['BUREAU_PRESTAMOS_CUOTA_RES']
             parametros[u'Compromiso mensual'] = float(datos[0]['BUREAU_PRESTAMOS_CUOTA_RES']) + float(datos[0]['BUREAU_TTCC_PAGO_MINIMO'])
-        else:
-            cuotas[u'UID ' + uidPrestamo] = 'Solicitud inexistente'
-            parametros['n/d'] = ''
 
         template_params = {
             'base_url': Util.config.get('app', 'base_url'),
