@@ -4,12 +4,18 @@
 
 {% block content %}
 <form class="form-horizontal" name="desbloqueo-cliente" action="desbloquearCliente" method="POST">
-	<div class="form-group col-sm-3">
-		<input class="form-control" type="text" name="numeroCliente" placeholder="NIT" maxlength="13" \>
+	{% include "includes/form_tipo_documento.inc.html" %}
+
+	<div class="form-group col-sm-10">
+		<input class="form-control" type="text" name="numeroDocumento" placeholder="Nro. documento" maxlength="11" \>
 	</div>
 
 	<div class="form-group col-sm-10">
 		<input class="form-control" type="text" name="usuario" placeholder="Usuario" \>
+	</div>
+
+	<div class="form-group col-sm-10">
+		<input type="text" name="numeroCliente" placeholder="NIT" maxlength="13" hidden="true" \>
 	</div>
 
 	<div class="form-group col-sm-10">
