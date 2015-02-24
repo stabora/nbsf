@@ -2,7 +2,12 @@
 
 import os
 import re
-import cx_Oracle
+
+try:
+    import cx_Oracle
+except ImportError:
+    pass
+
 from datetime import datetime
 from ConfigParser import SafeConfigParser
 from base64 import b64decode
