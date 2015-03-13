@@ -4,16 +4,16 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-		<title>NBSF - {% block title %}{% endblock %}</title>
-		<link rel="stylesheet" href="{{ base_url }}/public/css/bootstrap.min.css">
-		<link rel="stylesheet" href="{{ base_url }}/public/css/bootstrapValidator.min.css"/>
-		<link rel="stylesheet" href="{{ base_url }}/public/css/font-awesome.min.css">
-		<link rel="stylesheet" href="{{ base_url }}/public/css/styles.css">
-		<link rel="shortcut icon" type="image/png" href="{{ base_url }}/public/images/favicon.png"/>
+		<title>NBSF{% if self.title() %} - {% endif %}{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrapValidator.min.css') }}"/>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+		<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}"/>
 
 		<!--[if lt IE 9]>
-			<script src="{{ base_url }}/public/js/html5shiv.min.js"></script>
-			<script src="{{ base_url }}/public/js/respond.min.js"></script>
+			<script src="{{ url_for('static', filename='js/html5shiv.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='js/respond.min.js') }}"></script>
 		<![endif]-->
 
 		{% block header %}{% endblock %}
@@ -30,7 +30,7 @@
 	      </button>
 
 				<div class="navbar-header">
-					<a class="navbar-brand" href="{{ base_url }}"><img src="{{ base_url }}/public/images/favicon.png" alt="NBSF" title="Inicio"></a>
+					<a class="navbar-brand" href="{{ url_for('/') }}"><img src="{{ url_for('static', filename='images/favicon.png') }}" alt="NBSF" title="Inicio"></a>
 					<p class="navbar-text">Nuevo Banco de Santa Fe</p>
 				</div>
 
@@ -56,9 +56,9 @@
 			</div>
 		</footer>
 
-		<script type="text/javascript" src="{{ base_url }}/public/js/jquery.min.js"></script>
-		<script type="text/javascript" src="{{ base_url }}/public/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="{{ base_url }}/public/js/bootstrapValidator.min.js"></script>
-		<script type="text/javascript" src="{{ base_url }}/public/js/functions.js"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrapValidator.min.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/functions.js') }}"></script>
 	</body>
 </html>

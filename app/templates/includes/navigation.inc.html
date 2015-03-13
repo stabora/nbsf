@@ -3,7 +3,7 @@
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Utilidades <span class="caret"></span></a>
 
 		<ul class="dropdown-menu" role="menu">
-			<li><a href="{{ base_url }}/desbloquearClienteForm">Desbloquear cliente</a></li>
+			<li><a href="{{ url_for('desbloquearClienteForm') }}">Desbloquear cliente</a></li>
 		</ul>
 	</li>
 
@@ -11,11 +11,11 @@
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Consultas <span class="caret"></span></a>
 
 		<ul class="dropdown-menu" role="menu">
-			<li><a href="{{ base_url }}/consultarClienteForm">Consultar datos del cliente</a></li>
-			<li><a href="{{ base_url }}/consultarCuotaMAForm">Consultar cuota máxima mercado abierto</a></li>
+			<li><a href="{{ url_for('consultarClienteForm') }}">Consultar datos del cliente</a></li>
+			<li><a href="{{ url_for('consultarCuotaMAForm') }}">Consultar cuota máxima mercado abierto</a></li>
 			<li class="divider"></li>
-			<li><a href="{{ base_url }}/consultarCupoCUADForm">Consultar cupo CUAD (APP)</a></li>
-			<li><a href="{{ base_url }}/consultarVerazForm">Consultar Veraz</a></li>
+			<li><a href="{{ url_for('consultarCupoCUADForm') }}">Consultar cupo CUAD (APP)</a></li>
+			<li><a href="{{ url_for('consultarVerazForm') }}">Consultar Veraz</a></li>
 		</ul>
 	</li>
 </ul>

@@ -3,7 +3,7 @@
 {% block title %}Consultar datos del cliente{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" name="consulta-cliente" action="consultarCliente" method="POST">
+<form class="form-horizontal" name="consulta-cliente" action="{{ url_for('consultarCliente') }}" method="POST">
 	{% include "includes/form_tipo_documento.inc.html" %}
 
 	<div class="form-group col-sm-10">
