@@ -22,6 +22,10 @@
 		  </div>
 
 			<table class="table table-striped table-condensed table-hover">
+				<tr>
+					<td class="active"><strong>UID pr&eacute;stamo:</strong></td>
+					<td>{{ variables.uidPrestamo }}</td>
+				</tr>
 				{% for nombre, valor in variables.cuotas|dictsort %}
 				<tr>
 					<td class="active"><strong>{{ nombre }}</strong></td>

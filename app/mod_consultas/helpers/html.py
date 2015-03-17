@@ -125,6 +125,7 @@ class HTML:
             parametros[u'Compromiso mensual'] = float(datos[0]['BUREAU_PRESTAMOS_CUOTA_RES']) + float(datos[0]['BUREAU_TTCC_PAGO_MINIMO'])
 
         variables = {
+            'uidPrestamo': uidPrestamo,
             'cuotas': cuotas,
             'parametros': parametros,
             'valoresParamX': valoresParamX,
