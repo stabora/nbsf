@@ -38,7 +38,7 @@ class HTML:
         }
 
     @staticmethod
-    def get_html_respuestaCUAD(xml):
+    def get_html_respuestaCupoCUAD(xml):
         xml_obj = etree.fromstring(xml)
         nombre = xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}NombreApellido')
         variables = {}
@@ -52,6 +52,25 @@ class HTML:
                 u'Período': periodo,
                 'Monto': xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Monto', 'n/d')
             }
+
+        return variables
+
+    @staticmethod
+    def get_html_respuestaPrestamosPendientes(xml):
+        variables = {}
+        prestamos = []
+
+        xml_obj = etree.fromstring(xml)
+        root = xml_obj.find('.//{http://tempuri.org/PrestamosEnWFDS.xsd}PrestamosEnWFDS')
+
+        if root:
+            for prestamo in root.getchildren():
+                prestamos.append(prestamo.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}IDWorkFlow'))
+
+            variables[u'UIDs préstamos pendientes'] = ','.join(prestamos)
+
+        if prestamos:
+            variables[u'Total préstamos pendientes'] = len(prestamos)
 
         return variables
 
@@ -70,6 +89,24 @@ class HTML:
                     if 'Respuesta' in respuesta.tag:
                         for nodo in respuesta.getchildren():
                             variables[re.sub(r'\{[a-z.:/]+\}', '', nodo.tag)] = '' if nodo.text is None else nodo.text
+
+        return variables
+
+    @staticmethod
+    def get_html_respuestaPadronElectoral(xml):
+        variables = {}
+
+        xml_obj = etree.fromstring(xml)
+        root = xml_obj.find('.//{http://tempuri.org/}ResConsPad')
+
+        if root:
+            codigo_respuesta = root.findtext('.//{http://tempuri.org/}CodSubAs')
+
+            if codigo_respuesta == "100":
+                respuesta = root.find('.//{http://tempuri.org/}Respuesta')
+
+                for nodo in respuesta.getchildren():
+                    variables[re.sub(r'\{[a-z.:/]+\}', '', nodo.tag)] = '' if nodo.text is None else nodo.text
 
         return variables
 

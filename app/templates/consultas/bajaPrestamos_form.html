@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Consultar datos del cliente{% endblock %}
+{% block title %}Baja de préstamos{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" name="consulta-cliente" action="{{ url_for('consultarCliente') }}" method="POST">
-	<input type="hidden" name="numeroCliente" \>
+<form class="form-horizontal" name="baja-prestamos" action="{{ url_for('prestamosPendientes') }}" method="POST">
+  <input type="hidden" name="accion" value="BajaEnWF" \>
 
 	{% include "includes/form_tipo_documento.inc.html" %}
 
@@ -12,12 +12,14 @@
 		<input class="form-control" type="text" name="numeroDocumento" placeholder="Nro. documento" maxlength="11" \>
 	</div>
 
-	{% include "includes/form_tipo_respuesta.inc.html" %}
+  <div class="form-group col-sm-10">
+		<input class="form-control" type="text" name="uidPrestamo" placeholder="UID Pr&eacute;stamo" maxlength="13" \>
+	</div>
 
 	<div class="form-group col-sm-10">
 		<button type="submit" class="btn btn-primary has-spinner" name="consultar">
 			<span class="spinner"><i class="fa fa-refresh fa-spin"></i></span>
-			Consultar
+			Procesar
 		</button>
 	</div>
 </form>

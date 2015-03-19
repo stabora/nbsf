@@ -19,7 +19,7 @@ $(document).ready(function()
 
 			fields:
 			{
-				numeroDocumento: { validators: { integer: { message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } },
+				numeroDocumento: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } },
 				nombre: { validators: { notEmpty: { message: 'Ingrese un valor' } } },
 				sexo: { validators: { notEmpty: { message: 'Seleccione una opción' } } }
 			}
@@ -86,6 +86,29 @@ $(document).ready(function()
 	});
 
 
+	// Formulario préstamos pendientes
+
+	$('form[name=consulta-prestamos-pendientes]')
+	.bootstrapValidator(
+	{
+		feedbackIcons:
+		{
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+
+		fields:
+		{
+			numeroDocumento: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+		}
+	})
+	.on('success.form.bv', function(e, data)
+	{
+		$('button[type="submit"]').toggleClass('active');
+	});
+
+
 	// Formulario consulta datos del cliente
 
 	$('form[name=consulta-cliente]')
@@ -115,6 +138,29 @@ $(document).ready(function()
 				$('form[name=consulta-cliente] select[name=tipoDocumento]').val(),
 				$('form[name=consulta-cliente] input[name=numeroDocumento]').val()
 			));
+	});
+
+
+	// Formulario padrón electoral
+
+	$('form[name=consulta-padron]')
+	.bootstrapValidator(
+	{
+		feedbackIcons:
+		{
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+
+		fields:
+		{
+			numeroDocumento: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+		}
+	})
+	.on('success.form.bv', function(e, data)
+	{
+		$('button[type="submit"]').toggleClass('active');
 	});
 
 
@@ -171,6 +217,40 @@ $(document).ready(function()
 				$('form[name=desbloqueo-cliente] select[name=tipoDocumento]').val(),
 				$('form[name=desbloqueo-cliente] input[name=numeroDocumento]').val()
 			));
+	});
+
+
+	// Formulario baja de préstamos
+
+	$('form[name=baja-prestamos]')
+	.bootstrapValidator(
+	{
+		feedbackIcons:
+		{
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+
+		fields:
+		{
+			numeroDocumento: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+		}
+	})
+	.on('success.form.bv', function(e, data)
+	{
+		if( ! $('form[name=baja-prestamos] input[name=uidPrestamo]').val())
+		{
+				result = confirm('Se solicitará la baja de todos los préstamos pendientes para el cliente');
+
+				if( ! result)
+				{
+					$('button[type="submit"]').prop('disabled', false);
+					return false;
+				}
+		}
+
+		$('button[type="submit"]').toggleClass('active');
 	});
 
 

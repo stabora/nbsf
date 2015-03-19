@@ -3,7 +3,11 @@
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Utilidades <span class="caret"></span></a>
 
 		<ul class="dropdown-menu" role="menu">
+			<li role="presentation" class="dropdown-header">AS-400</li>
 			<li><a href="{{ url_for('desbloquearClienteForm') }}">Desbloquear cliente</a></li>
+			<li class="divider"></li>
+			<li role="presentation" class="dropdown-header">Broker</li>
+			<li><a href="{{ url_for('bajaPrestamosForm') }}">Baja de pr&eacute;stamos</a></li>
 		</ul>
 	</li>
 
@@ -11,11 +15,22 @@
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Consultas <span class="caret"></span></a>
 
 		<ul class="dropdown-menu" role="menu">
-			<li><a href="{{ url_for('consultarClienteForm') }}">Consultar datos del cliente</a></li>
-			<li><a href="{{ url_for('consultarCuotaMAForm') }}">Consultar cuota máxima mercado abierto</a></li>
+			<li role="presentation" class="dropdown-header">AS-400</li>
+			<li><a href="{{ url_for('consultarClienteForm') }}">Datos del cliente</a></li>
+			<li><a href="{{ url_for('consultarPadronForm') }}">Padr&oacute;n electoral</a></li>
 			<li class="divider"></li>
-			<li><a href="{{ url_for('consultarCupoCUADForm') }}">Consultar cupo CUAD (APP)</a></li>
-			<li><a href="{{ url_for('consultarVerazForm') }}">Consultar Veraz</a></li>
+
+			<li role="presentation" class="dropdown-header">Broker</li>
+			<li><a href="{{ url_for('consultarCupoCUADForm') }}">Cupo CUAD (APP)</a></li>
+			<li><a href="{{ url_for('consultarPrestamosPendientesForm') }}">Pr&eacute;stamos pendientes</a></li>
+			<li class="divider"></li>
+
+			<li role="presentation" class="dropdown-header">Workflow</li>
+			<li><a href="{{ url_for('consultarCuotaMAForm') }}">An&aacute;lisis cuota m&aacute;xima mercado abierto</a></li>
+			<li class="divider"></li>
+
+			<li role="presentation" class="dropdown-header">Externas</li>
+			<li><a href="{{ url_for('consultarVerazForm') }}">Veraz</a></li>
 		</ul>
 	</li>
 </ul>

@@ -24,6 +24,8 @@ VERAZ_MATRIZ = 'VN0330'
 VERAZ_USUARIO = 'XML'
 VERAZ_PASSWORD = '110224870051101206368'
 
+# desarrollowf - 172.16.8.165
+# mensajeria - 172.16.55.6
 NBSF_MENSAJERIA_HOST = 'http://mensajeria'
 NBSF_MENSAJERIA_RESOURCE = '/asconexweb/asconsultas.asmx/Consultar'
 
