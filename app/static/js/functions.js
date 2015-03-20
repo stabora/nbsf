@@ -241,13 +241,14 @@ $(document).ready(function()
 	{
 		if( ! $('form[name=baja-prestamos] input[name=uidPrestamo]').val())
 		{
-				result = confirm('Se solicitará la baja de todos los préstamos pendientes para el cliente');
+			generarDataConfirmModal()
 
-				if( ! result)
-				{
-					$('button[type="submit"]').prop('disabled', false);
-					return false;
-				}
+			$('#dataConfirmModal').find('.modal-body').text('Se solicitará la baja de todos los préstamos pendientes para el cliente');
+			$('#dataConfirmOK').click(function() { $('form[name=baja-prestamos]')[0].submit() });
+			$('#dataConfirmModal').modal({ show: true });
+			$('button[type="submit"]').prop('disabled', false);
+
+			return false;
 		}
 
 		$('button[type="submit"]').toggleClass('active');
@@ -277,19 +278,25 @@ $(document).ready(function()
 	});
 
 
-	// Enlaces de baja de préstamos pendientes
-	$('a.linkBajaMasivaPrestamos').click(function() {
-		return confirm('Se solicitará la baja de todos los préstamos pendientes para el cliente');
-	})
+	// Inicialización de elementos tooltip
 
-	$('a.linkBajaPrestamo').click(function() {
-		return confirm('Se solicitará la baja del préstamo UID ' + $(this).html());
-	})
+	$('[data-toggle="tooltip"]').tooltip();
 
 
 	// Foco en el primer campo del formulario activo
 
 	$("form input:text, form textarea").first().focus();
+
+
+	$('a[data-confirm]').click(function(ev) {
+		generarDataConfirmModal();
+
+		$('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
+		$('#dataConfirmOK').attr('href', $(this).attr('href'));
+		$('#dataConfirmModal').modal({ show: true });
+
+		return false;
+	});
 });
 
 
@@ -302,5 +309,29 @@ function generarNITCliente(tipoDocumento, numeroDocumento)
 	if(tipoDocumento && numeroDocumento)
 	{
 		return tipoDocumento + ('00000000000' + numeroDocumento).slice(-11);
+	}
+}
+
+function generarDataConfirmModal()
+{
+	if( ! $('#dataConfirmModal').length)
+	{
+		$('body').append(
+			'<div id="dataConfirmModal" class="modal fade" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true">' +
+			'<div class="modal-dialog">' +
+			'<div class="modal-content">' +
+			'<div class="modal-header">' +
+			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+			'<h3 id="dataConfirmLabel">Confirmar acci&oacute;n</h3>' +
+			'</div>' +
+			'<div class="modal-body"></div>' +
+			'<div class="modal-footer">' +
+			'<button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>' +
+			'<a class="btn btn-primary" id="dataConfirmOK">Continuar</a>' +
+			'</div>' +
+			'</div>' +
+			'</div>' +
+			'</div>'
+		);
 	}
 }
