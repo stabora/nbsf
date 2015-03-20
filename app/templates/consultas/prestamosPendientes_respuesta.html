@@ -6,6 +6,7 @@
 {% if variables %}
 <ul class="nav nav-pills">
 	<li class="active"><a href="#variables" data-toggle="tab">Variables</a></li>
+	<li><a class="linkBajaMasivaPrestamos" href="{{ url_for('bajaMasivaPrestamos') }}?tipoDocumento={{ variables.tipoDocumento }}&numeroDocumento={{ variables.numeroDocumento }}">Baja masiva</a></li>
 	<li><a href="?">Volver</a></li>
 </ul>
 
@@ -19,19 +20,31 @@
 		  </div>
 
 			<table class="table table-striped table-condensed table-hover">
-				{% for nombre, valor in variables|dictsort %}
 				<tr>
-					<td class="active"><strong>{{ nombre }}</strong></td>
-					<td>{{ valor }}</td>
+					<td class="active"><strong>Total pr&eacute;stamos pendientes</strong></td>
+					<td>{{ variables.totalPrestamos }}</td>
 				</tr>
-				{% endfor %}
+				<tr>
+					<td class="active"><strong>UIDs pr&eacute;stamos pendientes</strong></td>
+					<td>
+						{% for uid in variables.prestamos %}
+							<a class="linkBajaPrestamo" href="{{ url_for('prestamosPendientes') }}?accion=BajaEnWF&tipoDocumento={{ variables.tipoDocumento }}&numeroDocumento={{ variables.numeroDocumento }}&uidPrestamo={{ uid }}" title="Solicitar baja de UID {{ uid }}">{{ uid }}</a>
+							{% if not loop.last %}, {% endif %}
+						{% endfor %}
+					</td>
+				</tr>
 			</table>
+
+			<div class="panel-footer">
+				<p>
+					<small>Haga clic en los UIDs de los préstamos pendientes para solicitar la baja de cada operación.</small>
+				</p>
+			</div>
 		</div>
 	</div>
 </div>
 
 {% else %}
-
 <div class="alert alert-danger" role="alert">
   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
   <span class="sr-only">Error:</span>

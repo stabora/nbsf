@@ -277,6 +277,18 @@ $(document).ready(function()
 	});
 
 
+	// Enlaces de baja de préstamos pendientes
+	$('a.linkBajaMasivaPrestamos').click(function() {
+		return confirm('Se solicitará la baja de todos los préstamos pendientes para el cliente');
+	})
+
+	$('a.linkBajaPrestamo').click(function() {
+		return confirm('Se solicitará la baja del préstamo UID ' + $(this).html());
+	})
+
+
+	// Foco en el primer campo del formulario activo
+
 	$("form input:text, form textarea").first().focus();
 });
 

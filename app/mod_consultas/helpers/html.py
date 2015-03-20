@@ -67,10 +67,13 @@ class HTML:
             for prestamo in root.getchildren():
                 prestamos.append(prestamo.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}IDWorkFlow'))
 
-            variables[u'UIDs préstamos pendientes'] = ','.join(prestamos)
-
         if prestamos:
-            variables[u'Total préstamos pendientes'] = len(prestamos)
+            variables = {
+                'totalPrestamos': len(prestamos),
+                'tipoDocumento': root.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}TipoDoc'),
+                'numeroDocumento': root.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}NumeroDoc'),
+                'prestamos': prestamos
+            }
 
         return variables
 
