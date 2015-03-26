@@ -270,6 +270,7 @@ def consultarVeraz():
     nombre = params.get('nombre')
     sexo = params.get('sexo')
     formato = params.get('formato')
+    debug = params.get('debug', False)
 
     par_xml = XML.get_xml_consultarVeraz(nombre, sexo, numeroDocumento)
 
@@ -279,11 +280,14 @@ def consultarVeraz():
 
     session = requests.Session()
 
-    response = session.post(
-        app.config['VERAZ_HOST'] + app.config['VERAZ_RESOURCE'],
-        data=payload,
-        proxies=Util.get_proxies()
-    ).content
+    if debug:
+        response = XML.get_xml_respuestaVerazDebug(nombre, sexo, numeroDocumento)
+    else:
+        response = session.post(
+            app.config['VERAZ_HOST'] + app.config['VERAZ_RESOURCE'],
+            data=payload,
+            proxies=Util.get_proxies()
+        ).content
 
     Db.guardar_consulta(
         consulta=str(request.url_rule)[1:],
