@@ -270,7 +270,7 @@ def consultarVeraz():
     nombre = params.get('nombre')
     sexo = params.get('sexo')
     formato = params.get('formato')
-    debug = params.get('debug', False)
+    debug = params.get('debug', app.config['VERAZ_DEBUG'])
 
     par_xml = XML.get_xml_consultarVeraz(nombre, sexo, numeroDocumento)
 
