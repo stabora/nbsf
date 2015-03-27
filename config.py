@@ -37,7 +37,7 @@ NBSF_BROKERWS_RESOURCE = '/BrokerWSDesa/WebDispatcher.asmx/ExecuteString'
 SQLALCHEMY_DATABASE_URI = 'mysql://root:sa@localhost/nbsf'
 
 # Consulta Veraz - Modo debug
-VERAZ_DEBUG = True
+VERAZ_DEBUG = False
 VERAZ_DEBUG_SCORE_POBLACION = 'th'
 VERAZ_DEBUG_SCORE = 810
 VERAZ_DEBUG_BUREAU_PRESTAMOS_CUOTA_RES = 0
