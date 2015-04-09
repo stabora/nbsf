@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import uuid
 from datetime import datetime
-from random import randint
 from lxml import etree
 from lxml.builder import E
 from lxml.etree import tostring
@@ -95,7 +95,7 @@ class XML:
         xml = E.Request(
             E.Header(
                 E.ActionCode(action),
-                E.TraceGuid('00000000-0000-0000-0000-000{0:09d}'.format(randint(1, 999999999))),
+                E.TraceGuid(str(uuid.uuid4())),
                 E.IsBodyEncrypted('false'),
                 E.EncryptRequest('false'),
                 E.EncryptResponse('false')
