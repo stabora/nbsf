@@ -266,13 +266,20 @@ def consultarVeraz():
     if not params:
         return redirect(url_for('consultarVerazForm'))
 
-    numeroDocumento = params.get('numeroDocumento')
-    nombre = params.get('nombre')
-    sexo = params.get('sexo')
+    par_xml = params.get('par_xml', '')
     formato = params.get('formato')
     debug = params.get('debug', app.config['VERAZ_DEBUG'])
 
-    par_xml = XML.get_xml_consultarVeraz(nombre, sexo, numeroDocumento)
+    if par_xml == '':
+        numeroDocumento = params.get('numeroDocumento')
+        nombre = params.get('nombre')
+        sexo = params.get('sexo')
+        par_xml = XML.get_xml_consultarVeraz(nombre, sexo, numeroDocumento)
+    else:
+        xml = etree.fromstring(par_xml)
+        numeroDocumento = xml.findtext('.//documento')
+        nombre = xml.findtext('.//nombre')
+        sexo = xml.findtext('.//sexo')
 
     payload = {
         'par_xml': par_xml
