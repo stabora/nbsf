@@ -63,7 +63,7 @@ class HTML:
         xml_obj = etree.fromstring(xml)
         root = xml_obj.find('.//{http://tempuri.org/PrestamosEnWFDS.xsd}PrestamosEnWFDS')
 
-        if root:
+        if root is not None:
             for prestamo in root.getchildren():
                 prestamos.append(prestamo.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}IDWorkFlow'))
 
@@ -84,7 +84,7 @@ class HTML:
         xml_obj = etree.fromstring(xml)
         root = xml_obj.find('.//{http://tempuri.org/}ResCliConsBlqDesblq')
 
-        if root:
+        if root is not None:
             codigo_respuesta = root.findtext('.//{http://tempuri.org/}CodEstadoPed')
 
             if codigo_respuesta == "100":
