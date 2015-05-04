@@ -202,7 +202,8 @@ $(document).ready(function()
 		fields:
 		{
 			numeroDocumento: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } },
-			usuario: { validators: { notEmpty: { message: 'Ingrese un valor' } } }
+			usuario: { validators: { notEmpty: { message: 'Ingrese un valor' } } },
+			operacion: { validators: { notEmpty: { message: 'Seleccione una operación' } } }
 		}
 	})
 	.on('success.form.bv', function(e, data)

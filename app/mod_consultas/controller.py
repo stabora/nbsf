@@ -92,8 +92,9 @@ def desbloquearCliente():
 
     numeroCliente = params.get('numeroCliente')
     usuario = params.get('usuario')
+    operacion = params.get('operacion')
 
-    response = Mensajeria.cliConsBlqDesblq(8, numeroCliente, usuario)
+    response = Mensajeria.cliConsBlqDesblq(operacion, numeroCliente, usuario)
 
     return Response(response, mimetype='text/xml')
 

@@ -7,7 +7,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 PROXY_HOST = 'proxy'
 PROXY_PORT = 80
 PROXY_USER = 'taboras'
-PROXY_PASS = 'aXMwMzAzNjYyMg=='
+PROXY_PASS = 'aXMwMzAzNjYyMw=='
 
 MYSQL_NBSF_USER = 'nbsf'
 MYSQL_NBSF_PASSWORD = 'dx8sBt9F3dAnpfrV'
