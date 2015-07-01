@@ -279,6 +279,29 @@ $(document).ready(function()
 	});
 
 
+	// Formulario consulta SOAT estado tarjeta
+
+	$('form[name=consulta-soat-estado]')
+	.bootstrapValidator(
+	{
+		feedbackIcons:
+		{
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+
+		fields:
+		{
+			numeroTarjeta: { validators: { regexp: { regexp: /[0-9]{16}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+		}
+	})
+	.on('success.form.bv', function(e, data)
+	{
+		$('button[type="submit"]').toggleClass('active');
+	});
+
+
 	// Inicialización de elementos tooltip
 
 	$('[data-toggle="tooltip"]').tooltip();

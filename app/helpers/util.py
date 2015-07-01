@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from base64 import b64decode
+import re
 from app import app
 
 
@@ -12,6 +13,14 @@ class Util:
             xml = xml.replace(k, v)
 
         return xml
+
+    @staticmethod
+    def format_removeXMLPrefixes(xml):
+        return re.sub(r'(</?)[\w]+:', '\\1', xml)
+
+    @staticmethod
+    def format_removeXMLNamespaces(value):
+        return re.sub(r'\{[a-z.:/]+\}', '', value)
 
     @staticmethod
     def cursor_to_dict(cursor):

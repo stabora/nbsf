@@ -3,6 +3,8 @@
 import requests
 from flask import Response, render_template, request, redirect, url_for
 from lxml import etree
+from suds.client import Client
+from suds.sudsobject import asdict
 from helpers.xml import XML
 from helpers.html import HTML
 from helpers.mensajeria import Mensajeria
@@ -306,5 +308,44 @@ def consultarVeraz():
 
     if formato == 'html':
         return render_template('consultas/veraz_respuesta.html', **HTML.get_html_respuestaVeraz(response))
+    else:
+        return Response(response, mimetype='text/xml')
+
+
+@app.route('/consultarSoatEstadoForm', methods=['GET', 'POST'])
+def consultarSoatEstadoForm():
+    return render_template('consultas/soatEstado_form.html')
+
+
+@app.route('/consultarSoatEstado', methods=['GET', 'POST'])
+def consultarSoatEstado():
+    if not params:
+        return redirect(url_for('consultarSoatEstadoForm'))
+
+    numeroTarjeta = params.get('numeroTarjeta')
+    formato = params.get('formato')
+
+    ws = Client(app.config['SOAT_HOST'] + app.config['SOAT_WSDL'])
+
+    ped = ws.factory.create('ConsultaEstadoTarjeta')
+    ped.idEntidad = app.config['SOAT_ENTIDAD']
+    ped.canal = app.config['SOAT_CANAL']
+    ped.ip = app.config['SOAT_IP']
+    ped.usuario = app.config['SOAT_USUARIO']
+    ped.numeroTarjeta = numeroTarjeta
+
+    ws.service.ConsultaEstadoTarjeta(**asdict(ped))
+
+    response = Util.format_removeXMLPrefixes(str(ws.last_received()))
+
+    Db.guardar_consulta(
+        consulta=str(request.url_rule)[1:],
+        tx=ws.last_sent(),
+        rx=ws.last_received(),
+        ip=request.remote_addr
+    )
+
+    if formato == 'html':
+        return render_template('consultas/soatEstado_respuesta.html', variables=HTML.get_html_respuestaSoatEstado(response))
     else:
         return Response(response, mimetype='text/xml')

@@ -24,10 +24,19 @@ VERAZ_MATRIZ = 'VN0330'
 VERAZ_USUARIO = 'XML'
 VERAZ_PASSWORD = '110224870051101206368'
 
+SOAT_HOST = 'http://soatwstest.nbsf.com.ar'
+SOAT_WSDL = '/ServicioSoat.svc?wsdl'
+SOAT_ENTIDAD = '0071'
+SOAT_CANAL = '003'
+SOAT_IP = '192.168.0.1'
+SOAT_USUARIO = 'NBSF-PY'
+
+
 # desarrollowf - 172.16.8.165
 # mensajeria - 172.16.55.6
 NBSF_MENSAJERIA_HOST = 'http://172.16.55.6'
 NBSF_MENSAJERIA_RESOURCE = '/asconexweb/asconsultas.asmx/Consultar'
+
 
 # Desarrollo: http://nbsf000des01.nbsf.com.ar/BrokerWSDesa/WebDispatcher.asmx/ExecuteString
 # Test: https://nbsfvmwwse01.nbsf.com.ar/BrokerWS/WebDispatcher.asmx/ExecuteString
@@ -35,6 +44,7 @@ NBSF_BROKERWS_HOST = 'http://nbsf000des01.nbsf.com.ar'
 NBSF_BROKERWS_RESOURCE = '/BrokerWSDesa/WebDispatcher.asmx/ExecuteString'
 
 SQLALCHEMY_DATABASE_URI = 'mysql://nbsf:nTCWG2ubpRxssD8N@localhost/nbsf'
+
 
 # Consulta Veraz - Modo debug
 VERAZ_DEBUG = True

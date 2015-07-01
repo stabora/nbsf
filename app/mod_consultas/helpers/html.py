@@ -91,7 +91,7 @@ class HTML:
                 for respuesta in root.getchildren():
                     if 'Respuesta' in respuesta.tag:
                         for nodo in respuesta.getchildren():
-                            variables[re.sub(r'\{[a-z.:/]+\}', '', nodo.tag)] = '' if nodo.text is None else nodo.text
+                            variables[Util.format_removeXMLNamespaces(nodo.tag)] = '' if nodo.text is None else nodo.text
 
         return variables
 
@@ -109,7 +109,7 @@ class HTML:
                 respuesta = root.find('.//{http://tempuri.org/}Respuesta')
 
                 for nodo in respuesta.getchildren():
-                    variables[re.sub(r'\{[a-z.:/]+\}', '', nodo.tag)] = '' if nodo.text is None else nodo.text
+                    variables[Util.format_removeXMLNamespaces(nodo.tag)] = '' if nodo.text is None else nodo.text
 
         return variables
 
@@ -174,5 +174,17 @@ class HTML:
 
         cursor.close()
         db.close()
+
+        return variables
+
+    @staticmethod
+    def get_html_respuestaSoatEstado(xml):
+        variables = {}
+        xml_obj = etree.fromstring(xml)
+        root = xml_obj.find('.//{http://tempuri.org/}ConsultaEstadoTarjetaResult')
+
+        if root is not None:
+            for nodo in root.getchildren():
+                variables[Util.format_removeXMLNamespaces(nodo.tag)] = nodo.text
 
         return variables
