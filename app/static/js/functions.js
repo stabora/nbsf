@@ -187,7 +187,7 @@ $(document).ready(function()
 	});
 
 
-	// Formulario desbloqueo de cliente
+	// Formulario bloqueo / desbloqueo de cliente
 
 	$('form[name=desbloqueo-cliente]')
 	.bootstrapValidator(
@@ -294,6 +294,31 @@ $(document).ready(function()
 		fields:
 		{
 			numeroTarjeta: { validators: { regexp: { regexp: /[0-9]{16}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+		}
+	})
+	.on('success.form.bv', function(e, data)
+	{
+		$('button[type="submit"]').toggleClass('active');
+	});
+
+
+	// Formulario consulta API Prieto
+
+	$('form[name=consulta-api-prieto]')
+	.bootstrapValidator(
+	{
+		feedbackIcons:
+		{
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+
+		fields:
+		{
+			doc: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } },
+			page: { validators: { notEmpty: { message : 'Ingrese un valor' }, greaterThan: { value: 1, message: 'Ingrese un valor mayor a 0' } } },
+			limit: { validators: { notEmpty: { message : 'Ingrese un valor' }, between: { min: 1, max: 10, message: 'Ingrese un valor entre 1 y 10' } } }
 		}
 	})
 	.on('success.form.bv', function(e, data)

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from base64 import b64decode
 import re
+from requests.auth import HTTPProxyAuth
+from base64 import b64decode
 from app import app
 
 
@@ -44,3 +45,10 @@ class Util:
                 })
 
         return proxies
+
+    @staticmethod
+    def get_proxy_auth():
+        if app.config['PROXY_USER']:
+            return HTTPProxyAuth(app.config['PROXY_USER'], b64decode(app.config['PROXY_PASS']))
+        else:
+            return None

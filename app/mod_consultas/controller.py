@@ -55,6 +55,8 @@ def consultarPadron():
         ip=request.remote_addr
     )
 
+    session.close()
+
     if formato == 'html':
         return render_template('consultas/padronElectoral_respuesta.html', variables=HTML.get_html_respuestaPadronElectoral(response))
     else:
@@ -159,6 +161,8 @@ def consultarCupoCUAD():
         ip=request.remote_addr
     )
 
+    session.close()
+
     if formato == 'html':
         return render_template('consultas/cupoCUAD_respuesta.html', variables=HTML.get_html_respuestaCupoCUAD(response))
     else:
@@ -211,6 +215,8 @@ def prestamosPendientes():
         ip=request.remote_addr
     )
 
+    session.close()
+
     if formato == 'html':
         return render_template('consultas/prestamosPendientes_respuesta.html', variables=HTML.get_html_respuestaPrestamosPendientes(response))
     else:
@@ -255,6 +261,8 @@ def bajaMasivaPrestamos():
         xmlBaja = etree.fromstring(Util.format_replaceXMLEntities(responseBaja[122:-9]))
 
         prestamos[idPrestamo] = xmlBaja.findtext('.//Body/StringData', 'N/D')
+
+    session.close()
 
     return render_template('consultas/bajaMasivaPrestamos_respuesta.html', prestamos=prestamos)
 
@@ -306,6 +314,8 @@ def consultarVeraz():
         ip=request.remote_addr
     )
 
+    session.close()
+
     if formato == 'html':
         return render_template('consultas/veraz_respuesta.html', **HTML.get_html_respuestaVeraz(response))
     else:
@@ -349,3 +359,46 @@ def consultarSoatEstado():
         return render_template('consultas/soatEstado_respuesta.html', variables=HTML.get_html_respuestaSoatEstado(response))
     else:
         return Response(response, mimetype='text/xml')
+
+
+@app.route('/consultarApiPrietoForm', methods=['GET', 'POST'])
+def consultarApiPrietoForm():
+    return render_template('consultas/apiPrieto_form.html')
+
+
+@app.route('/consultarApiPrieto', methods=['GET', 'POST'])
+def consultarApiPrieto():
+    if not params:
+        return redirect(url_for('consultarApiPrietoForm'))
+
+    headers = {
+        'Accept': 'application/xml',
+        'Prieto-APIKey': app.config['PRIETO_APIKEY']
+    }
+
+    payload = {
+        'doc': params.get('doc'),
+        'page': params.get('page', '1'),
+        'limit': params.get('limit', '10')
+    }
+
+    session = requests.Session()
+
+    response = session.get(
+        app.config['PRIETO_HOST'] + app.config['PRIETO_RESOURCE'],
+        headers=headers,
+        params=payload,
+        proxies=Util.get_proxies(),
+        auth=Util.get_proxy_auth()
+    )
+
+    Db.guardar_consulta(
+        consulta=str(request.url_rule)[1:],
+        tx=response.url,
+        rx=response.content,
+        ip=request.remote_addr
+    )
+
+    session.close()
+
+    return Response(response.content, mimetype='text/xml')

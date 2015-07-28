@@ -4,10 +4,10 @@ import os
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-PROXY_HOST = 'proxy'
+PROXY_HOST = '172.16.1.107'
 PROXY_PORT = 80
 PROXY_USER = 'taboras'
-PROXY_PASS = 'aXMwMzAzNjYyMw=='
+PROXY_PASS = 'aXMwMzAzNjYyNg=='
 
 MYSQL_NBSF_USER = 'nbsf'
 MYSQL_NBSF_PASSWORD = 'dx8sBt9F3dAnpfrV'
@@ -30,6 +30,10 @@ SOAT_ENTIDAD = '0071'
 SOAT_CANAL = '003'
 SOAT_IP = '192.168.0.1'
 SOAT_USUARIO = 'NBSF-PY'
+
+PRIETO_HOST = 'https://api.prietoyprieto.com.ar'
+PRIETO_RESOURCE = '/dev.php/api/v1/lotes.xml'
+PRIETO_APIKEY = 'CJWSBaUXUjVAz6cV'
 
 
 # desarrollowf - 172.16.8.165
