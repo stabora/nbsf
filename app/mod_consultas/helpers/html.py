@@ -25,7 +25,7 @@ class HTML:
             for variable in xml_obj.findall('.//variable'):
                 variables[variable.findtext('nombre')] = variable.findtext('valor')
 
-            texto_informe = xml_obj.findtext('.//informe/texto').encode('ascii', 'xmlcharrefreplace')
+            texto_informe = xml_obj.findtext('.//informe/texto')
             texto_informe = re.sub(r'\n', '', texto_informe)
             texto_informe = re.sub(r'[0-9]{3}[A-Z][0-9]{8}[A-Z\*][0-9]{2}[0-9A-Z]{2}[0-9]{1,2}', '<br>', texto_informe)
         else:

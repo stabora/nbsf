@@ -1,0 +1,1 @@
+- Consulta Veraz: XML de respuesta se guarda cortado por error en codificación de caracteres

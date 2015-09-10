@@ -7,7 +7,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 PROXY_HOST = '172.16.1.107'
 PROXY_PORT = 80
 PROXY_USER = 'taboras'
-PROXY_PASS = 'aXMwMzAzNjYyNg=='
+PROXY_PASS = 'aXMwMzAzNjYyOA=='
 
 MYSQL_NBSF_USER = 'nbsf'
 MYSQL_NBSF_PASSWORD = 'dx8sBt9F3dAnpfrV'
@@ -18,12 +18,6 @@ ORACLE_NBSF_WF6_USER = 'dellaquil'
 ORACLE_NBSF_WF6_PASSWORD = 'nbsf2014'
 ORACLE_NBSF_WF6_SID = 'prod04'
 
-VERAZ_HOST = 'https://online.org.veraz.com.ar'
-VERAZ_RESOURCE = '/pls/consulta817/wserv'
-VERAZ_MATRIZ = 'VN0330'
-VERAZ_USUARIO = 'XML'
-VERAZ_PASSWORD = '110224870051101206368'
-
 SOAT_HOST = 'http://soatwstest.nbsf.com.ar'
 SOAT_WSDL = '/ServicioSoat.svc?wsdl'
 SOAT_ENTIDAD = '0071'
@@ -31,16 +25,14 @@ SOAT_CANAL = '003'
 SOAT_IP = '192.168.0.1'
 SOAT_USUARIO = 'NBSF-PY'
 
-PRIETO_HOST = 'https://api.prietoyprieto.com.ar'
+PRIETO_HOST = 'https://api.prietoyprieto.com'
 PRIETO_RESOURCE = '/dev.php/api/v1/lotes.xml'
 PRIETO_APIKEY = 'CJWSBaUXUjVAz6cV'
-
 
 # desarrollowf - 172.16.8.165
 # mensajeria - 172.16.55.6
 NBSF_MENSAJERIA_HOST = 'http://172.16.55.6'
 NBSF_MENSAJERIA_RESOURCE = '/asconexweb/asconsultas.asmx/Consultar'
-
 
 # Desarrollo: http://nbsf000des01.nbsf.com.ar/BrokerWSDesa/WebDispatcher.asmx/ExecuteString
 # Test: https://nbsfvmwwse01.nbsf.com.ar/BrokerWS/WebDispatcher.asmx/ExecuteString
@@ -49,6 +41,17 @@ NBSF_BROKERWS_RESOURCE = '/BrokerWSDesa/WebDispatcher.asmx/ExecuteString'
 
 SQLALCHEMY_DATABASE_URI = 'mysql://nbsf:nTCWG2ubpRxssD8N@localhost/nbsf'
 
+VERAZ_HOST = 'https://online.org.veraz.com.ar'
+VERAZ_RESOURCE = '/pls/consulta817/wserv'
+VERAZ_USUARIO = 'XML'
+VERAZ_PASSWORD = '110224870051101206368'
+VERAZ_MATRIZ = 'VN0330'  # VN0330: NBSF - C19644: SIng - GO0330: Producción
+VERAZ_SECTOR = '03'  # VN0330: 03 - C19644: 05
+VERAZ_SUCURSAL = '0'
+VERAZ_CLIENTE = 'TRA-999845721'
+VERAZ_MEDIO = 'HTML'
+VERAZ_FORMATOINFORME = 'T'
+VERAZ_PRODUCTO = 'RISC:Experto'
 
 # Consulta Veraz - Modo debug
 VERAZ_DEBUG = True

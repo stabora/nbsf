@@ -36,6 +36,7 @@ def consultarPadron():
     xml_ped = XML.get_xml_consultarPadron(numeroDocumento)
 
     session = requests.Session()
+    session.trust_env = False
 
     payload = {
         'Consulta': xml_ped

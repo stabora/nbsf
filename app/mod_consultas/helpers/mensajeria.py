@@ -13,6 +13,7 @@ class Mensajeria:
         xml_ped = XML.get_xml_cliConsBlqDesblq(numeroCliente, operacion, usuario)
 
         session = requests.Session()
+        session.trust_env = False
 
         payload = {
             'Consulta': xml_ped

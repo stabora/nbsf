@@ -43,14 +43,14 @@ class XML:
                         E.usuario(app.config['VERAZ_USUARIO']),
                         E.password(app.config['VERAZ_PASSWORD'])
                     ),
-                    E.medio('HTML'),
-                    E.formatoInforme('T'),
+                    E.medio(app.config['VERAZ_MEDIO']),
+                    E.formatoInforme(app.config['VERAZ_FORMATOINFORME']),
                     E.reenvio(),
-                    E.producto('RISC:Experto'),
+                    E.producto(app.config['VERAZ_PRODUCTO']),
                     E.lote(
-                        E.sectorVeraz('03'),
-                        E.sucursalVeraz('0'),
-                        E.cliente('TRA-999845721'),
+                        E.sectorVeraz(app.config['VERAZ_SECTOR']),
+                        E.sucursalVeraz(app.config['VERAZ_SUCURSAL']),
+                        E.cliente(app.config['VERAZ_CLIENTE']),
                         E.fechaHora(datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
                     )
                 ),
