@@ -7,6 +7,7 @@ except ImportError:
 
 import re
 from lxml import etree
+from base64 import b64decode
 from app.helpers.util import Util
 from app import app
 
@@ -118,7 +119,7 @@ class HTML:
         db = cx_Oracle.connect(
             '{}/{}@{}/{}'.format(
                 app.config['ORACLE_NBSF_WF6_USER'],
-                app.config['ORACLE_NBSF_WF6_PASSWORD'],
+                b64decode(app.config['ORACLE_NBSF_WF6_PASSWORD']),
                 app.config['ORACLE_NBSF_WF6_HOST'],
                 app.config['ORACLE_NBSF_WF6_SID']
             )

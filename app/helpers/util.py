@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from requests import Session, Request, Response
 from requests.auth import HTTPProxyAuth
 from base64 import b64decode
 from app import app
@@ -52,3 +53,32 @@ class Util:
             return HTTPProxyAuth(app.config['PROXY_USER'], b64decode(app.config['PROXY_PASS']))
         else:
             return None
+
+    @staticmethod
+    def get_http_request(url, payload, method='POST', headers=None, use_proxy=False, use_proxy_auth=False, trust_env=True):
+        try:
+            session = Session()
+            session.trust_env = trust_env
+            session.proxies = Util.get_proxies() if use_proxy else None
+            session.auth = Util.get_proxy_auth() if use_proxy_auth else None
+
+            request = Request(
+                'POST' if method not in ('GET', 'POST') else method,
+                url,
+                data=payload if method == 'POST' else None,
+                params=payload if method == 'GET' else None,
+                headers=headers,
+            )
+            prepped = request.prepare()
+
+            response = session.send(
+                prepped,
+                timeout=app.config['HTTP_REQUESTS_TIMEOUT']
+            )
+
+            session.close()
+        except:
+            response = Response()
+            response.raise_for_status()
+
+        return response

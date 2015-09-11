@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import requests
 from flask import Response, render_template, request, redirect, url_for
 from lxml import etree
 from suds.client import Client
@@ -35,19 +34,11 @@ def consultarPadron():
     formato = params.get('formato')
     xml_ped = XML.get_xml_consultarPadron(numeroDocumento)
 
-    session = requests.Session()
-    session.trust_env = False
-
-    payload = {
-        'Consulta': xml_ped
-    }
-
-    response = session.post(
+    response = Util.format_replaceXMLEntities(Util.get_http_request(
         app.config['NBSF_MENSAJERIA_HOST'] + app.config['NBSF_MENSAJERIA_RESOURCE'],
-        data=payload
-    )
-
-    response = Util.format_replaceXMLEntities(response.content)
+        {'Consulta': xml_ped},
+        trust_env=False
+    ).content)
 
     Db.guardar_consulta(
         consulta=str(request.url_rule)[1:],
@@ -55,8 +46,6 @@ def consultarPadron():
         rx=response,
         ip=request.remote_addr
     )
-
-    session.close()
 
     if formato == 'html':
         return render_template('consultas/padronElectoral_respuesta.html', variables=HTML.get_html_respuestaPadronElectoral(response))
@@ -142,15 +131,9 @@ def consultarCupoCUAD():
     formato = params.get('formato')
     xml_ped = XML.get_xml_broker_consultarCupoCUAD(numeroCuit)
 
-    session = requests.Session()
-
-    payload = {
-        'messageRequest': xml_ped
-    }
-
-    response = session.post(
+    response = Util.get_http_request(
         app.config['NBSF_BROKERWS_HOST'] + app.config['NBSF_BROKERWS_RESOURCE'],
-        data=payload
+        {'messageRequest': xml_ped}
     ).content
 
     response = Util.format_replaceXMLEntities(response[122:-9])
@@ -161,8 +144,6 @@ def consultarCupoCUAD():
         rx=response,
         ip=request.remote_addr
     )
-
-    session.close()
 
     if formato == 'html':
         return render_template('consultas/cupoCUAD_respuesta.html', variables=HTML.get_html_respuestaCupoCUAD(response))
@@ -196,15 +177,9 @@ def prestamosPendientes():
 
     par_xml = XML.get_xml_broker_consultarPrestamos(accion, tipoDocumento, numeroDocumento, uidPrestamo)
 
-    payload = {
-        'messageRequest': par_xml
-    }
-
-    session = requests.Session()
-
-    response = session.post(
+    response = Util.get_http_request(
         app.config['NBSF_BROKERWS_HOST'] + app.config['NBSF_BROKERWS_RESOURCE'],
-        data=payload
+        {'messageRequest': par_xml}
     ).content
 
     response = Util.format_replaceXMLEntities(response[122:-9])
@@ -215,8 +190,6 @@ def prestamosPendientes():
         rx=response,
         ip=request.remote_addr
     )
-
-    session.close()
 
     if formato == 'html':
         return render_template('consultas/prestamosPendientes_respuesta.html', variables=HTML.get_html_respuestaPrestamosPendientes(response))
@@ -232,15 +205,9 @@ def bajaMasivaPrestamos():
     tipoDocumento = params.get('tipoDocumento')
     numeroDocumento = params.get('numeroDocumento')
 
-    payload = {
-        'messageRequest': XML.get_xml_broker_consultarPrestamos('SelectEnWF', tipoDocumento, numeroDocumento)
-    }
-
-    session = requests.Session()
-
-    response = session.post(
+    response = Util.get_http_request(
         app.config['NBSF_BROKERWS_HOST'] + app.config['NBSF_BROKERWS_RESOURCE'],
-        data=payload
+        {'messageRequest': XML.get_xml_broker_consultarPrestamos('SelectEnWF', tipoDocumento, numeroDocumento)}
     ).content
 
     xml = etree.fromstring(Util.format_replaceXMLEntities(response[122:-9]))
@@ -250,20 +217,14 @@ def bajaMasivaPrestamos():
     for prestamo in xml.findall('.//{http://tempuri.org/PrestamosEnWFDS.xsd}NBSF_PrestamosEnWF'):
         idPrestamo = prestamo.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}IDWorkFlow')
 
-        payload = {
-            'messageRequest': XML.get_xml_broker_consultarPrestamos('BajaEnWF', tipoDocumento, numeroDocumento, idPrestamo)
-        }
-
-        responseBaja = session.post(
+        responseBaja = Util.get_http_request(
             app.config['NBSF_BROKERWS_HOST'] + app.config['NBSF_BROKERWS_RESOURCE'],
-            data=payload
+            {'messageRequest': XML.get_xml_broker_consultarPrestamos('BajaEnWF', tipoDocumento, numeroDocumento, idPrestamo)}
         ).content
 
         xmlBaja = etree.fromstring(Util.format_replaceXMLEntities(responseBaja[122:-9]))
 
         prestamos[idPrestamo] = xmlBaja.findtext('.//Body/StringData', 'N/D')
-
-    session.close()
 
     return render_template('consultas/bajaMasivaPrestamos_respuesta.html', prestamos=prestamos)
 
@@ -293,19 +254,13 @@ def consultarVeraz():
         nombre = xml.findtext('.//nombre')
         sexo = xml.findtext('.//sexo')
 
-    payload = {
-        'par_xml': par_xml
-    }
-
-    session = requests.Session()
-
     if debug:
         response = XML.get_xml_respuestaVerazDebug(nombre, sexo, numeroDocumento)
     else:
-        response = session.post(
+        response = Util.get_http_request(
             app.config['VERAZ_HOST'] + app.config['VERAZ_RESOURCE'],
-            data=payload,
-            proxies=Util.get_proxies()
+            {'par_xml': par_xml},
+            use_proxy=True
         ).content
 
     Db.guardar_consulta(
@@ -314,8 +269,6 @@ def consultarVeraz():
         rx=response,
         ip=request.remote_addr
     )
-
-    session.close()
 
     if formato == 'html':
         return render_template('consultas/veraz_respuesta.html', **HTML.get_html_respuestaVeraz(response))
@@ -383,14 +336,13 @@ def consultarApiPrieto():
         'limit': params.get('limit', '10')
     }
 
-    session = requests.Session()
-
-    response = session.get(
+    response = Util.get_http_request(
         app.config['PRIETO_HOST'] + app.config['PRIETO_RESOURCE'],
+        payload,
+        method='GET',
         headers=headers,
-        params=payload,
-        proxies=Util.get_proxies(),
-        auth=Util.get_proxy_auth()
+        use_proxy=True,
+        use_proxy_auth=True,
     )
 
     Db.guardar_consulta(
@@ -400,6 +352,4 @@ def consultarApiPrieto():
         ip=request.remote_addr
     )
 
-    session.close()
-
-    return Response(response.content, mimetype='text/xml')
+    return Response(response, mimetype='text/xml')
