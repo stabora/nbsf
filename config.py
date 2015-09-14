@@ -4,7 +4,7 @@ import os
 
 # General
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-HTTP_REQUESTS_TIMEOUT = 20
+HTTP_REQUESTS_TIMEOUT = 40
 
 # Proxy
 PROXY_HOST = '172.16.1.107'
@@ -34,7 +34,7 @@ ORACLE_NBSF_WF6_SID = 'prod04'
 # Mensajería
 # desarrollowf - 172.16.8.165
 # mensajeria - 172.16.55.6
-NBSF_MENSAJERIA_HOST = 'http://172.16.55.6'  #
+NBSF_MENSAJERIA_HOST = 'http://172.16.55.6'
 NBSF_MENSAJERIA_RESOURCE = '/asconexweb/asconsultas.asmx/Consultar'
 
 # BrokerWS
@@ -43,11 +43,6 @@ NBSF_MENSAJERIA_RESOURCE = '/asconexweb/asconsultas.asmx/Consultar'
 NBSF_BROKERWS_HOST = 'http://nbsf000des01.nbsf.com.ar'
 NBSF_BROKERWS_RESOURCE = '/BrokerWSDesa/WebDispatcher.asmx/ExecuteString'
 
-
-##################################################
-# External web services
-##################################################
-
 # SOAT
 SOAT_HOST = 'http://soatwstest.nbsf.com.ar'
 SOAT_WSDL = '/ServicioSoat.svc?wsdl'
@@ -55,6 +50,11 @@ SOAT_ENTIDAD = '0071'
 SOAT_CANAL = '003'
 SOAT_IP = '192.168.0.1'
 SOAT_USUARIO = 'NBSF-PY'
+
+
+##################################################
+# External web services
+##################################################
 
 # API Prieto & Prieto
 PRIETO_HOST = 'https://api.prietoyprieto.com'

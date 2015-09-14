@@ -69,6 +69,7 @@ class Util:
                 params=payload if method == 'GET' else None,
                 headers=headers,
             )
+
             prepped = request.prepare()
 
             response = session.send(
@@ -77,8 +78,9 @@ class Util:
             )
 
             session.close()
-        except:
+        except Exception, e:
             response = Response()
             response.raise_for_status()
+            return response, 'Error al realizar la consulta - Motivo: ' + str(e.message)
 
-        return response
+        return response, None

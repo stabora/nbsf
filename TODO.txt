@@ -1,2 +1,0 @@
-- Consulta Veraz: XML de respuesta se guarda cortado por error en codificación de caracteres
-- Util.get_http_request: evaluar excepción
