@@ -324,15 +324,19 @@ def consultarVeraz():
         return Response(response, mimetype='text/xml')
 
 
-@app.route('/consultarSoatEstadoForm', methods=['GET', 'POST'])
-def consultarSoatEstadoForm():
-    return render_template('consultas/soatEstado_form.html')
+@app.route('/soatConsultarTarjetaForm', methods=['GET', 'POST'])
+def soatConsultarTarjetaForm():
+    return render_template(
+        'consultas/soatOperacionTarjeta_form.html',
+        title=u'Consultar estado de tarjeta de débito',
+        formAction='soatConsultarTarjeta'
+    )
 
 
-@app.route('/consultarSoatEstado', methods=['GET', 'POST'])
-def consultarSoatEstado():
+@app.route('/soatConsultarTarjeta', methods=['GET', 'POST'])
+def soatConsultarTarjeta():
     if not params:
-        return redirect(url_for('consultarSoatEstadoForm'))
+        return redirect(url_for('soatConsultarTarjetaForm'))
 
     numeroTarjeta = params.get('numeroTarjeta')
     formato = params.get('formato')
@@ -359,7 +363,62 @@ def consultarSoatEstado():
         )
 
         if formato == 'html':
-            return render_template('consultas/soatEstado_respuesta.html', variables=HTML.get_html_respuestaSoatEstado(response))
+            return render_template(
+                'consultas/soatOperacionTarjeta_respuesta.html',
+                title=u'Consultar estado de tarjeta de débito',
+                variables=HTML.get_html_respuestaOperacionSoat(response)
+            )
+        else:
+            return Response(response, mimetype='text/xml')
+    except Exception, e:
+        msg = 'Error al realizar la consulta - Motivo: ' + str(e)
+        return render_template('error.html', texto_error=msg)
+
+
+@app.route('/soatHabilitarTarjetaForm', methods=['GET', 'POST'])
+def soatHabilitarTarjetaForm():
+    return render_template(
+        'consultas/soatOperacionTarjeta_form.html',
+        title=u'Habilitar tarjeta de débito',
+        formAction='soatHabilitarTarjeta'
+    )
+
+
+@app.route('/soatHabilitarTarjeta', methods=['GET', 'POST'])
+def soatHabilitarTarjeta():
+    if not params:
+        return redirect(url_for('soatHabilitarTarjetaForm'))
+
+    numeroTarjeta = params.get('numeroTarjeta')
+    formato = params.get('formato')
+
+    try:
+        ws = Client(app.config['SOAT_HOST'] + app.config['SOAT_WSDL'])
+
+        ped = ws.factory.create('HabilitacionDeTarjeta')
+        ped.idEntidad = app.config['SOAT_ENTIDAD']
+        ped.canal = app.config['SOAT_CANAL']
+        ped.ip = app.config['SOAT_IP']
+        ped.usuario = app.config['SOAT_USUARIO']
+        ped.numeroTarjeta = numeroTarjeta
+
+        ws.service.HabilitacionDeTarjeta(**asdict(ped))
+
+        response = Util.format_removeXMLPrefixes(str(ws.last_received()))
+
+        Db.guardar_consulta(
+            consulta=str(request.url_rule)[1:],
+            tx=ws.last_sent(),
+            rx=ws.last_received(),
+            ip=request.remote_addr
+        )
+
+        if formato == 'html':
+            return render_template(
+                'consultas/soatOperacionTarjeta_respuesta.html',
+                title=u'Habilitar tarjeta de débito',
+                variables=HTML.get_html_respuestaOperacionSoat(response)
+            )
         else:
             return Response(response, mimetype='text/xml')
     except Exception, e:

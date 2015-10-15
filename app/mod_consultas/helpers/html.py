@@ -184,13 +184,13 @@ class HTML:
             return variables, 'Error al realizar la consulta - Motivo: ' + str(e.message)
 
     @staticmethod
-    def get_html_respuestaSoatEstado(xml):
+    def get_html_respuestaOperacionSoat(xml):
         variables = {}
         xml_obj = etree.fromstring(xml)
-        root = xml_obj.find('.//{http://tempuri.org/}ConsultaEstadoTarjetaResult')
+        nodos = xml_obj.xpath("//Envelope/Body/*/*/*")
 
-        if root is not None:
-            for nodo in root.getchildren():
-                variables[Util.format_removeXMLNamespaces(nodo.tag)] = nodo.text
+        if nodos is not None:
+            for nodo in nodos:
+                variables[Util.format_removeXMLNodeNamespace(nodo.tag)] = nodo.text
 
         return variables

@@ -8,6 +8,9 @@
 			<li class="divider"></li>
 			<li role="presentation" class="dropdown-header">Broker</li>
 			<li><a href="{{ url_for('bajaPrestamosForm') }}">Baja de pr&eacute;stamos</a></li>
+			<li class="divider"></li>
+			<li role="presentation" class="dropdown-header">Externas</li>
+			<li><a href="{{ url_for('soatHabilitarTarjetaForm') }}">SOAT - Habilitar tarjeta de d&eacute;bito</a></li>
 		</ul>
 	</li>
 
@@ -31,7 +34,7 @@
 
 			<li role="presentation" class="dropdown-header">Externas</li>
 			<li><a href="{{ url_for('consultarApiPrieto') }}">API Prieto</a></li>
-			<li><a href="{{ url_for('consultarSoatEstadoForm') }}">SOAT - Estado tarjeta</a></li>
+			<li><a href="{{ url_for('soatConsultarTarjetaForm') }}">SOAT - Estado tarjeta de d&eacute;bito</a></li>
 			<li><a href="{{ url_for('consultarVerazForm') }}">Veraz</a></li>
 		</ul>
 	</li>

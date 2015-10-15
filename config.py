@@ -10,7 +10,7 @@ HTTP_REQUESTS_TIMEOUT = 40
 PROXY_HOST = '172.16.1.107'
 PROXY_PORT = 80
 PROXY_USER = 'taboras'
-PROXY_PASS = 'aXMwMzAzNjYyOA=='
+PROXY_PASS = 'aXMwMzAzNjYyOQ=='
 
 
 ##################################################

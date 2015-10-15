@@ -18,10 +18,12 @@ class Util:
 
     @staticmethod
     def format_removeXMLPrefixes(xml):
-        return re.sub(r'(</?)[\w]+:', '\\1', xml)
+        xml = re.sub(r'(</?)[\w]+:', '\\1', xml)
+        xml = re.sub(r'[a-z]+:', '', xml)
+        return xml
 
     @staticmethod
-    def format_removeXMLNamespaces(value):
+    def format_removeXMLNodeNamespace(value):
         return re.sub(r'\{[a-z.:/]+\}', '', value)
 
     @staticmethod
