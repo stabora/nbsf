@@ -8,11 +8,11 @@ from app.helpers.util import Util
 class Mensajeria:
 
     @staticmethod
-    def cliConsBlqDesblq(operacion, numeroCliente, usuario='NBSFPY'):
+    def cliConsBlqDesblq(operacion, numeroCliente, usuario='NBSFPY', entorno='DESARROLLO'):
         xml_ped = XML.get_xml_cliConsBlqDesblq(numeroCliente, operacion, usuario)
 
         response, msg = Util.get_http_request(
-            app.config['NBSF_MENSAJERIA_HOST'] + app.config['NBSF_MENSAJERIA_RESOURCE'],
+            app.config['NBSF_MENSAJERIA_HOST_' + entorno] + app.config['NBSF_MENSAJERIA_RESOURCE'],
             {'Consulta': xml_ped},
             trust_env=False
         )

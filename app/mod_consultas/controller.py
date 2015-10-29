@@ -33,9 +33,10 @@ def consultarPadron():
     numeroDocumento = params.get('numeroDocumento')
     formato = params.get('formato')
     xml_ped = XML.get_xml_consultarPadron(numeroDocumento)
+    entorno = params.get('entorno', 'DESARROLLO')
 
     response, msg = Util.get_http_request(
-        app.config['NBSF_MENSAJERIA_HOST'] + app.config['NBSF_MENSAJERIA_RESOURCE'],
+        app.config['NBSF_MENSAJERIA_HOST_' + entorno] + app.config['NBSF_MENSAJERIA_RESOURCE'],
         {'Consulta': xml_ped},
         trust_env=False
     )
@@ -70,8 +71,9 @@ def consultarCliente():
 
     numeroCliente = params.get('numeroCliente')
     formato = params.get('formato')
+    entorno = params.get('entorno', 'DESARROLLO')
 
-    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(1, numeroCliente)
+    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(1, numeroCliente, entorno=entorno)
 
     if response.status_code == 200:
         response = Util.format_replaceXMLEntities(response.content)
@@ -104,8 +106,9 @@ def desbloquearCliente():
     numeroCliente = params.get('numeroCliente')
     usuario = params.get('usuario')
     operacion = params.get('operacion')
+    entorno = params.get('entorno', 'DESARROLLO')
 
-    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(operacion, numeroCliente, usuario)
+    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(operacion, numeroCliente, usuario, entorno)
 
     if response.status_code == 200:
         response = Util.format_replaceXMLEntities(response.content)

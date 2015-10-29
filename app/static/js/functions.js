@@ -40,10 +40,10 @@ $(document).ready(function()
 			if($(this).val())
 			{
 				$.get(
-					'./consultarPadron?numeroDocumento=' + $(this).val(),
+					'./consultarPadron?entorno=TESTING&numeroDocumento=' + $(this).val(),
 					function(data)
 					{
-						nombre = $(data).find('Nombre1').text().replace(' ', ', ')
+						nombre = $(data).find('Nombre1').text()
 
 						if(nombre)
 						{

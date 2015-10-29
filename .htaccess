@@ -1,0 +1,4 @@
+#AuthType basic
+#AuthName "Acceso restringido"
+#AuthUserFile /home/taboras/Webs/nbsf/.htpasswd
+#Require valid-user

@@ -25,13 +25,15 @@
 	<div class="form-group">
 		<div class="col-sm-offset-2 col-sm-10">
 			<label class="radio-inline">
-				<input type="radio" name="operacion" id="sexo" value="3" checked="true"> Desbloquear
+				<input type="radio" name="operacion" id="operacion" value="3" checked="true"> Desbloquear
 			</label>
 			<label class="radio-inline">
-				<input type="radio" name="operacion" id="sexo" value="2"> Bloquear
+				<input type="radio" name="operacion" id="operacion" value="2"> Bloquear
 			</label>
 		</div>
 	</div>
+
+	{% include "includes/form_entorno_as400.inc.html" %}
 
 	<div class="form-group">
 		<div class="col-sm-offset-2 col-sm-10">

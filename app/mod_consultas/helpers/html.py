@@ -92,7 +92,7 @@ class HTML:
                 for respuesta in root.getchildren():
                     if 'Respuesta' in respuesta.tag:
                         for nodo in respuesta.getchildren():
-                            variables[Util.format_removeXMLNamespaces(nodo.tag)] = '' if nodo.text is None else nodo.text
+                            variables[Util.format_removeXMLNodeNamespace(nodo.tag)] = '' if nodo.text is None else nodo.text
 
         return variables
 
@@ -110,7 +110,7 @@ class HTML:
                 respuesta = root.find('.//{http://tempuri.org/}Respuesta')
 
                 for nodo in respuesta.getchildren():
-                    variables[Util.format_removeXMLNamespaces(nodo.tag)] = '' if nodo.text is None else nodo.text
+                    variables[Util.format_removeXMLNodeNamespace(nodo.tag)] = '' if nodo.text is None else nodo.text
 
         return variables
 

@@ -23,7 +23,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql://nbsf:nTCWG2ubpRxssD8N@localhost/nbsf'
 # Oracle WF6
 ORACLE_NBSF_WF6_HOST = '172.16.9.29'
 ORACLE_NBSF_WF6_USER = 'dellaquil'
-ORACLE_NBSF_WF6_PASSWORD = 'bmJzZjIwMTQ='
+ORACLE_NBSF_WF6_PASSWORD = 'bmJzZjIwMTUxMA=='
 ORACLE_NBSF_WF6_SID = 'prod04'
 
 
@@ -32,9 +32,8 @@ ORACLE_NBSF_WF6_SID = 'prod04'
 ##################################################
 
 # Mensajería
-# desarrollowf - 172.16.8.165
-# mensajeria - 172.16.55.6
-NBSF_MENSAJERIA_HOST = 'http://172.16.55.6'
+NBSF_MENSAJERIA_HOST_DESARROLLO = 'http://172.16.8.165'  # desarrollowf
+NBSF_MENSAJERIA_HOST_TESTING = 'http://172.16.55.6'      # mensajeria
 NBSF_MENSAJERIA_RESOURCE = '/asconexweb/asconsultas.asmx/Consultar'
 
 # BrokerWS
