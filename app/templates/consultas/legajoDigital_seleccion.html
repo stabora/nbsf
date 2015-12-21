@@ -46,7 +46,7 @@
 						<a href="{{ archivo.url }}" rel="{{ archivo.id }}" target="_blank" class="document-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
 						{% endif %}
 
-						<input class="hiddenAA" type="checkbox" disabled="true" rel="{{ documento.id }}" name="chk-{{ archivo.id }}">
+						<input class="hidden" type="checkbox" disabled="true" rel="{{ documento.id }}" name="chk-{{ archivo.id }}">
 						{% endfor %}
 					</div>
 				{% endfor %}
