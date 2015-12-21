@@ -223,7 +223,7 @@ $(document).ready(function()
 
 	// Formulario baja de préstamos
 
-	$('form[name=baja-prestamos]')
+	$('form[name=alta-baja-prestamos]')
 	.bootstrapValidator(
 	{
 		feedbackIcons:
@@ -235,19 +235,29 @@ $(document).ready(function()
 
 		fields:
 		{
-			numeroDocumento: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+			numeroDocumento: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } },
+			uidPrestamo: {
+					validators: {
+							callback: {
+									message: 'Ingrese un valor',
+									callback: function(value, validator, $field)
+									{
+											var accion = $('form[name=alta-baja-prestamos] input[name=accion]:checked').val();
+											return (accion !== 'AltaEnWF') ? true : (value !== '');
+									}
+							}
+					}
+			}
 		}
 	})
 	.on('success.form.bv', function(e, data)
 	{
-		if( ! $('form[name=baja-prestamos] input[name=uidPrestamo]').val())
-		{
-			generarDataConfirmModal()
-
-			$('#dataConfirmModal').find('.modal-body').text('Se solicitará la baja de todos los préstamos pendientes para el cliente');
-			$('#dataConfirmOK').click(function() { $('form[name=baja-prestamos]')[0].submit() });
-			$('#dataConfirmModal').modal({ show: true });
-			$('button[type="submit"]').prop('disabled', false);
+		if (
+			$('form[name=alta-baja-prestamos] input[name=accion]:checked').val() == 'BajaEnWF'
+			&& ! $('form[name=alta-baja-prestamos] input[name=uidPrestamo]').val()
+		) {
+			mostrarConfirmacionModal('Se solicitará la baja de todos los préstamos pendientes para el cliente', 'alert-danger')
+			$('#confirmacionOK').click(function() { $('form[name=alta-baja-prestamos]')[0].submit() });
 
 			return false;
 		}
@@ -327,9 +337,52 @@ $(document).ready(function()
 	});
 
 
+	// Formulario consulta legajo digital
+
+	$('form[name=consulta-legajo-digital]')
+	.bootstrapValidator(
+	{
+		feedbackIcons:
+		{
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+
+		fields:
+		{
+			numeroDocumento: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+		}
+	})
+	.on('success.form.bv', function(e, data)
+	{
+		$('button[type="submit"]').toggleClass('active');
+	});
+
+	$('form[name=consulta-legajo-digital] input[name=numeroDocumento], form[name=consulta-legajo-digital] select[name=tipoDocumento]').change(function()
+	{
+		$('form[name=consulta-legajo-digital] input[name=numeroCliente]').val(
+			generarNITCliente(
+				$('form[name=consulta-legajo-digital] select[name=tipoDocumento]').val(),
+				$('form[name=consulta-legajo-digital] input[name=numeroDocumento]').val()
+			));
+	});
+
+
 	// Inicialización de elementos tooltip
 
-	$('[data-toggle="tooltip"]').tooltip();
+	$('a[data-toggle="tooltip"]').tooltip();
+
+
+	// Inicialización de confirmación modal
+
+	$('a[data-confirm]').click(function(ev)
+	{
+		mostrarConfirmacionModal($(this).attr('data-confirm'), 'alert-danger');
+		$('#confirmacionOK').attr('href', $(this).attr('href'));
+
+		return false;
+	});
 
 
 	// Foco en el primer campo del formulario activo
@@ -337,14 +390,14 @@ $(document).ready(function()
 	$("form input:text, form textarea").first().focus();
 
 
-	$('a[data-confirm]').click(function(ev) {
-		generarDataConfirmModal();
+	// Image preview
 
-		$('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
-		$('#dataConfirmOK').attr('href', $(this).attr('href'));
-		$('#dataConfirmModal').modal({ show: true });
-
-		return false;
+	$('.image-preview').on('click', function()
+	{
+		$('#image-preview').attr('src', $(this).find('img').attr('src').replace('FileMiniature', 'File'));
+		$('#image-preview-title').html($(this).find('img').attr('title'));
+		$('#image-preview-link').attr('href', $(this).find('img').attr('src').replace('FileMiniature', 'File'));
+		$('#image-preview-modal').modal('show');
 	});
 });
 
@@ -361,26 +414,85 @@ function generarNITCliente(tipoDocumento, numeroDocumento)
 	}
 }
 
-function generarDataConfirmModal()
+function generarConfirmacionModal(texto, estilo, titulo)
 {
-	if( ! $('#dataConfirmModal').length)
+	if( ! $('#confirmacionModal').length)
 	{
+		if(typeof titulo === "undefined")
+		{
+			titulo = 'Confirmar acci&oacute;n';
+		}
+
+		if(typeof estilo === "undefined")
+		{
+			estilo = '';
+		}
+
 		$('body').append(
-			'<div id="dataConfirmModal" class="modal fade" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true">' +
+			'<div id="confirmacionModal" class="modal fade" role="dialog" aria-labelledby="confirmacionModalLabel" aria-hidden="true" tabindex="-1">' +
 			'<div class="modal-dialog">' +
-			'<div class="modal-content">' +
+			'<div class="modal-content ' + estilo + '">' +
 			'<div class="modal-header">' +
 			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
-			'<h3 id="dataConfirmLabel">Confirmar acci&oacute;n</h3>' +
+			'<h3 id="confirmacionModalLabel">' + titulo + '</h3>' +
 			'</div>' +
-			'<div class="modal-body"></div>' +
+			'<div class="modal-body">' + texto + '</div>' +
 			'<div class="modal-footer">' +
 			'<button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>' +
-			'<a class="btn btn-primary" id="dataConfirmOK">Continuar</a>' +
+			'<a class="btn btn-danger btn-ok" id="confirmacionOK">Continuar</a>' +
 			'</div>' +
 			'</div>' +
 			'</div>' +
 			'</div>'
 		);
 	}
+}
+
+function mostrarConfirmacionModal(texto, estilo, titulo)
+{
+	$('#confirmacionModal').remove();
+	generarConfirmacionModal(texto, estilo, titulo);
+	$('#confirmacionModal').modal({ show: true });
+	$('button[type="submit"]').prop('disabled', false);
+}
+
+
+function generarAvisoModal(texto, estilo, titulo)
+{
+	if( ! $('#avisoModal').length)
+	{
+		if(typeof titulo === "undefined")
+		{
+			titulo = 'Aviso';
+		}
+
+		if(typeof estilo === "undefined")
+		{
+			estilo = '';
+		}
+
+		$('body').append(
+			'<div id="avisoModal" class="modal fade" role="dialog" aria-labelledby="avisoModalLabel" aria-hidden="true">' +
+			'<div class="modal-dialog">' +
+			'<div class="modal-content ' + estilo + '">' +
+			'<div class="modal-header">' +
+			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+			'<h3 id="avisoModalLabel">' + titulo + '</h3>' +
+			'</div>' +
+			'<div class="modal-body">' + texto + '</div>' +
+			'<div class="modal-footer">' +
+			'<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Aceptar</button>' +
+			'</div>' +
+			'</div>' +
+			'</div>' +
+			'</div>'
+		);
+	}
+}
+
+function mostrarAvisoModal(texto, estilo, titulo)
+{
+	$('#avisoModal').remove();
+	generarAvisoModal(texto, estilo, titulo);
+	$('#avisoModal').modal({ show: true });
 }

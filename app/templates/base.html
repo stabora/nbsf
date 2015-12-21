@@ -61,5 +61,6 @@
 		<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 		<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrapValidator.min.js') }}"></script>
 		<script type="text/javascript" src="{{ url_for('static', filename='js/functions.js') }}"></script>
+		{% block scripts %}{% endblock %}
 	</body>
 </html>

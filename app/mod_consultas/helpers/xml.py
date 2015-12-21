@@ -40,7 +40,7 @@ class XML:
                 E.identificador(
                     E.userlogon(
                         E.matriz(app.config['VERAZ_MATRIZ']),
-                        E.usuario(app.config['VERAZ_USUARIO']),
+                        E.usuario(app.config['VERAZ_USER']),
                         E.password(app.config['VERAZ_PASSWORD'])
                     ),
                     E.medio(app.config['VERAZ_MEDIO']),
@@ -111,7 +111,7 @@ class XML:
         dsdata = xml.find('.//Body/DSData')
 
         dsdata.append(etree.fromstring(
-            '<xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" id="CUADDS" targetNamespace="http://tempuri.org/CUADDS.xsd" xmlns="http://tempuri.org/CUADDS.xsd" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:mstns="http://tempuri.org/CUADDS.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">'
+            '<xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" id="CUADDS" targetNamespace="{ns}" xmlns="{ns}" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:mstns="{ns}" xmlns:xs="http://www.w3.org/2001/XMLSchema">'
             '<xs:element name="CUADDS">'
             '<xs:complexType>'
             '<xs:choice maxOccurs="unbounded" minOccurs="0">'
@@ -127,13 +127,15 @@ class XML:
             '</xs:choice>'
             '</xs:complexType>'
             '</xs:element>'
-            '</xs:schema>'
+            '</xs:schema>'.format(
+                ns=app.config['BROKERWS_XMLNS_CUAD']
+            )
         ))
 
         dsdata.append(etree.fromstring(
             (
                 '<diffgr:diffgram xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">'
-                '<CUADDS xmlns="http://tempuri.org/CUADDS.xsd">'
+                '<CUADDS xmlns="{ns}">'
                 '<ConsultaCupo>'
                 '<ClaveEmpleado>{cuit}</ClaveEmpleado>'
                 '<CUIL>{cuit}</CUIL>'
@@ -142,6 +144,7 @@ class XML:
                 '</CUADDS>'
                 '</diffgr:diffgram>'
             ).format(
+                ns=app.config['BROKERWS_XMLNS_CUAD'],
                 cuit=cuit,
                 idEmpleador=10
             )
@@ -157,7 +160,7 @@ class XML:
             origen = 1
         elif accion == 'SelectEnSite':
             origen = 2
-        elif accion == 'BajaEnWF':
+        elif accion in ['AltaEnWF', 'BajaEnWF']:
             origen = 2 if idSite > 0 else 1
             estado = 806
 
@@ -165,7 +168,7 @@ class XML:
         dsdata = xml.find('.//Body/DSData')
 
         dsdata.append(etree.fromstring(
-            '<xs:schema id="PrestamosEnWFDS" targetNamespace="http://tempuri.org/PrestamosEnWFDS.xsd" xmlns:mstns="http://tempuri.org/PrestamosEnWFDS.xsd" xmlns="http://tempuri.org/PrestamosEnWFDS.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" attributeFormDefault="qualified" elementFormDefault="qualified">'
+            '<xs:schema id="PrestamosEnWFDS" targetNamespace="{ns}" xmlns:mstns="{ns}" xmlns="{ns}" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" attributeFormDefault="qualified" elementFormDefault="qualified">'
             '<xs:element name="PrestamosEnWFDS" msdata:IsDataSet="true" msdata:Locale="en-US">'
             '<xs:complexType>'
             '<xs:choice minOccurs="0" maxOccurs="unbounded">'
@@ -190,13 +193,15 @@ class XML:
             '<xs:field xpath="mstns:Origen_ID" />'
             '</xs:unique>'
             '</xs:element>'
-            '</xs:schema>'
+            '</xs:schema>'.format(
+                ns=app.config['BROKERWS_XMLNS_PRESTAMOS']
+            )
         ))
 
         dsdata.append(etree.fromstring(
             (
                 '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">'
-                '<PrestamosEnWFDS xmlns="http://tempuri.org/PrestamosEnWFDS.xsd">'
+                '<PrestamosEnWFDS xmlns="{ns}">'
                 '<NBSF_PrestamosEnWF diffgr:id="NBSF_PrestamosEnWF1" msdata:rowOrder="0" diffgr:hasChanges="inserted">'
                 '<IDWorkFlow>{uid}</IDWorkFlow>'
                 '<Prestamo_ID>{idSite}</Prestamo_ID>'
@@ -208,6 +213,7 @@ class XML:
                 '</PrestamosEnWFDS>'
                 '</diffgr:diffgram>'
             ).format(
+                ns=app.config['BROKERWS_XMLNS_PRESTAMOS'],
                 uid=uidPrestamo,
                 estado=estado,
                 origen=origen,

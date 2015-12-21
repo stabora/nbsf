@@ -10,7 +10,7 @@ HTTP_REQUESTS_TIMEOUT = 40
 PROXY_HOST = '172.16.1.107'
 PROXY_PORT = 80
 PROXY_USER = 'taboras'
-PROXY_PASS = 'aXMwMzAzNjYyOQ=='
+PROXY_PASSWORD = 'aXMwMzAzNjYzMQ=='
 
 
 ##################################################
@@ -32,15 +32,18 @@ ORACLE_NBSF_WF6_SID = 'prod04'
 ##################################################
 
 # Mensajería
-NBSF_MENSAJERIA_HOST_DESARROLLO = 'http://172.16.8.165'  # desarrollowf
-NBSF_MENSAJERIA_HOST_TESTING = 'http://172.16.55.6'      # mensajeria
-NBSF_MENSAJERIA_RESOURCE = '/asconexweb/asconsultas.asmx/Consultar'
+MENSAJERIA_HOST_DESARROLLO = 'http://172.16.8.165'  # desarrollowf
+MENSAJERIA_HOST_TESTING = 'http://172.16.55.6'      # mensajeria
+MENSAJERIA_RESOURCE = '/asconexweb/asconsultas.asmx/Consultar'
+MENSAJERIA_XMLNS = 'http://tempuri.org/'
 
 # BrokerWS
 # Desarrollo: http://nbsf000des01.nbsf.com.ar/BrokerWSDesa/WebDispatcher.asmx/ExecuteString
 # Test: https://nbsfvmwwse01.nbsf.com.ar/BrokerWS/WebDispatcher.asmx/ExecuteString
-NBSF_BROKERWS_HOST = 'http://nbsf000des01.nbsf.com.ar'
-NBSF_BROKERWS_RESOURCE = '/BrokerWSDesa/WebDispatcher.asmx/ExecuteString'
+BROKERWS_HOST = 'http://nbsf000des01.nbsf.com.ar'
+BROKERWS_RESOURCE = '/BrokerWSDesa/WebDispatcher.asmx/ExecuteString'
+BROKERWS_XMLNS_PRESTAMOS = 'http://tempuri.org/PrestamosEnWFDS.xsd'
+BROKERWS_XMLNS_CUAD = 'http://tempuri.org/CUADDS.xsd'
 
 # SOAT
 SOAT_HOST = 'http://soatwstest.nbsf.com.ar'
@@ -48,7 +51,14 @@ SOAT_WSDL = '/ServicioSoat.svc?wsdl'
 SOAT_ENTIDAD = '0071'
 SOAT_CANAL = '003'
 SOAT_IP = '192.168.0.1'
-SOAT_USUARIO = 'NBSF-PY'
+SOAT_USER = 'NBSF-PY'
+
+# Legajo digital
+LEGAJO_DIGITAL_HOST = 'http://legajodigitalwstest.nbsf.com.ar'
+LEGAJO_DIGITAL_WSDL = '/LegajoDigital.asmx?wsdl'
+LEGAJO_DIGITAL_USER = 'legajodigital'
+LEGAJO_DIGITAL_PASSWORD = 'l3g4j0d1g1t4l'
+LEGAJO_DIGITAL_XMLNS = 'http://tempuri.org/'
 
 
 ##################################################
@@ -63,7 +73,7 @@ PRIETO_APIKEY = 'CJWSBaUXUjVAz6cV'
 # Veraz
 VERAZ_HOST = 'https://online.org.veraz.com.ar'
 VERAZ_RESOURCE = '/pls/consulta817/wserv'
-VERAZ_USUARIO = 'XML'
+VERAZ_USER = 'XML'
 VERAZ_PASSWORD = '110224870051101206368'
 VERAZ_MATRIZ = 'VN0330'  # VN0330: NBSF - C19644: SIng - GO0330: Producción
 VERAZ_SECTOR = '03'  # VN0330: 03 - C19644: 05

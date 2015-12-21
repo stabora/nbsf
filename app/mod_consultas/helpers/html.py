@@ -6,6 +6,7 @@ except ImportError:
     pass
 
 import re
+import urllib2
 from lxml import etree
 from base64 import b64decode
 from app.helpers.util import Util
@@ -40,18 +41,19 @@ class HTML:
 
     @staticmethod
     def get_html_respuestaCupoCUAD(xml):
+        namespaces = {'ns': app.config['BROKERWS_XMLNS_CUAD']}
         xml_obj = etree.fromstring(xml)
-        nombre = xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}NombreApellido')
+        nombre = xml_obj.findtext('.//ns:NombreApellido', namespaces=namespaces)
         variables = {}
 
         if nombre:
-            periodo = xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Periodo', 'n/d')
+            periodo = xml_obj.findtext('.//ns:Periodo', default='n/d', namespaces=namespaces)
             periodo = periodo[4:6] + ' / ' + periodo[0:4] if len(periodo) == 6 else periodo
 
             variables = {
                 'Nombre': nombre,
                 u'Período': periodo,
-                'Monto': xml_obj.findtext('.//{http://tempuri.org/CUADDS.xsd}Monto', 'n/d')
+                'Monto': xml_obj.findtext('.//ns:Monto', default='n/d', namespaces=namespaces)
             }
 
         return variables
@@ -60,19 +62,20 @@ class HTML:
     def get_html_respuestaPrestamosPendientes(xml):
         variables = {}
         prestamos = []
+        namespaces = {'ns': app.config['BROKERWS_XMLNS_PRESTAMOS']}
 
         xml_obj = etree.fromstring(xml)
-        root = xml_obj.find('.//{http://tempuri.org/PrestamosEnWFDS.xsd}PrestamosEnWFDS')
+        root = xml_obj.find('.//ns:PrestamosEnWFDS', namespaces=namespaces)
 
         if root is not None:
             for prestamo in root.getchildren():
-                prestamos.append(prestamo.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}IDWorkFlow'))
+                prestamos.append(prestamo.findtext('.//ns:IDWorkFlow', namespaces=namespaces))
 
         if prestamos:
             variables = {
                 'totalPrestamos': len(prestamos),
-                'tipoDocumento': root.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}TipoDoc'),
-                'numeroDocumento': root.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}NumeroDoc'),
+                'tipoDocumento': root.findtext('.//ns:TipoDoc', namespaces=namespaces),
+                'numeroDocumento': root.findtext('.//ns:NumeroDoc', namespaces=namespaces),
                 'prestamos': prestamos
             }
 
@@ -81,12 +84,13 @@ class HTML:
     @staticmethod
     def get_html_respuestaDatosCliente(xml):
         variables = {}
+        namespaces = {'ns': app.config['MENSAJERIA_XMLNS']}
 
         xml_obj = etree.fromstring(xml)
-        root = xml_obj.find('.//{http://tempuri.org/}ResCliConsBlqDesblq')
+        root = xml_obj.find('.//ns:ResCliConsBlqDesblq', namespaces=namespaces)
 
         if root is not None:
-            codigo_respuesta = root.findtext('.//{http://tempuri.org/}CodEstadoPed')
+            codigo_respuesta = root.findtext('.//ns:CodEstadoPed', namespaces=namespaces)
 
             if codigo_respuesta == "100":
                 for respuesta in root.getchildren():
@@ -99,15 +103,16 @@ class HTML:
     @staticmethod
     def get_html_respuestaPadronElectoral(xml):
         variables = {}
+        namespaces = {'ns': app.config['MENSAJERIA_XMLNS']}
 
         xml_obj = etree.fromstring(xml)
-        root = xml_obj.find('.//{http://tempuri.org/}ResConsPad')
+        root = xml_obj.find('.//ns:ResConsPad', namespaces=namespaces)
 
         if root:
-            codigo_respuesta = root.findtext('.//{http://tempuri.org/}CodSubAs')
+            codigo_respuesta = root.findtext('.//ns:CodSubAs', namespaces=namespaces)
 
             if codigo_respuesta == "100":
-                respuesta = root.find('.//{http://tempuri.org/}Respuesta')
+                respuesta = root.find('.//ns:Respuesta', namespaces=namespaces)
 
                 for nodo in respuesta.getchildren():
                     variables[Util.format_removeXMLNodeNamespace(nodo.tag)] = '' if nodo.text is None else nodo.text
@@ -192,5 +197,67 @@ class HTML:
         if nodos is not None:
             for nodo in nodos:
                 variables[Util.format_removeXMLNodeNamespace(nodo.tag)] = nodo.text
+
+        return variables
+
+    @staticmethod
+    def get_html_respuestaLegajoDigital(xml):
+        xml_obj = etree.fromstring(xml)
+        documentos = []
+        namespaces = {'ns': app.config['LEGAJO_DIGITAL_XMLNS']}
+
+        for documento in xml_obj.findall('.//ns:DocumentoClienteOut', namespaces=namespaces):
+            documentoEtiqueta = documento.findtext('ns:FormInterno', namespaces=namespaces)
+            versiones = []
+
+            for version in documento.findall('.//ns:VersionDocumentoClienteOut', namespaces=namespaces):
+                versionNumero = re.sub('[^0-9]', '', version.findtext('.//ns:Version', namespaces=namespaces))
+                versionFecha = version.findtext('.//ns:FechaActu', default='n/d', namespaces=namespaces)
+                archivos = []
+                archivoNumero = 0
+
+                for archivo in version.findall('.//ns:ArchivoOut', namespaces=namespaces):
+                    archivoUrl = archivo.findtext('ns:Permalink', namespaces=namespaces)
+                    archivoTipo = urllib2.urlopen(archivoUrl).info().maintype
+                    archivoNumero += 1
+                    archivoId = ''
+
+                    if documentoEtiqueta and versionFecha:
+                        archivoId = '{}-{}-{}-{}'.format(
+                            re.sub('[^a-zA-Z0-9]', '', documentoEtiqueta),
+                            versionNumero,
+                            versionFecha.split('/')[2] + versionFecha.split('/')[1] + versionFecha.split('/')[0],
+                            archivoNumero
+                        )
+                    else:
+                        archivoId = archivoUrl
+
+                    archivos.append({
+                        'id': archivoId,
+                        'nombre': archivo.findtext('ns:Nombre', namespaces=namespaces),
+                        'url': archivoUrl,
+                        'urlMiniatura': archivo.findtext('ns:PermalinkMiniatura', namespaces=namespaces),
+                        'tipo': archivoTipo
+                    })
+
+                if archivos:
+                    documentoDescripcion = documento.findtext('ns:Descripcion', namespaces=namespaces)
+
+                    versiones.append({
+                        'numero': versionNumero,
+                        'fecha_actualizacion': versionFecha,
+                        'archivos': archivos
+                    })
+
+                    documentos.append({
+                        'id': re.sub(r'[\s.-]', '', documentoDescripcion),
+                        'descripcion': documentoDescripcion,
+                        'etiqueta': documentoEtiqueta,
+                        'versiones': versiones
+                    })
+
+        variables = {
+            'documentos': documentos
+        }
 
         return variables

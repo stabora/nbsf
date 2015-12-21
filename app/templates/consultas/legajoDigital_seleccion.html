@@ -1,0 +1,101 @@
+<style type="text/css">
+	label
+	{
+		font-size: 0.8em;
+		font-weight: normal;
+		display: block;
+	}
+
+	.hidden
+	{
+		display: none;
+	}
+</style>
+
+
+<div class="tab-pane" id="seleccion">
+	<h3></h3>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Documentaci&oacute;n a presentar</h3>
+		</div>
+		{% for documento in variables.documentos|sort %}
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				{{ documento.descripcion }}
+				{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}
+			</h4>
+		</div>
+
+		<div class="panel-body">
+			<div class="tab-content">
+				<br/>
+				<label><input name="{{ documento.id }}" type="radio" value="F"> Versi&oacute;n f&iacute;sica</label>
+
+				{% if documento.etiqueta %}
+				<label><input name="{{ documento.id }}" type="radio" value="D"> Versi&oacute;n digital</label>
+				<br>
+
+				{% for version in documento.versiones[:1] %}
+					<div class="panel-body">
+						{% for archivo in version.archivos %}
+						{% if archivo.tipo == 'image' %}
+						<a href="javascript:;" rel="{{ archivo.id }}" class="image-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
+						{% else %}
+						<a href="{{ archivo.url }}" rel="{{ archivo.id }}" target="_blank" class="document-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
+						{% endif %}
+
+						<input class="hiddenAA" type="checkbox" disabled="true" rel="{{ documento.id }}" name="chk-{{ archivo.id }}">
+						{% endfor %}
+					</div>
+				{% endfor %}
+				{% else %}
+				<label><input type="radio" disabled="disabled"> Versi&oacute;n digital no disponible</label>
+				{% endif %}
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+
+	<a class="btn btn-primary verificar-seleccion">Verificar</a>
+</div>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script type="text/javascript">
+	$(document).ready(function()
+	{
+		$('input[type="radio"][value="D"]').click(function()
+		{
+			if($('input[rel="' + $(this).attr('name') + '"]').not(':checked').size() == 0)
+			{
+				return true;
+			} else {
+				mostrarAvisoModal('Debe revisar la versión digital para poder seleccionarla.', 'alert-danger');
+				return false;
+			}
+		});
+
+
+		$('.image-preview, .document-preview').click(function()
+		{
+			if($(this).attr('rel'))
+			{
+				$(document).find('input[name="chk-' + $(this).attr('rel') + '"]').attr('checked', 'true');
+				$(this).css('opacity', '0.5');
+			}
+		});
+
+
+		$('.verificar-seleccion').click(function()
+		{
+			if($('input[type="radio"]:checked').size() == $('input[type="radio"]').size() / 2)
+			{
+				mostrarAvisoModal('Documentación seleccionada.\n', 'alert-success');
+			} else {
+				mostrarAvisoModal('Debe seleccionar toda la documentación.', 'alert-danger');
+			}
+		});
+	});
+</script>

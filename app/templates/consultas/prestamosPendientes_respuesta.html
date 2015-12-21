@@ -28,7 +28,7 @@
 					<td class="active"><strong>UIDs pr&eacute;stamos pendientes</strong></td>
 					<td>
 						{% for uid in variables.prestamos %}
-							<a data-confirm="Se solicitará la baja del préstamo UID {{ uid }}" href="{{ url_for('prestamosPendientes') }}?accion=BajaEnWF&tipoDocumento={{ variables.tipoDocumento }}&numeroDocumento={{ variables.numeroDocumento }}&uidPrestamo={{ uid }}" data-toggle="tooltip" data-placement="bottom" title="Solicitar baja de UID {{ uid }}">{{ uid }}</a>
+							<a data-confirm="Se solicitar&aacute; la baja del pr&eacute;stamo UID {{ uid }}" href="{{ url_for('prestamosPendientes') }}?accion=BajaEnWF&tipoDocumento={{ variables.tipoDocumento }}&numeroDocumento={{ variables.numeroDocumento }}&uidPrestamo={{ uid }}" data-toggle="tooltip" data-placement="bottom" title="Solicitar baja de UID {{ uid }}">{{ uid }}</a>
 							{% if not loop.last %}, {% endif %}
 						{% endfor %}
 					</td>
@@ -45,6 +45,7 @@
 </div>
 
 {% else %}
+
 <div class="alert alert-danger" role="alert">
   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
   <span class="sr-only">Error:</span>

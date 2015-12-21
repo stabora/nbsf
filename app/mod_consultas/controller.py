@@ -36,7 +36,7 @@ def consultarPadron():
     entorno = params.get('entorno', 'DESARROLLO')
 
     response, msg = Util.get_http_request(
-        app.config['NBSF_MENSAJERIA_HOST_' + entorno] + app.config['NBSF_MENSAJERIA_RESOURCE'],
+        app.config['MENSAJERIA_HOST_' + entorno] + app.config['MENSAJERIA_RESOURCE'],
         {'Consulta': xml_ped},
         trust_env=False
     )
@@ -167,7 +167,7 @@ def consultarCupoCUAD():
     xml_ped = XML.get_xml_broker_consultarCupoCUAD(numeroCuit)
 
     response, msg = Util.get_http_request(
-        app.config['NBSF_BROKERWS_HOST'] + app.config['NBSF_BROKERWS_RESOURCE'],
+        app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
         {'messageRequest': xml_ped}
     )
 
@@ -194,9 +194,9 @@ def consultarPrestamosPendientesForm():
     return render_template('consultas/prestamosPendientes_form.html')
 
 
-@app.route('/bajaPrestamosForm')
-def bajaPrestamosForm():
-    return render_template('consultas/bajaPrestamos_form.html')
+@app.route('/altaBajaPrestamosForm')
+def altaBajaPrestamosForm():
+    return render_template('consultas/altaBajaPrestamos_form.html')
 
 
 @app.route('/prestamosPendientes', methods=['GET', 'POST'])
@@ -216,7 +216,7 @@ def prestamosPendientes():
     par_xml = XML.get_xml_broker_consultarPrestamos(accion, tipoDocumento, numeroDocumento, uidPrestamo)
 
     response, msg = Util.get_http_request(
-        app.config['NBSF_BROKERWS_HOST'] + app.config['NBSF_BROKERWS_RESOURCE'],
+        app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
         {'messageRequest': par_xml}
     )
 
@@ -247,20 +247,20 @@ def bajaMasivaPrestamos():
     numeroDocumento = params.get('numeroDocumento')
 
     response, msg = Util.get_http_request(
-        app.config['NBSF_BROKERWS_HOST'] + app.config['NBSF_BROKERWS_RESOURCE'],
+        app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
         {'messageRequest': XML.get_xml_broker_consultarPrestamos('SelectEnWF', tipoDocumento, numeroDocumento)}
     )
 
     if response.status_code == 200:
         xml = etree.fromstring(Util.format_replaceXMLEntities(response.content[122:-9]))
-
         prestamos = {}
+        namespaces = {'ns': app.config['BROKERWS_XMLNS_PRESTAMOS']}
 
-        for prestamo in xml.findall('.//{http://tempuri.org/PrestamosEnWFDS.xsd}NBSF_PrestamosEnWF'):
-            idPrestamo = prestamo.findtext('.//{http://tempuri.org/PrestamosEnWFDS.xsd}IDWorkFlow')
+        for prestamo in xml.findall('.//ns:NBSF_PrestamosEnWF', namespaces=namespaces):
+            idPrestamo = prestamo.findtext('.//ns:IDWorkFlow', namespaces=namespaces)
 
             responseBaja, msgBaja = Util.get_http_request(
-                app.config['NBSF_BROKERWS_HOST'] + app.config['NBSF_BROKERWS_RESOURCE'],
+                app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
                 {'messageRequest': XML.get_xml_broker_consultarPrestamos('BajaEnWF', tipoDocumento, numeroDocumento, idPrestamo)}
             )
 
@@ -351,7 +351,7 @@ def soatConsultarTarjeta():
         ped.idEntidad = app.config['SOAT_ENTIDAD']
         ped.canal = app.config['SOAT_CANAL']
         ped.ip = app.config['SOAT_IP']
-        ped.usuario = app.config['SOAT_USUARIO']
+        ped.usuario = app.config['SOAT_USER']
         ped.numeroTarjeta = numeroTarjeta
 
         ws.service.ConsultaEstadoTarjeta(**asdict(ped))
@@ -402,7 +402,7 @@ def soatHabilitarTarjeta():
         ped.idEntidad = app.config['SOAT_ENTIDAD']
         ped.canal = app.config['SOAT_CANAL']
         ped.ip = app.config['SOAT_IP']
-        ped.usuario = app.config['SOAT_USUARIO']
+        ped.usuario = app.config['SOAT_USER']
         ped.numeroTarjeta = numeroTarjeta
 
         ws.service.HabilitacionDeTarjeta(**asdict(ped))
@@ -470,3 +470,49 @@ def consultarApiPrieto():
         return Response(response, mimetype='text/xml')
     else:
         return render_template('error.html', texto_error=msg)
+
+
+@app.route('/consultarLegajoDigitalForm', methods=['GET', 'POST'])
+def consultarLegajoDigitalForm():
+    return render_template('consultas/legajoDigital_form.html')
+
+
+@app.route('/consultarLegajoDigital', methods=['GET', 'POST'])
+def consultarLegajoDigital():
+    if not params:
+        return redirect(url_for('consultarLegajoDigitalForm'))
+
+    formato = params.get('formato')
+    numeroCliente = params.get('numeroCliente')
+
+    url = app.config['LEGAJO_DIGITAL_HOST'] + app.config['LEGAJO_DIGITAL_WSDL']
+
+    try:
+        ws = Client(url)
+    except Exception, e:
+        msg = 'Error al realizar la consulta - Motivo: ' + str(e)
+        return render_template('error.html', texto_error=msg)
+
+    header = ws.factory.create('SecuredWebServiceHeader')
+    header.Username = app.config['LEGAJO_DIGITAL_USER']
+    header.Password = app.config['LEGAJO_DIGITAL_PASSWORD']
+
+    cliente = ws.factory.create('GetCliente')
+    cliente.nroCliente = numeroCliente
+
+    ws.set_options(soapheaders=header)
+    ws.service.GetCliente(cliente)
+
+    response = Util.format_removeXMLPrefixes(str(ws.last_received()))
+
+    Db.guardar_consulta(
+        consulta=str(request.url_rule)[1:],
+        tx=str(ws.last_sent()),
+        rx=response,
+        ip=request.remote_addr
+    )
+
+    if formato == 'html':
+        return render_template('consultas/legajoDigital_respuesta.html', variables=HTML.get_html_respuestaLegajoDigital(response))
+    else:
+        return Response(response, mimetype='text/xml')

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Consultar legajo digital del cliente{% endblock %}
+
+{% block content %}
+<form class="form-horizontal" role="form" name="consulta-legajo-digital" action="{{ url_for('consultarLegajoDigital') }}" method="POST">
+	<input type="hidden" name="numeroCliente" \>
+
+	{% include "includes/form_tipo_documento.inc.html" %}
+
+	<div class="form-group">
+		<label class="control-label col-sm-2" for="numeroDocumento">Nro. de documento:</label>
+		<div class="col-sm-10">
+			<input class="form-control" type="text" name="numeroDocumento" maxlength="11" \>
+		</div>
+	</div>
+
+	{% include "includes/form_tipo_respuesta.inc.html" %}
+
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			<button type="submit" class="btn btn-primary has-spinner" name="consultar">
+				<span class="spinner"><i class="fa fa-refresh fa-spin"></i></span>
+				Consultar
+			</button>
+		</div>
+	</div>
+</form>
+{% endblock %}

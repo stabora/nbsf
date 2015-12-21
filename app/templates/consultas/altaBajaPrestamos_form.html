@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Baja de préstamos{% endblock %}
+{% block title %}Alta / baja de pr&eacute;stamos{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form" name="baja-prestamos" action="{{ url_for('prestamosPendientes') }}" method="POST">
-  <input type="hidden" name="accion" value="BajaEnWF" \>
-
+<form class="form-horizontal" role="form" name="alta-baja-prestamos" action="{{ url_for('prestamosPendientes') }}" method="POST">
 	{% include "includes/form_tipo_documento.inc.html" %}
 
 	<div class="form-group">
@@ -15,10 +13,22 @@
 		</div>
 	</div>
 
-  <div class="form-group">
-  	<label class="control-label col-sm-2" for="uidPrestamo">UID pr&eacute;stamo:</label>
+	<div class="form-group">
+		<label class="control-label col-sm-2" for="uidPrestamo">UID pr&eacute;stamo:</label>
 		<div class="col-sm-10">
 			<input class="form-control" type="text" name="uidPrestamo" maxlength="13" \>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="control-label col-sm-2" for="accion">Acci&oacute;n:</label>
+		<div class="col-sm-10">
+			<label class="radio-inline">
+				<input type="radio" name="accion" id="accion" value="AltaEnWF"> Alta
+			</label>
+			<label class="radio-inline">
+				<input type="radio" name="accion" id="accion" value="BajaEnWF" checked="true"> Baja
+			</label>
 		</div>
 	</div>
 

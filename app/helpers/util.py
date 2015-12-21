@@ -19,7 +19,6 @@ class Util:
     @staticmethod
     def format_removeXMLPrefixes(xml):
         xml = re.sub(r'(</?)[\w]+:', '\\1', xml)
-        xml = re.sub(r'[a-z]+:', '', xml)
         return xml
 
     @staticmethod
@@ -41,7 +40,7 @@ class Util:
                     protocol: (
                         'http://' +
                         app.config['PROXY_USER'] + ':' +
-                        b64decode(app.config['PROXY_PASS']) + '@' +
+                        b64decode(app.config['PROXY_PASSWORD']) + '@' +
                         app.config['PROXY_HOST'] + ':' +
                         str(app.config['PROXY_PORT'])
                     )
@@ -52,7 +51,7 @@ class Util:
     @staticmethod
     def get_proxy_auth():
         if app.config['PROXY_USER']:
-            return HTTPProxyAuth(app.config['PROXY_USER'], b64decode(app.config['PROXY_PASS']))
+            return HTTPProxyAuth(app.config['PROXY_USER'], b64decode(app.config['PROXY_PASSWORD']))
         else:
             return None
 
