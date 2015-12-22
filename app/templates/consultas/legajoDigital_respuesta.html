@@ -41,8 +41,8 @@
 					{% for version in documento.versiones %}
 					<div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ documento.id }}-ver{{ version.numero }}">
 						<div class="panel-heading">
-							{% if documento.versiones|length == 1 %}Versi&oacute;n {{ version.numero}} - {% endif %}
-							Fecha actualizaci&oacute;n: {{ version.fecha_actualizacion|default('n/d', true) }}
+							{% if documento.versionable and documento.versiones|length == 1 %}Versi&oacute;n {{ version.numero}} - {% endif %}
+							Fecha actualizaci&oacute;n: {{ version.fecha|default('n/d', true) }}
 						</div>
 
 						<div class="panel-body">

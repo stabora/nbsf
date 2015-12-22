@@ -9,6 +9,7 @@ import re
 import urllib2
 from lxml import etree
 from base64 import b64decode
+from time import strptime
 from app.helpers.util import Util
 from app import app
 
@@ -203,6 +204,7 @@ class HTML:
     @staticmethod
     def get_html_respuestaLegajoDigital(xml):
         xml_obj = etree.fromstring(xml)
+
         documentos = []
         namespaces = {'ns': app.config['LEGAJO_DIGITAL_XMLNS']}
 
@@ -211,29 +213,15 @@ class HTML:
             versiones = []
 
             for version in documento.findall('.//ns:VersionDocumentoClienteOut', namespaces=namespaces):
-                versionNumero = re.sub('[^0-9]', '', version.findtext('.//ns:Version', namespaces=namespaces))
-                versionFecha = version.findtext('.//ns:FechaActu', default='n/d', namespaces=namespaces)
                 archivos = []
-                archivoNumero = 0
 
                 for archivo in version.findall('.//ns:ArchivoOut', namespaces=namespaces):
                     archivoUrl = archivo.findtext('ns:Permalink', namespaces=namespaces)
                     archivoTipo = urllib2.urlopen(archivoUrl).info().maintype
-                    archivoNumero += 1
-                    archivoId = ''
-
-                    if documentoEtiqueta and versionFecha:
-                        archivoId = '{}-{}-{}-{}'.format(
-                            re.sub('[^a-zA-Z0-9]', '', documentoEtiqueta),
-                            versionNumero,
-                            versionFecha.split('/')[2] + versionFecha.split('/')[1] + versionFecha.split('/')[0],
-                            archivoNumero
-                        )
-                    else:
-                        archivoId = archivoUrl
 
                     archivos.append({
-                        'id': archivoId,
+                        'id': archivo.findtext('ns:IdArchivo', namespaces=namespaces),
+                        'fecha': archivo.findtext('ns:Fecha', namespaces=namespaces),
                         'nombre': archivo.findtext('ns:Nombre', namespaces=namespaces),
                         'url': archivoUrl,
                         'urlMiniatura': archivo.findtext('ns:PermalinkMiniatura', namespaces=namespaces),
@@ -241,20 +229,22 @@ class HTML:
                     })
 
                 if archivos:
-                    documentoDescripcion = documento.findtext('ns:Descripcion', namespaces=namespaces)
-
                     versiones.append({
-                        'numero': versionNumero,
-                        'fecha_actualizacion': versionFecha,
-                        'archivos': archivos
+                        'numero': re.sub('[^0-9]', '', version.findtext('.//ns:Version', namespaces=namespaces)),
+                        'fecha': version.findtext('.//ns:FechaActu', default='n/d', namespaces=namespaces),
+                        'archivos': sorted(archivos, key=lambda archivo: strptime(archivo['fecha'], '%d/%m/%Y') if archivo['fecha'] else None, reverse=True)
                     })
 
-                    documentos.append({
-                        'id': re.sub(r'[\s.-]', '', documentoDescripcion),
-                        'descripcion': documentoDescripcion,
-                        'etiqueta': documentoEtiqueta,
-                        'versiones': versiones
-                    })
+            if versiones:
+                documentoDescripcion = documento.findtext('ns:Descripcion', namespaces=namespaces)
+
+                documentos.append({
+                    'id': re.sub(r'[\s.-]', '', documentoDescripcion),
+                    'descripcion': documentoDescripcion,
+                    'etiqueta': documentoEtiqueta,
+                    'versionable': str.upper(documento.findtext('ns:VersionaPorTramite', namespaces=namespaces)) == 'TRUE',
+                    'versiones': sorted(versiones, key=lambda version: strptime(version['fecha'], '%d/%m/%Y') if version['fecha'] else None, reverse=True)
+                })
 
         variables = {
             'documentos': documentos

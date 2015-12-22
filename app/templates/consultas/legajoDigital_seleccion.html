@@ -39,7 +39,9 @@
 
 				{% for version in documento.versiones[:1] %}
 					<div class="panel-body">
-						{% for archivo in version.archivos %}
+						{% set limite = version.archivos|count if documento.versionable else 1 %}
+
+						{% for archivo in version.archivos[:limite] %}
 						{% if archivo.tipo == 'image' %}
 						<a href="javascript:;" rel="{{ archivo.id }}" class="image-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
 						{% else %}
