@@ -204,7 +204,6 @@ class HTML:
     @staticmethod
     def get_html_respuestaLegajoDigital(xml):
         xml_obj = etree.fromstring(xml)
-
         documentos = []
         namespaces = {'ns': app.config['LEGAJO_DIGITAL_XMLNS']}
 

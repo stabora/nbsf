@@ -505,6 +505,9 @@ def consultarLegajoDigital():
 
     response = Util.format_removeXMLPrefixes(str(ws.last_received()))
 
+    # DEBUG
+    # response = Util.format_removeXMLPrefixes(open(app.config['BASE_DIR'] + '/app/tests/legajoDigital_respuesta.xml').read())
+
     Db.guardar_consulta(
         consulta=str(request.url_rule)[1:],
         tx=str(ws.last_sent()),

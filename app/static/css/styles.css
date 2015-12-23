@@ -19,6 +19,11 @@ body
 	border: none;
 }
 
+.hidden
+{
+	display: none;
+}
+
 
 /* Layout */
 
@@ -60,6 +65,10 @@ body
 	font-size: 0.9em;
 }
 
+div.dbg {
+	margin-top: 30px;
+}
+
 
 /* Legajo digital */
 
@@ -95,6 +104,12 @@ body
 	height: 120px;
 }
 
+#legajoDigitalSeleccion label
+{
+	font-size: 0.8em;
+	font-weight: normal;
+	display: block;
+}
 
 /* Image preview */
 

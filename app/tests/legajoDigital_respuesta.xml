@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+   <Body>
+      <GetClienteResponse xmlns="http://tempuri.org/">
+         <GetClienteResult>
+            <Message>
+               <Codigo>0</Codigo>
+               <Descripcion>Sin Mensajes</Descripcion>
+            </Message>
+            <CuitCuil>10006215014</CuitCuil>
+            <Descripcion>SOTTINI, RICARDO</Descripcion>
+            <NroCliente>100006215014</NroCliente>
+            <NumeroDocumento>6215014</NumeroDocumento>
+            <Sexo>M</Sexo>
+            <Sucursal>000</Sucursal>
+            <TipoDocumento>LE</TipoDocumento>
+            <TipoPersona>Fisica</TipoPersona>
+            <LegajoActualizado>NO</LegajoActualizado>
+            <Confidencial>NO</Confidencial>
+            <FechaFallecido/>
+            <Documentos>
+               <DocumentoClienteOut>
+                  <Descripcion>Solicitud de Prod. y Serv. - Personas Físicas</Descripcion>
+                  <AsActualizable>false</AsActualizable>
+                  <TieneVencimiento>false</TieneVencimiento>
+                  <VersionaPorTramite>false</VersionaPorTramite>
+                  <FormInterno>ESPE-240</FormInterno>
+                  <Versiones>
+                     <VersionDocumentoClienteOut>
+                        <Descripcion>Solicitud de Prod. y Serv. - Personas Físicas</Descripcion>
+                        <Version>Versión 1</Version>
+                        <FechaActu>28/04/2015</FechaActu>
+                        <FechaVencimiento/>
+                        <PeriodoActu>0</PeriodoActu>
+                        <Obligatoridad/>
+                        <Archivos>
+                           <ArchivoOut>
+                              <Nombre>635658365383163887.pdf</Nombre>
+                              <Permalink>http://nbsflegajodigitaltest.nbsf.com.ar/File/13580</Permalink>
+                              <IdArchivo>13580</IdArchivo>
+                              <Fecha>28/04/2015</Fecha>
+                              <Usuario>Administrador</Usuario>
+                              <PermalinkMiniatura>http://nbsflegajodigitaltest.nbsf.com.ar/FileMiniature/13580</PermalinkMiniatura>
+                           </ArchivoOut>
+                           <ArchivoOut>
+                              <Nombre>635658365383163887.pdf</Nombre>
+                              <Permalink>http://nbsflegajodigitaltest.nbsf.com.ar/File/13581</Permalink>
+                              <IdArchivo>13580</IdArchivo>
+                              <Fecha>28/05/2015</Fecha>
+                              <Usuario>Administrador</Usuario>
+                              <PermalinkMiniatura>http://nbsflegajodigitaltest.nbsf.com.ar/FileMiniature/13581</PermalinkMiniatura>
+                           </ArchivoOut>
+                           <ArchivoOut>
+                              <Nombre>635658365383163887.pdf</Nombre>
+                              <Permalink>http://nbsflegajodigitaltest.nbsf.com.ar/File/13582</Permalink>
+                              <IdArchivo>13580</IdArchivo>
+                              <Fecha>28/06/2015</Fecha>
+                              <Usuario>Administrador</Usuario>
+                              <PermalinkMiniatura>http://nbsflegajodigitaltest.nbsf.com.ar/FileMiniature/13582</PermalinkMiniatura>
+                           </ArchivoOut>
+                        </Archivos>
+                     </VersionDocumentoClienteOut>
+                  </Versiones>
+               </DocumentoClienteOut>
+               <DocumentoClienteOut>
+                  <Descripcion>DDJJ para sujetos no obligados a efectuar aportes</Descripcion>
+                  <AsActualizable>false</AsActualizable>
+                  <TieneVencimiento>false</TieneVencimiento>
+                  <VersionaPorTramite>true</VersionaPorTramite>
+                  <FormInterno>ESPE-177</FormInterno>
+                  <Versiones>
+                     <VersionDocumentoClienteOut>
+                        <Descripcion>DDJJ para sujetos no obligados a efectuar aportes</Descripcion>
+                        <Version>Versión 1</Version>
+                        <FechaActu>28/04/2015</FechaActu>
+                        <FechaVencimiento/>
+                        <PeriodoActu>0</PeriodoActu>
+                        <Obligatoridad/>
+                        <Archivos>
+                           <ArchivoOut>
+                              <Nombre>635658365381601357.pdf</Nombre>
+                              <Permalink>http://nbsflegajodigitaltest.nbsf.com.ar/File/13577</Permalink>
+                              <IdArchivo>13577</IdArchivo>
+                              <Fecha>28/04/2015</Fecha>
+                              <Usuario>Administrador</Usuario>
+                              <PermalinkMiniatura>http://nbsflegajodigitaltest.nbsf.com.ar/FileMiniature/13577</PermalinkMiniatura>
+                           </ArchivoOut>
+                        </Archivos>
+                     </VersionDocumentoClienteOut>
+                     <VersionDocumentoClienteOut>
+                        <Descripcion>DDJJ para sujetos no obligados a efectuar aportes</Descripcion>
+                        <Version>Versión 2</Version>
+                        <FechaActu>30/04/2015</FechaActu>
+                        <FechaVencimiento/>
+                        <PeriodoActu>0</PeriodoActu>
+                        <Obligatoridad/>
+                        <Archivos>
+                           <ArchivoOut>
+                              <Nombre>635658365381601357.pdf</Nombre>
+                              <Permalink>http://nbsflegajodigitaltest.nbsf.com.ar/File/13577</Permalink>
+                              <IdArchivo>13577</IdArchivo>
+                              <Fecha>28/04/2015</Fecha>
+                              <Usuario>Administrador</Usuario>
+                              <PermalinkMiniatura>http://nbsflegajodigitaltest.nbsf.com.ar/FileMiniature/13577</PermalinkMiniatura>
+                           </ArchivoOut>
+                           <ArchivoOut>
+                              <Nombre>635658365381601666.pdf</Nombre>
+                              <Permalink>http://nbsflegajodigitaltest.nbsf.com.ar/File/13581</Permalink>
+                              <IdArchivo>13581</IdArchivo>
+                              <Fecha>30/04/2015</Fecha>
+                              <Usuario>Administrador</Usuario>
+                              <PermalinkMiniatura>http://nbsflegajodigitaltest.nbsf.com.ar/FileMiniature/13581</PermalinkMiniatura>
+                           </ArchivoOut>
+                        </Archivos>
+                     </VersionDocumentoClienteOut>
+                  </Versiones>
+               </DocumentoClienteOut>
+            </Documentos>
+         </GetClienteResult>
+      </GetClienteResponse>
+   </Body>
+</Envelope>

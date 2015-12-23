@@ -2,7 +2,10 @@
 
 import os
 
+##################################################
 # General
+##################################################
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 HTTP_REQUESTS_TIMEOUT = 40
 

@@ -369,6 +369,44 @@ $(document).ready(function()
 	});
 
 
+	// Legajo digital - Selección de documentos
+
+	if($('div#legajoDigitalSeleccion').length)
+	{
+		$('input[type="radio"][value="D"]').click(function()
+		{
+			if($('input[rel="' + $(this).attr('name') + '"]').not(':checked').size() == 0)
+			{
+				return true;
+			} else {
+				mostrarAvisoModal('Debe revisar la versión digital para poder seleccionarla.', 'alert-danger');
+				return false;
+			}
+		});
+
+
+		$('.image-preview, .document-preview').click(function()
+		{
+			if($(this).attr('rel'))
+			{
+				$(document).find('input[name="chk-' + $(this).attr('rel') + '"]').attr('checked', 'true');
+				$(this).css('opacity', '0.5');
+			}
+		});
+
+
+		$('.verificar-seleccion').click(function()
+		{
+			if($('input[type="radio"]:checked').size() == $('input[type="radio"]').size() / 2)
+			{
+				mostrarAvisoModal('Documentación seleccionada.\n', 'alert-success');
+			} else {
+				mostrarAvisoModal('Debe seleccionar toda la documentación.', 'alert-danger');
+			}
+		});
+	}
+
+
 	// Inicialización de elementos tooltip
 
 	$('a[data-toggle="tooltip"]').tooltip();
