@@ -4,12 +4,12 @@ from flask import Response, render_template, request, redirect, url_for
 from lxml import etree
 from suds.client import Client
 from suds.sudsobject import asdict
-from helpers.xml import XML
-from helpers.html import HTML
-from helpers.mensajeria import Mensajeria
 from app import app
 from app.helpers.util import Util
 from app.helpers.db import Db
+from app.helpers.xml import XML
+from app.helpers.html import HTML
+from app.helpers.mensajeria import Mensajeria
 
 params = None
 
@@ -93,38 +93,6 @@ def consultarCliente():
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/desbloquearClienteForm')
-def desbloquearClienteForm():
-    return render_template('consultas/desbloquearCliente_form.html')
-
-
-@app.route('/desbloquearCliente', methods=['GET', 'POST'])
-def desbloquearCliente():
-    if not params:
-        return redirect(url_for('desbloquearClienteForm'))
-
-    numeroCliente = params.get('numeroCliente')
-    usuario = params.get('usuario')
-    operacion = params.get('operacion')
-    entorno = params.get('entorno', 'DESARROLLO')
-
-    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(operacion, numeroCliente, usuario, entorno)
-
-    if response.status_code == 200:
-        response = Util.format_replaceXMLEntities(response.content)
-
-        Db.guardar_consulta(
-            consulta=str(request.url_rule)[1:],
-            tx=xml_ped,
-            rx=response,
-            ip=request.remote_addr
-        )
-
-        return Response(response, mimetype='text/xml')
-    else:
-        return render_template('error.html', texto_error=msg)
-
-
 @app.route('/consultarCuotaMAForm')
 def consultarCuotaMAForm():
     return render_template('consultas/cuotaMA_form.html')
@@ -194,87 +162,6 @@ def consultarPrestamosPendientesForm():
     return render_template('consultas/prestamosPendientes_form.html')
 
 
-@app.route('/altaBajaPrestamosForm')
-def altaBajaPrestamosForm():
-    return render_template('consultas/altaBajaPrestamos_form.html')
-
-
-@app.route('/prestamosPendientes', methods=['GET', 'POST'])
-def prestamosPendientes():
-    if not params:
-        return redirect(url_for('consultarPrestamosPendientesForm'))
-
-    accion = params.get('accion')
-    tipoDocumento = params.get('tipoDocumento')
-    numeroDocumento = params.get('numeroDocumento')
-    uidPrestamo = params.get('uidPrestamo', 0)
-    formato = params.get('formato')
-
-    if accion == 'BajaEnWF' and not uidPrestamo:
-        return redirect(url_for('bajaMasivaPrestamos'), code=307)
-
-    par_xml = XML.get_xml_broker_consultarPrestamos(accion, tipoDocumento, numeroDocumento, uidPrestamo)
-
-    response, msg = Util.get_http_request(
-        app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
-        {'messageRequest': par_xml}
-    )
-
-    if response.status_code == 200:
-        response = Util.format_replaceXMLEntities(response.content[122:-9])
-
-        Db.guardar_consulta(
-            consulta=str(request.url_rule)[1:],
-            tx=par_xml,
-            rx=response,
-            ip=request.remote_addr
-        )
-
-        if formato == 'html':
-            return render_template('consultas/prestamosPendientes_respuesta.html', variables=HTML.get_html_respuestaPrestamosPendientes(response))
-        else:
-            return Response(response, mimetype="text/xml")
-    else:
-        return render_template('error.html', texto_error=msg)
-
-
-@app.route('/bajaMasivaPrestamos', methods=['GET', 'POST'])
-def bajaMasivaPrestamos():
-    if not params:
-        return redirect(url_for('/'))
-
-    tipoDocumento = params.get('tipoDocumento')
-    numeroDocumento = params.get('numeroDocumento')
-
-    response, msg = Util.get_http_request(
-        app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
-        {'messageRequest': XML.get_xml_broker_consultarPrestamos('SelectEnWF', tipoDocumento, numeroDocumento)}
-    )
-
-    if response.status_code == 200:
-        xml = etree.fromstring(Util.format_replaceXMLEntities(response.content[122:-9]))
-        prestamos = {}
-        namespaces = {'ns': app.config['BROKERWS_XMLNS_PRESTAMOS']}
-
-        for prestamo in xml.findall('.//ns:NBSF_PrestamosEnWF', namespaces=namespaces):
-            idPrestamo = prestamo.findtext('.//ns:IDWorkFlow', namespaces=namespaces)
-
-            responseBaja, msgBaja = Util.get_http_request(
-                app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
-                {'messageRequest': XML.get_xml_broker_consultarPrestamos('BajaEnWF', tipoDocumento, numeroDocumento, idPrestamo)}
-            )
-
-            if response.status_code == 200:
-                xmlBaja = etree.fromstring(Util.format_replaceXMLEntities(responseBaja.content[122:-9]))
-                prestamos[idPrestamo] = xmlBaja.findtext('.//Body/StringData', 'N/D')
-            else:
-                prestamos[idPrestamo] = msgBaja
-
-        return render_template('consultas/bajaMasivaPrestamos_respuesta.html', prestamos=prestamos)
-    else:
-        return render_template('error.html', texto_error=msg)
-
-
 @app.route('/consultarVerazForm', methods=['GET', 'POST'])
 def consultarVerazForm():
     return render_template('consultas/veraz_form.html')
@@ -327,19 +214,19 @@ def consultarVeraz():
         return Response(response, mimetype='text/xml')
 
 
-@app.route('/soatConsultarTarjetaForm', methods=['GET', 'POST'])
-def soatConsultarTarjetaForm():
+@app.route('/consultarTarjetaSOATForm', methods=['GET', 'POST'])
+def consultarTarjetaSOATForm():
     return render_template(
-        'consultas/soatOperacionTarjeta_form.html',
+        'operaciones/soatOperacionTarjeta_form.html',
         title=u'Consultar estado de tarjeta de débito',
-        formAction='soatConsultarTarjeta'
+        formAction='consultarTarjetaSOAT'
     )
 
 
-@app.route('/soatConsultarTarjeta', methods=['GET', 'POST'])
-def soatConsultarTarjeta():
+@app.route('/consultarTarjetaSOAT', methods=['GET', 'POST'])
+def consultarTarjetaSOAT():
     if not params:
-        return redirect(url_for('soatConsultarTarjetaForm'))
+        return redirect(url_for('consultarTarjetaSOATForm'))
 
     numeroTarjeta = params.get('numeroTarjeta')
     formato = params.get('formato')
@@ -367,59 +254,8 @@ def soatConsultarTarjeta():
 
         if formato == 'html':
             return render_template(
-                'consultas/soatOperacionTarjeta_respuesta.html',
+                'operaciones/soatOperacionTarjeta_respuesta.html',
                 title=u'Consultar estado de tarjeta de débito',
-                variables=HTML.get_html_respuestaOperacionSoat(response)
-            )
-        else:
-            return Response(response, mimetype='text/xml')
-    except Exception, e:
-        msg = 'Error al realizar la consulta - Motivo: ' + str(e)
-        return render_template('error.html', texto_error=msg)
-
-
-@app.route('/soatHabilitarTarjetaForm', methods=['GET', 'POST'])
-def soatHabilitarTarjetaForm():
-    return render_template(
-        'consultas/soatOperacionTarjeta_form.html',
-        title=u'Habilitar tarjeta de débito',
-        formAction='soatHabilitarTarjeta'
-    )
-
-
-@app.route('/soatHabilitarTarjeta', methods=['GET', 'POST'])
-def soatHabilitarTarjeta():
-    if not params:
-        return redirect(url_for('soatHabilitarTarjetaForm'))
-
-    numeroTarjeta = params.get('numeroTarjeta')
-    formato = params.get('formato')
-
-    try:
-        ws = Client(app.config['SOAT_HOST'] + app.config['SOAT_WSDL'])
-
-        ped = ws.factory.create('HabilitacionDeTarjeta')
-        ped.idEntidad = app.config['SOAT_ENTIDAD']
-        ped.canal = app.config['SOAT_CANAL']
-        ped.ip = app.config['SOAT_IP']
-        ped.usuario = app.config['SOAT_USER']
-        ped.numeroTarjeta = numeroTarjeta
-
-        ws.service.HabilitacionDeTarjeta(**asdict(ped))
-
-        response = Util.format_removeXMLPrefixes(str(ws.last_received()))
-
-        Db.guardar_consulta(
-            consulta=str(request.url_rule)[1:],
-            tx=ws.last_sent(),
-            rx=ws.last_received(),
-            ip=request.remote_addr
-        )
-
-        if formato == 'html':
-            return render_template(
-                'consultas/soatOperacionTarjeta_respuesta.html',
-                title=u'Habilitar tarjeta de débito',
                 variables=HTML.get_html_respuestaOperacionSoat(response)
             )
         else:

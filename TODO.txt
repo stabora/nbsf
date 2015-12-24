@@ -1,1 +1,5 @@
+# Mejoras
 
+- Mejorar inicialización de argumentos de llamada a los métodos:
+	- Método global.
+	- Verificar argumentos requeridos para cada operación y mostrar mensaje de error si no se cumplen.

@@ -19,6 +19,7 @@ class Util:
     @staticmethod
     def format_removeXMLPrefixes(xml):
         xml = re.sub(r'(</?)[\w]+:', '\\1', xml)
+        xml = re.sub(r'(</?[\w]+\s)([\w]+:)([\w]+)', '\\1\\3', xml)
         return xml
 
     @staticmethod

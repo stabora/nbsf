@@ -6,7 +6,7 @@
 {% if variables %}
 <ul class="nav nav-pills">
 	<li class="active"><a href="#variables" data-toggle="tab">Variables</a></li>
-	<li><a data-confirm="Se solicitar&aacute; la baja de todos los pr&eacute;stamos pendientes para el cliente" href="{{ url_for('bajaMasivaPrestamos') }}?tipoDocumento={{ variables.tipoDocumento }}&numeroDocumento={{ variables.numeroDocumento }}" data-toggle="tooltip" data-placement="bottom" title="Solicitar la baja de todos los pr&eacute;stamos pendientes">Baja masiva</a></li>
+	<li><a data-confirm="Se solicitar&aacute; la baja de todos los pr&eacute;stamos pendientes para el cliente" href="{{ url_for('brokerBajaMasivaPrestamos') }}?tipoDocumento={{ variables.tipoDocumento }}&numeroDocumento={{ variables.numeroDocumento }}" data-toggle="tooltip" data-placement="bottom" title="Solicitar la baja de todos los pr&eacute;stamos pendientes">Baja masiva</a></li>
 	<li><a href="?">Volver</a></li>
 </ul>
 
@@ -28,7 +28,7 @@
 					<td class="active"><strong>UIDs pr&eacute;stamos pendientes</strong></td>
 					<td>
 						{% for uid in variables.prestamos %}
-							<a data-confirm="Se solicitar&aacute; la baja del pr&eacute;stamo UID {{ uid }}" href="{{ url_for('prestamosPendientes') }}?accion=BajaEnWF&tipoDocumento={{ variables.tipoDocumento }}&numeroDocumento={{ variables.numeroDocumento }}&uidPrestamo={{ uid }}" data-toggle="tooltip" data-placement="bottom" title="Solicitar baja de UID {{ uid }}">{{ uid }}</a>
+							<a data-confirm="Se solicitar&aacute; la baja del pr&eacute;stamo UID {{ uid }}" href="{{ url_for('brokerOperacionPrestamos') }}?accion=BajaEnWF&tipoDocumento={{ variables.tipoDocumento }}&numeroDocumento={{ variables.numeroDocumento }}&uidPrestamo={{ uid }}" data-toggle="tooltip" data-placement="bottom" title="Solicitar baja de UID {{ uid }}">{{ uid }}</a>
 							{% if not loop.last %}, {% endif %}
 						{% endfor %}
 					</td>

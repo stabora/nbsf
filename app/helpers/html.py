@@ -10,8 +10,8 @@ import urllib2
 from lxml import etree
 from base64 import b64decode
 from time import strptime
-from app.helpers.util import Util
 from app import app
+from app.helpers.util import Util
 
 
 class HTML:

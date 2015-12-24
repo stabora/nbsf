@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from app import db
-from app.mod_consultas.models import Consulta
+from app.models import Log
 
 
 class Db:
@@ -11,8 +11,8 @@ class Db:
 
     @staticmethod
     def guardar_consulta(**kwargs):
-        con = Consulta(
-            consulta=kwargs['consulta'],
+        con = Log(
+            programa=kwargs['consulta'],
             tx=kwargs['tx'],
             rx=kwargs['rx'],
             ip=kwargs['ip']
