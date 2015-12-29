@@ -10,6 +10,12 @@ from app import app
 class Util:
 
     @staticmethod
+    def check_parameters(names, params):
+        for param in names:
+            if param not in params:
+                raise Exception(u'Parámetro requerido: {}'.format(param))
+
+    @staticmethod
     def format_replaceXMLEntities(xml):
         for k, v in [('&lt;', '<'), ('&gt;', '>')]:
             xml = xml.replace(k, v)
@@ -39,11 +45,12 @@ class Util:
             for protocol in ('http', 'https'):
                 proxies.update({
                     protocol: (
-                        'http://' +
-                        app.config['PROXY_USER'] + ':' +
-                        b64decode(app.config['PROXY_PASSWORD']) + '@' +
-                        app.config['PROXY_HOST'] + ':' +
-                        str(app.config['PROXY_PORT'])
+                        'http://{}:{}@{}:{}'.format(
+                            app.config['PROXY_USER'],
+                            b64decode(app.config['PROXY_PASSWORD']),
+                            app.config['PROXY_HOST'],
+                            str(app.config['PROXY_PORT'])
+                        )
                     )
                 })
 
@@ -83,6 +90,6 @@ class Util:
         except Exception, e:
             response = Response()
             response.raise_for_status()
-            return response, 'Error al realizar la consulta - Motivo: ' + str(e.message)
+            return response, 'Error al realizar la consulta - Motivo: {}'.format(e.message)
 
         return response, None

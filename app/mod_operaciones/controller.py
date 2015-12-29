@@ -29,13 +29,15 @@ def as400BloqueoClienteForm():
 def as400BloqueoCliente():
     if not params:
         return redirect(url_for('as400BloqueoClienteForm'))
+    else:
+        Util.check_parameters(['numeroCliente', 'usuario', 'operacion'], params)
 
-    numeroCliente = params.get('numeroCliente')
-    usuario = params.get('usuario')
-    operacion = params.get('operacion')
-    entorno = params.get('entorno', 'DESARROLLO')
-
-    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(operacion, numeroCliente, usuario, entorno)
+    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(
+        params.get('operacion'),
+        params.get('numeroCliente'),
+        params.get('usuario'),
+        params.get('entorno', 'DESARROLLO')
+    )
 
     if response.status_code == 200:
         response = Util.format_replaceXMLEntities(response.content)
@@ -61,20 +63,21 @@ def brokerOperacionPrestamosForm():
 def brokerOperacionPrestamos():
     if not params:
         return redirect(url_for('brokerOperacionPrestamosForm'))
+    else:
+        Util.check_parameters(['tipoDocumento', 'numeroDocumento', 'accion'], params)
 
-    accion = params.get('accion')
-    tipoDocumento = params.get('tipoDocumento')
-    numeroDocumento = params.get('numeroDocumento')
-    uidPrestamo = params.get('uidPrestamo', 0)
-    formato = params.get('formato')
+    if params.get('accion') == 'BajaEnWF' and not params.get('uidPrestamo', 0):
+        return redirect(url_for('brokerBajaMasivaPrestamos', tipoDocumento=params.get('tipoDocumento'), numeroDocumento=params.get('numeroDocumento')), code=307)
 
-    if accion == 'BajaEnWF' and not uidPrestamo:
-        return redirect(url_for('brokerBajaMasivaPrestamos'), code=307)
-
-    par_xml = XML.get_xml_broker_consultarPrestamos(accion, tipoDocumento, numeroDocumento, uidPrestamo)
+    par_xml = XML.get_xml_broker_consultarPrestamos(
+        params.get('accion'),
+        params.get('tipoDocumento'),
+        params.get('numeroDocumento'),
+        params.get('uidPrestamo', 0)
+    )
 
     response, msg = Util.get_http_request(
-        app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
+        '{}{}'.format(app.config['BROKERWS_HOST'], app.config['BROKERWS_RESOURCE']),
         {'messageRequest': par_xml}
     )
 
@@ -88,7 +91,7 @@ def brokerOperacionPrestamos():
             ip=request.remote_addr
         )
 
-        if formato == 'html':
+        if params.get('formato') == 'html':
             return render_template('consultas/prestamosPendientes_respuesta.html', variables=HTML.get_html_respuestaPrestamosPendientes(response))
         else:
             return Response(response, mimetype="text/xml")
@@ -100,13 +103,12 @@ def brokerOperacionPrestamos():
 def brokerBajaMasivaPrestamos():
     if not params:
         return redirect(url_for('brokerOperacionPrestamosForm'))
-
-    tipoDocumento = params.get('tipoDocumento')
-    numeroDocumento = params.get('numeroDocumento')
+    else:
+        Util.check_parameters(['tipoDocumento', 'numeroDocumento'], params)
 
     response, msg = Util.get_http_request(
-        app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
-        {'messageRequest': XML.get_xml_broker_consultarPrestamos('SelectEnWF', tipoDocumento, numeroDocumento)}
+        '{}{}'.format(app.config['BROKERWS_HOST'], app.config['BROKERWS_RESOURCE']),
+        {'messageRequest': XML.get_xml_broker_consultarPrestamos('SelectEnWF', params.get('tipoDocumento'), params.get('numeroDocumento'))}
     )
 
     if response.status_code == 200:
@@ -118,8 +120,8 @@ def brokerBajaMasivaPrestamos():
             idPrestamo = prestamo.findtext('.//ns:IDWorkFlow', namespaces=namespaces)
 
             responseBaja, msgBaja = Util.get_http_request(
-                app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
-                {'messageRequest': XML.get_xml_broker_consultarPrestamos('BajaEnWF', tipoDocumento, numeroDocumento, idPrestamo)}
+                '{}{}'.format(app.config['BROKERWS_HOST'], app.config['BROKERWS_RESOURCE']),
+                {'messageRequest': XML.get_xml_broker_consultarPrestamos('BajaEnWF', params.get('tipoDocumento'), params.get('numeroDocumento'), idPrestamo)}
             )
 
             if response.status_code == 200:
@@ -146,19 +148,18 @@ def soatHabilitarTarjetaForm():
 def soatHabilitarTarjeta():
     if not params:
         return redirect(url_for('soatHabilitarTarjetaForm'))
-
-    numeroTarjeta = params.get('numeroTarjeta')
-    formato = params.get('formato')
+    else:
+        Util.check_parameters(['numeroTarjeta'], params)
 
     try:
-        ws = Client(app.config['SOAT_HOST'] + app.config['SOAT_WSDL'])
+        ws = Client('{}{}'.format(app.config['SOAT_HOST'], app.config['SOAT_WSDL']))
 
         ped = ws.factory.create('HabilitacionDeTarjeta')
         ped.idEntidad = app.config['SOAT_ENTIDAD']
         ped.canal = app.config['SOAT_CANAL']
         ped.ip = app.config['SOAT_IP']
         ped.usuario = app.config['SOAT_USER']
-        ped.numeroTarjeta = numeroTarjeta
+        ped.numeroTarjeta = params.get('numeroTarjeta')
 
         ws.service.HabilitacionDeTarjeta(**asdict(ped))
 
@@ -171,7 +172,7 @@ def soatHabilitarTarjeta():
             ip=request.remote_addr
         )
 
-        if formato == 'html':
+        if params.get('formato') == 'html':
             return render_template(
                 'operaciones/soatOperacionTarjeta_respuesta.html',
                 title=u'Habilitar tarjeta de débito',
@@ -180,5 +181,5 @@ def soatHabilitarTarjeta():
         else:
             return Response(response, mimetype='text/xml')
     except Exception, e:
-        msg = 'Error al realizar la consulta - Motivo: ' + str(e)
+        msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)

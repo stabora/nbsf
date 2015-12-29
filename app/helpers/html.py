@@ -49,7 +49,7 @@ class HTML:
 
         if nombre:
             periodo = xml_obj.findtext('.//ns:Periodo', default='n/d', namespaces=namespaces)
-            periodo = periodo[4:6] + ' / ' + periodo[0:4] if len(periodo) == 6 else periodo
+            periodo = '{}/{}'.format(periodo[4:6], periodo[0:4]) if len(periodo) == 6 else periodo
 
             variables = {
                 'Nombre': nombre,
@@ -162,8 +162,8 @@ class HTML:
 
             if datos:
                 cuotas[u'Cuota máxima'] = datos[0]['CUOTA_MAXIMA'] if float(datos[0]['CUOTA_MAXIMA']) > 0 else 0
-                cuotas['Cuota A [ ' + datos[0]['CUOTA_A_FORMULA'] + ' ]'] = datos[0]['CUOTA_A']
-                cuotas['Cuota B [ ' + datos[0]['CUOTA_B_FORMULA'] + ' ]'] = datos[0]['CUOTA_B']
+                cuotas['Cuota A [ {} ]'.format(datos[0]['CUOTA_A_FORMULA'])] = datos[0]['CUOTA_A']
+                cuotas['Cuota B [ {} ]'.format(datos[0]['CUOTA_B_FORMULA'])] = datos[0]['CUOTA_B']
 
                 parametros['IMC'] = datos[0]['IMC']
                 parametros['Tipo vivienda'] = datos[0]['TIPO_VIVIENDA']
@@ -187,7 +187,7 @@ class HTML:
 
             return variables, None
         except Exception, e:
-            return variables, 'Error al realizar la consulta - Motivo: ' + str(e.message)
+            return variables, 'Error al realizar la consulta - Motivo: {}'.format(e.message)
 
     @staticmethod
     def get_html_respuestaOperacionSoat(xml):

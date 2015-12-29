@@ -20,23 +20,30 @@ def init():
     params = request.form if request.method == 'POST' else request.args
 
 
+@app.errorhandler(Exception)
+def handle_error(e):
+    return Response(XML.get_xml_error(e.message), mimetype='text/xml')
+
+
 @app.route('/consultarPadronForm')
 def consultarPadronForm():
     return render_template('consultas/padronElectoral_form.html')
 
 
-@app.route('/consultarPadron', methods=['GET', 'POST'])
+@app.route('/consultarPadron', methods=['POST', 'GET'])
 def consultarPadron():
     if not params:
         return redirect(url_for('consultarPadronForm'))
+    else:
+        Util.check_parameters(['numeroDocumento'], params)
 
-    numeroDocumento = params.get('numeroDocumento')
-    formato = params.get('formato')
-    xml_ped = XML.get_xml_consultarPadron(numeroDocumento)
-    entorno = params.get('entorno', 'DESARROLLO')
+    xml_ped = XML.get_xml_consultarPadron(params.get('numeroDocumento'))
 
     response, msg = Util.get_http_request(
-        app.config['MENSAJERIA_HOST_' + entorno] + app.config['MENSAJERIA_RESOURCE'],
+        '{}{}'.format(
+            app.config['MENSAJERIA_HOST_{}'.format(params.get('entorno', 'DESARROLLO').upper())],
+            app.config['MENSAJERIA_RESOURCE']
+        ),
         {'Consulta': xml_ped},
         trust_env=False
     )
@@ -51,7 +58,7 @@ def consultarPadron():
             ip=request.remote_addr
         )
 
-        if formato == 'html':
+        if params.get('formato') == 'html':
             return render_template('consultas/padronElectoral_respuesta.html', variables=HTML.get_html_respuestaPadronElectoral(response))
         else:
             return Response(response, mimetype="text/xml")
@@ -68,12 +75,10 @@ def consultarClienteForm():
 def consultarCliente():
     if not params:
         return redirect(url_for('consultarClienteForm'))
+    else:
+        Util.check_parameters(['numeroCliente'], params)
 
-    numeroCliente = params.get('numeroCliente')
-    formato = params.get('formato')
-    entorno = params.get('entorno', 'DESARROLLO')
-
-    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(1, numeroCliente, entorno=entorno)
+    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(1, params.get('numeroCliente'), entorno=params.get('entorno', 'DESARROLLO').upper())
 
     if response.status_code == 200:
         response = Util.format_replaceXMLEntities(response.content)
@@ -85,7 +90,7 @@ def consultarCliente():
             ip=request.remote_addr
         )
 
-        if formato == 'html':
+        if params.get('formato') == 'html':
             return render_template('consultas/datosCliente_respuesta.html', variables=HTML.get_html_respuestaDatosCliente(response))
         else:
             return Response(response, mimetype='text/xml')
@@ -102,15 +107,15 @@ def consultarCuotaMAForm():
 def consultarCuotaMA():
     if not params:
         return redirect(url_for('consultarCuotaMAForm'))
+    else:
+        Util.check_parameters(['uidPrestamo'], params)
 
-    uidPrestamo = params.get('uidPrestamo')
-
-    response, msg = HTML.get_html_respuestaCuotaMA(uidPrestamo)
+    response, msg = HTML.get_html_respuestaCuotaMA(params.get('uidPrestamo'))
 
     if response:
         Db.guardar_consulta(
             consulta=str(request.url_rule)[1:],
-            tx='UID: ' + uidPrestamo,
+            tx='UID: {}'.format(params.get('uidPrestamo')),
             rx=str(response),
             ip=request.remote_addr
         )
@@ -129,13 +134,13 @@ def consultarCupoCUADForm():
 def consultarCupoCUAD():
     if not params:
         return redirect(url_for('consultarCupoCUADForm'))
+    else:
+        Util.check_parameters(['numeroCuit'], params)
 
-    numeroCuit = params.get('numeroCuit')
-    formato = params.get('formato')
-    xml_ped = XML.get_xml_broker_consultarCupoCUAD(numeroCuit)
+    xml_ped = XML.get_xml_broker_consultarCupoCUAD(params.get('numeroCuit'))
 
     response, msg = Util.get_http_request(
-        app.config['BROKERWS_HOST'] + app.config['BROKERWS_RESOURCE'],
+        '{}{}'.format(app.config['BROKERWS_HOST'], app.config['BROKERWS_RESOURCE']),
         {'messageRequest': xml_ped}
     )
 
@@ -149,7 +154,7 @@ def consultarCupoCUAD():
             ip=request.remote_addr
         )
 
-        if formato == 'html':
+        if params.get('formato') == 'html':
             return render_template('consultas/cupoCUAD_respuesta.html', variables=HTML.get_html_respuestaCupoCUAD(response))
         else:
             return Response(response, mimetype='text/xml')
@@ -177,6 +182,7 @@ def consultarVeraz():
     debug = params.get('debug', app.config['VERAZ_DEBUG'])
 
     if par_xml == '':
+        Util.check_parameters(['numeroDocumento', 'nombre', 'sexo'], params)
         numeroDocumento = params.get('numeroDocumento')
         nombre = params.get('nombre')
         sexo = params.get('sexo')
@@ -187,11 +193,11 @@ def consultarVeraz():
         nombre = xml.findtext('.//nombre')
         sexo = xml.findtext('.//sexo')
 
-    if debug:
+    if str(debug).upper() == 'TRUE':
         response = XML.get_xml_respuestaVerazDebug(nombre, sexo, numeroDocumento)
     else:
         response, msg = Util.get_http_request(
-            app.config['VERAZ_HOST'] + app.config['VERAZ_RESOURCE'],
+            '{}{}'.format(app.config['VERAZ_HOST'], app.config['VERAZ_RESOURCE']),
             {'par_xml': par_xml},
             use_proxy=True
         )
@@ -227,19 +233,18 @@ def consultarTarjetaSOATForm():
 def consultarTarjetaSOAT():
     if not params:
         return redirect(url_for('consultarTarjetaSOATForm'))
-
-    numeroTarjeta = params.get('numeroTarjeta')
-    formato = params.get('formato')
+    else:
+        Util.check_parameters(['numeroTarjeta'], params)
 
     try:
-        ws = Client(app.config['SOAT_HOST'] + app.config['SOAT_WSDL'])
+        ws = Client('{}{}'.format(app.config['SOAT_HOST'], app.config['SOAT_WSDL']))
 
         ped = ws.factory.create('ConsultaEstadoTarjeta')
         ped.idEntidad = app.config['SOAT_ENTIDAD']
         ped.canal = app.config['SOAT_CANAL']
         ped.ip = app.config['SOAT_IP']
         ped.usuario = app.config['SOAT_USER']
-        ped.numeroTarjeta = numeroTarjeta
+        ped.numeroTarjeta = params.get('numeroTarjeta')
 
         ws.service.ConsultaEstadoTarjeta(**asdict(ped))
 
@@ -252,7 +257,7 @@ def consultarTarjetaSOAT():
             ip=request.remote_addr
         )
 
-        if formato == 'html':
+        if params.get('formato') == 'html':
             return render_template(
                 'operaciones/soatOperacionTarjeta_respuesta.html',
                 title=u'Consultar estado de tarjeta de débito',
@@ -261,7 +266,7 @@ def consultarTarjetaSOAT():
         else:
             return Response(response, mimetype='text/xml')
     except Exception, e:
-        msg = 'Error al realizar la consulta - Motivo: ' + str(e)
+        msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
 
 
@@ -274,6 +279,8 @@ def consultarApiPrietoForm():
 def consultarApiPrieto():
     if not params:
         return redirect(url_for('consultarApiPrietoForm'))
+    else:
+        Util.check_parameters(['doc'], params)
 
     headers = {
         'Accept': 'application/xml',
@@ -287,7 +294,7 @@ def consultarApiPrieto():
     }
 
     response, msg = Util.get_http_request(
-        app.config['PRIETO_HOST'] + app.config['PRIETO_RESOURCE'],
+        '{}{}'.format(app.config['PRIETO_HOST'], app.config['PRIETO_RESOURCE']),
         payload,
         method='GET',
         headers=headers,
@@ -317,16 +324,14 @@ def consultarLegajoDigitalForm():
 def consultarLegajoDigital():
     if not params:
         return redirect(url_for('consultarLegajoDigitalForm'))
-
-    formato = params.get('formato')
-    numeroCliente = params.get('numeroCliente')
-
-    url = app.config['LEGAJO_DIGITAL_HOST'] + app.config['LEGAJO_DIGITAL_WSDL']
+    else:
+        Util.check_parameters(['numeroCliente'], params)
 
     try:
+        url = '{}{}'.format(app.config['LEGAJO_DIGITAL_HOST'], app.config['LEGAJO_DIGITAL_WSDL'])
         ws = Client(url)
     except Exception, e:
-        msg = 'Error al realizar la consulta - Motivo: ' + str(e)
+        msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
 
     header = ws.factory.create('SecuredWebServiceHeader')
@@ -334,15 +339,16 @@ def consultarLegajoDigital():
     header.Password = app.config['LEGAJO_DIGITAL_PASSWORD']
 
     cliente = ws.factory.create('GetCliente')
-    cliente.nroCliente = numeroCliente
+    cliente.nroCliente = params.get('numeroCliente')
 
     ws.set_options(soapheaders=header)
     ws.service.GetCliente(cliente)
 
-    response = Util.format_removeXMLPrefixes(str(ws.last_received()))
-
-    # DEBUG
-    # response = Util.format_removeXMLPrefixes(open(app.config['BASE_DIR'] + '/app/tests/legajoDigital_respuesta.xml').read())
+    if params.get('debug', 'FALSE').upper() == 'TRUE':
+        # DEBUG
+        response = Util.format_removeXMLPrefixes(open('{}/app/tests/legajoDigital_respuesta.xml'.format(app.config['BASE_DIR'])).read())
+    else:
+        response = Util.format_removeXMLPrefixes(str(ws.last_received()))
 
     Db.guardar_consulta(
         consulta=str(request.url_rule)[1:],
@@ -351,7 +357,7 @@ def consultarLegajoDigital():
         ip=request.remote_addr
     )
 
-    if formato == 'html':
+    if params.get('formato') == 'html':
         return render_template('consultas/legajoDigital_respuesta.html', variables=HTML.get_html_respuestaLegajoDigital(response))
     else:
         return Response(response, mimetype='text/xml')

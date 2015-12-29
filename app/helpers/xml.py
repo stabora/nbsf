@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from flask import request
 import uuid
 from datetime import datetime
 from lxml import etree
@@ -11,10 +12,21 @@ from app import app
 class XML:
 
     @staticmethod
+    def get_xml_error(motivo):
+        return tostring(
+            E.NBSFConsultas(
+                E.error(
+                    E.method(str(request.endpoint)),
+                    E.cause(motivo)
+                )
+            )
+        )
+
+    @staticmethod
     def get_xml_consultarPadron(numeroDocumento):
         return tostring(
             E.PedConsPad(
-                E.IDPedido('NBSFPY-' + datetime.today().strftime('%Y%m%d%H%M')),
+                E.IDPedido('NBSFPY-{}'.format(datetime.today().strftime('%Y%m%d%H%M'))),
                 E.NroDoc(numeroDocumento)
             )
         )
@@ -23,7 +35,7 @@ class XML:
     def get_xml_cliConsBlqDesblq(numeroCliente, operacion, usuario):
         return tostring(
             E.PedCliConsBlqDesblq(
-                E.IDPed('NBSFPY-' + datetime.today().strftime('%Y%m%d%H%M')),
+                E.IDPed('NBSFPY-'.format(datetime.today().strftime('%Y%m%d%H%M'))),
                 E.Fecha(datetime.today().strftime('%Y%m%d')),
                 E.Operacion(str(operacion)),
                 E.NroCliente(numeroCliente),
@@ -164,7 +176,7 @@ class XML:
             origen = 2 if idSite > 0 else 1
             estado = 806
 
-        xml = etree.fromstring(XML.get_xml_brokerEnvelope('Prestamos.' + accion))
+        xml = etree.fromstring(XML.get_xml_brokerEnvelope('Prestamos.{}'.format(accion)))
         dsdata = xml.find('.//Body/DSData')
 
         dsdata.append(etree.fromstring(
