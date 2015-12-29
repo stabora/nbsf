@@ -235,11 +235,9 @@ class HTML:
                     })
 
             if versiones:
-                documentoDescripcion = documento.findtext('ns:Descripcion', namespaces=namespaces)
-
                 documentos.append({
-                    'id': re.sub(r'[\s.-]', '', documentoDescripcion),
-                    'descripcion': documentoDescripcion,
+                    'id': documento.findtext('ns:Id', namespaces=namespaces),
+                    'descripcion': documento.findtext('ns:Descripcion', namespaces=namespaces),
                     'etiqueta': documentoEtiqueta,
                     'versionable': str.upper(documento.findtext('ns:VersionaPorTramite', namespaces=namespaces)) == 'TRUE',
                     'versiones': sorted(versiones, key=lambda version: strptime(version['fecha'], '%d/%m/%Y') if version['fecha'] else None, reverse=True)

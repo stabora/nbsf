@@ -25,6 +25,7 @@
                   <TieneVencimiento>false</TieneVencimiento>
                   <VersionaPorTramite>false</VersionaPorTramite>
                   <FormInterno>ESPE-240</FormInterno>
+                  <Id>8771</Id>
                   <Versiones>
                      <VersionDocumentoClienteOut>
                         <Descripcion>Solicitud de Prod. y Serv. - Personas Físicas</Descripcion>
@@ -68,6 +69,7 @@
                   <TieneVencimiento>false</TieneVencimiento>
                   <VersionaPorTramite>true</VersionaPorTramite>
                   <FormInterno>ESPE-177</FormInterno>
+                  <Id>8772</Id>
                   <Versiones>
                      <VersionDocumentoClienteOut>
                         <Descripcion>DDJJ para sujetos no obligados a efectuar aportes</Descripcion>
