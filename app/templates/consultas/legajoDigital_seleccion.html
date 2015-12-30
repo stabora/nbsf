@@ -24,16 +24,17 @@
 
 				{% for version in documento.versiones[:1] %}
 					<div class="panel-body">
-						{% set limite = version.archivos|count if documento.versionable else 1 %}
+						{% set ultimaFecha = version.archivos[0].fecha if not documento.versionable else None %}
 
-						{% for archivo in version.archivos[:limite] %}
+						{% for archivo in version.archivos %}
+						{% if ultimaFecha == None or archivo.fecha == ultimaFecha %}
 						{% if archivo.tipo == 'image' %}
 						<a href="javascript:;" rel="{{ archivo.id }}" class="image-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
 						{% else %}
 						<a href="{{ archivo.url }}" rel="{{ archivo.id }}" target="_blank" class="document-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
 						{% endif %}
-
 						<input class="hidden" type="checkbox" disabled="true" rel="{{ documento.id }}" name="chk-{{ archivo.id }}">
+						{% endif %}
 						{% endfor %}
 					</div>
 				{% endfor %}
