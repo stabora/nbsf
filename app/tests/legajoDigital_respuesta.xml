@@ -117,6 +117,60 @@
                      </VersionDocumentoClienteOut>
                   </Versiones>
                </DocumentoClienteOut>
+               <DocumentoClienteOut>
+                  <Descripcion>Documento nacional de identidad</Descripcion>
+                  <AsActualizable>false</AsActualizable>
+                  <TieneVencimiento>false</TieneVencimiento>
+                  <VersionaPorTramite>true</VersionaPorTramite>
+                  <FormInterno>DOCIDEN</FormInterno>
+                  <Id>8773</Id>
+                  <Versiones>
+                     <VersionDocumentoClienteOut>
+                        <Descripcion>Documento nacional de identidad</Descripcion>
+                        <Version>Versión 1</Version>
+                        <FechaActu>28/04/2015</FechaActu>
+                        <FechaVencimiento/>
+                        <PeriodoActu>0</PeriodoActu>
+                        <Obligatoridad/>
+                        <Archivos>
+                           <ArchivoOut>
+                              <Nombre>136.pdf</Nombre>
+                              <Permalink>http://nbsflegajodigitaltest.nbsf.com.ar/File/136</Permalink>
+                              <IdArchivo>136</IdArchivo>
+                              <Fecha>28/04/2015</Fecha>
+                              <Usuario>Administrador</Usuario>
+                              <PermalinkMiniatura>http://nbsflegajodigitaltest.nbsf.com.ar/FileMiniature/136</PermalinkMiniatura>
+                           </ArchivoOut>
+                        </Archivos>
+                     </VersionDocumentoClienteOut>
+                     <VersionDocumentoClienteOut>
+                        <Descripcion>Documento nacional de identidad</Descripcion>
+                        <Version>Versión 2</Version>
+                        <FechaActu>30/04/2015</FechaActu>
+                        <FechaVencimiento/>
+                        <PeriodoActu>0</PeriodoActu>
+                        <Obligatoridad/>
+                        <Archivos>
+                           <ArchivoOut>
+                              <Nombre>136.pdf</Nombre>
+                              <Permalink>http://nbsflegajodigitaltest.nbsf.com.ar/File/136</Permalink>
+                              <IdArchivo>136</IdArchivo>
+                              <Fecha>28/04/2015</Fecha>
+                              <Usuario>Administrador</Usuario>
+                              <PermalinkMiniatura>http://nbsflegajodigitaltest.nbsf.com.ar/FileMiniature/136</PermalinkMiniatura>
+                           </ArchivoOut>
+                           <ArchivoOut>
+                              <Nombre>137.pdf</Nombre>
+                              <Permalink>http://nbsflegajodigitaltest.nbsf.com.ar/File/137</Permalink>
+                              <IdArchivo>137</IdArchivo>
+                              <Fecha>28/04/2015</Fecha>
+                              <Usuario>Administrador</Usuario>
+                              <PermalinkMiniatura>http://nbsflegajodigitaltest.nbsf.com.ar/FileMiniature/137</PermalinkMiniatura>
+                           </ArchivoOut>
+                        </Archivos>
+                     </VersionDocumentoClienteOut>
+                  </Versiones>
+               </DocumentoClienteOut>
             </Documentos>
          </GetClienteResult>
       </GetClienteResponse>

@@ -190,56 +190,52 @@ class HTML:
             return variables, 'Error al realizar la consulta - Motivo: {}'.format(e.message)
 
     @staticmethod
-    def get_html_respuestaOperacionSoat(xml):
+    def get_html_respuestaOperacionSoat(response):
         variables = {}
-        xml_obj = etree.fromstring(xml)
-        nodos = xml_obj.xpath("//Envelope/Body/*/*/*")
 
-        if nodos is not None:
-            for nodo in nodos:
-                variables[Util.format_removeXMLNodeNamespace(nodo.tag)] = nodo.text
+        for etiqueta, valor in response:
+            variables[etiqueta] = valor
 
         return variables
 
     @staticmethod
-    def get_html_respuestaLegajoDigital(xml):
-        xml_obj = etree.fromstring(xml)
+    def get_html_respuestaLegajoDigital(response):
         documentos = []
-        namespaces = {'ns': app.config['LEGAJO_DIGITAL_XMLNS']}
 
-        for documento in xml_obj.findall('.//ns:DocumentoClienteOut', namespaces=namespaces):
-            documentoEtiqueta = documento.findtext('ns:FormInterno', namespaces=namespaces)
+        for documento in response.Documentos.DocumentoClienteOut:
             versiones = []
+            documentoEtiqueta = documento.FormInterno
 
-            for version in documento.findall('.//ns:VersionDocumentoClienteOut', namespaces=namespaces):
+            for version in documento.Versiones.VersionDocumentoClienteOut:
                 archivos = []
 
-                for archivo in version.findall('.//ns:ArchivoOut', namespaces=namespaces):
-                    archivoUrl = archivo.findtext('ns:Permalink', namespaces=namespaces)
-                    archivoTipo = urllib2.urlopen(archivoUrl).info().maintype
+                if hasattr(version.Archivos, 'ArchivoOut'):
+                    for archivo in version.Archivos.ArchivoOut:
+                        archivoUrl = archivo.Permalink
+                        archivoTipo = urllib2.urlopen(archivoUrl).info().maintype
 
-                    archivos.append({
-                        'id': archivo.findtext('ns:IdArchivo', namespaces=namespaces),
-                        'fecha': archivo.findtext('ns:Fecha', namespaces=namespaces),
-                        'nombre': archivo.findtext('ns:Nombre', namespaces=namespaces),
-                        'url': archivoUrl,
-                        'urlMiniatura': archivo.findtext('ns:PermalinkMiniatura', namespaces=namespaces),
-                        'tipo': archivoTipo
-                    })
+                        archivos.append({
+                            'id': archivo.IdArchivo,
+                            'fecha': archivo.Fecha,
+                            'nombre': archivo.Nombre,
+                            'url': archivoUrl,
+                            'urlMiniatura': archivo.PermalinkMiniatura,
+                            'tipo': archivoTipo
+                        })
 
                 if archivos:
                     versiones.append({
-                        'numero': re.sub('[^0-9]', '', version.findtext('.//ns:Version', namespaces=namespaces)),
-                        'fecha': version.findtext('.//ns:FechaActu', default='n/d', namespaces=namespaces),
+                        'numero': re.sub('[^0-9]', '', version.Version),
+                        'fecha': version.FechaActu,
                         'archivos': sorted(archivos, key=lambda archivo: strptime(archivo['fecha'], '%d/%m/%Y') if archivo['fecha'] else None, reverse=True)
                     })
 
             if versiones:
                 documentos.append({
-                    'id': documento.findtext('ns:Id', namespaces=namespaces),
-                    'descripcion': documento.findtext('ns:Descripcion', namespaces=namespaces),
+                    'id': documento.Id,
+                    'descripcion': documento.Descripcion,
                     'etiqueta': documentoEtiqueta,
-                    'versionable': str.upper(documento.findtext('ns:VersionaPorTramite', namespaces=namespaces)) == 'TRUE',
+                    'versionable': documento.VersionaPorTramite,
                     'versiones': sorted(versiones, key=lambda version: strptime(version['fecha'], '%d/%m/%Y') if version['fecha'] else None, reverse=True)
                 })
 

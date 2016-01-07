@@ -61,7 +61,6 @@ LEGAJO_DIGITAL_HOST = 'http://legajodigitalwstest.nbsf.com.ar'
 LEGAJO_DIGITAL_WSDL = '/LegajoDigital.asmx?wsdl'
 LEGAJO_DIGITAL_USER = 'legajodigital'
 LEGAJO_DIGITAL_PASSWORD = 'l3g4j0d1g1t4l'
-LEGAJO_DIGITAL_XMLNS = 'http://tempuri.org/'
 
 
 ##################################################

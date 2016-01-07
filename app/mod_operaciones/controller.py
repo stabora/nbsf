@@ -161,14 +161,12 @@ def soatHabilitarTarjeta():
         ped.usuario = app.config['SOAT_USER']
         ped.numeroTarjeta = params.get('numeroTarjeta')
 
-        ws.service.HabilitacionDeTarjeta(**asdict(ped))
-
-        response = Util.format_removeXMLPrefixes(str(ws.last_received()))
+        response = ws.service.HabilitacionDeTarjeta(**asdict(ped))
 
         Db.guardar_consulta(
             consulta=str(request.url_rule)[1:],
-            tx=ws.last_sent(),
-            rx=ws.last_received(),
+            tx=str(ws.last_sent()),
+            rx=str(ws.last_received()),
             ip=request.remote_addr
         )
 
@@ -179,7 +177,7 @@ def soatHabilitarTarjeta():
                 variables=HTML.get_html_respuestaOperacionSoat(response)
             )
         else:
-            return Response(response, mimetype='text/xml')
+            return Response(Util.format_removeXMLPrefixes(str(ws.last_received())), mimetype='text/xml')
     except Exception, e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)

@@ -21,7 +21,7 @@ def init():
 
 
 @app.errorhandler(Exception)
-def handle_error(e):
+def handle_errore(e):
     return Response(XML.get_xml_error(e.message), mimetype='text/xml')
 
 
@@ -246,14 +246,12 @@ def consultarTarjetaSOAT():
         ped.usuario = app.config['SOAT_USER']
         ped.numeroTarjeta = params.get('numeroTarjeta')
 
-        ws.service.ConsultaEstadoTarjeta(**asdict(ped))
-
-        response = Util.format_removeXMLPrefixes(str(ws.last_received()))
+        response = ws.service.ConsultaEstadoTarjeta(**asdict(ped))
 
         Db.guardar_consulta(
             consulta=str(request.url_rule)[1:],
-            tx=ws.last_sent(),
-            rx=ws.last_received(),
+            tx=str(ws.last_sent()),
+            rx=str(ws.last_received()),
             ip=request.remote_addr
         )
 
@@ -264,7 +262,7 @@ def consultarTarjetaSOAT():
                 variables=HTML.get_html_respuestaOperacionSoat(response)
             )
         else:
-            return Response(response, mimetype='text/xml')
+            return Response(Util.format_removeXMLPrefixes(str(ws.last_received())), mimetype='text/xml')
     except Exception, e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
@@ -334,30 +332,28 @@ def consultarLegajoDigital():
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
 
-    header = ws.factory.create('SecuredWebServiceHeader')
-    header.Username = app.config['LEGAJO_DIGITAL_USER']
-    header.Password = app.config['LEGAJO_DIGITAL_PASSWORD']
-
-    cliente = ws.factory.create('GetCliente')
-    cliente.nroCliente = params.get('numeroCliente')
-
-    ws.set_options(soapheaders=header)
-    ws.service.GetCliente(cliente)
-
     if params.get('debug', 'FALSE').upper() == 'TRUE':
-        # DEBUG
-        response = Util.format_removeXMLPrefixes(open('{}/app/tests/legajoDigital_respuesta.xml'.format(app.config['BASE_DIR'])).read())
+        xml_test = open('{}/app/tests/legajoDigital_respuesta.xml'.format(app.config['BASE_DIR'])).read()
+        response = ws.service.GetCliente(__inject={'reply': xml_test})
     else:
-        response = Util.format_removeXMLPrefixes(str(ws.last_received()))
+        header = ws.factory.create('SecuredWebServiceHeader')
+        header.Username = app.config['LEGAJO_DIGITAL_USER']
+        header.Password = app.config['LEGAJO_DIGITAL_PASSWORD']
 
-    Db.guardar_consulta(
-        consulta=str(request.url_rule)[1:],
-        tx=str(ws.last_sent()),
-        rx=response,
-        ip=request.remote_addr
-    )
+        cliente = ws.factory.create('GetCliente')
+        cliente.nroCliente = params.get('numeroCliente')
+
+        ws.set_options(soapheaders=header)
+        response = ws.service.GetCliente(cliente)
+
+        Db.guardar_consulta(
+            consulta=str(request.url_rule)[1:],
+            tx=str(ws.last_sent()),
+            rx=str(ws.last_received()),
+            ip=request.remote_addr
+        )
 
     if params.get('formato') == 'html':
         return render_template('consultas/legajoDigital_respuesta.html', variables=HTML.get_html_respuestaLegajoDigital(response))
     else:
-        return Response(response, mimetype='text/xml')
+        return Response(Util.format_removeXMLPrefixes(str(ws.last_received())), mimetype='text/xml')
