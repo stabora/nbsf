@@ -202,42 +202,45 @@ class HTML:
     def get_html_respuestaLegajoDigital(response):
         documentos = []
 
-        for documento in response.Documentos.DocumentoClienteOut:
-            versiones = []
-            documentoEtiqueta = documento.FormInterno
+        try:
+            for documento in response.Documentos.DocumentoClienteOut:
+                versiones = []
+                documentoEtiqueta = documento.FormInterno
 
-            for version in documento.Versiones.VersionDocumentoClienteOut:
-                archivos = []
+                for version in documento.Versiones.VersionDocumentoClienteOut:
+                    archivos = []
 
-                if hasattr(version.Archivos, 'ArchivoOut'):
-                    for archivo in version.Archivos.ArchivoOut:
-                        archivoUrl = archivo.Permalink
-                        archivoTipo = urllib2.urlopen(archivoUrl).info().maintype
+                    if hasattr(version.Archivos, 'ArchivoOut'):
+                        for archivo in version.Archivos.ArchivoOut:
+                            archivoUrl = archivo.Permalink
+                            archivoTipo = urllib2.urlopen(archivoUrl).info().maintype
 
-                        archivos.append({
-                            'id': archivo.IdArchivo,
-                            'fecha': archivo.Fecha,
-                            'nombre': archivo.Nombre,
-                            'url': archivoUrl,
-                            'urlMiniatura': archivo.PermalinkMiniatura,
-                            'tipo': archivoTipo
+                            archivos.append({
+                                'id': archivo.IdArchivo,
+                                'fecha': archivo.Fecha,
+                                'nombre': archivo.Nombre,
+                                'url': archivoUrl,
+                                'urlMiniatura': archivo.PermalinkMiniatura,
+                                'tipo': archivoTipo
+                            })
+
+                    if archivos:
+                        versiones.append({
+                            'numero': re.sub('[^0-9]', '', version.Version),
+                            'fecha': version.FechaActu,
+                            'archivos': sorted(archivos, key=lambda archivo: strptime(archivo['fecha'], '%d/%m/%Y') if archivo['fecha'] else None, reverse=True)
                         })
 
-                if archivos:
-                    versiones.append({
-                        'numero': re.sub('[^0-9]', '', version.Version),
-                        'fecha': version.FechaActu,
-                        'archivos': sorted(archivos, key=lambda archivo: strptime(archivo['fecha'], '%d/%m/%Y') if archivo['fecha'] else None, reverse=True)
+                if versiones:
+                    documentos.append({
+                        'id': documento.Id,
+                        'descripcion': documento.Descripcion,
+                        'etiqueta': documentoEtiqueta,
+                        'versionable': documento.VersionaPorTramite,
+                        'versiones': sorted(versiones, key=lambda version: strptime(version['fecha'], '%d/%m/%Y') if version['fecha'] else None, reverse=True)
                     })
-
-            if versiones:
-                documentos.append({
-                    'id': documento.Id,
-                    'descripcion': documento.Descripcion,
-                    'etiqueta': documentoEtiqueta,
-                    'versionable': documento.VersionaPorTramite,
-                    'versiones': sorted(versiones, key=lambda version: strptime(version['fecha'], '%d/%m/%Y') if version['fecha'] else None, reverse=True)
-                })
+        except AttributeError:
+            pass
 
         variables = {
             'documentos': documentos
