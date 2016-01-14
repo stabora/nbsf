@@ -237,7 +237,7 @@ class HTML:
                         'descripcion': documento.Descripcion,
                         'etiqueta': documentoEtiqueta,
                         'versionable': documento.VersionaPorTramite,
-                        'versiones': sorted(versiones, key=lambda version: strptime(version['fecha'], '%d/%m/%Y') if version['fecha'] else None, reverse=True)
+                        'versiones': sorted(versiones, key=lambda version: '{}-{}'.format(strptime(version['fecha'], '%d/%m/%Y'), version['numero']) if version['fecha'] else None, reverse=True)
                     })
         except AttributeError:
             pass

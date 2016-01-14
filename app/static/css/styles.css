@@ -131,7 +131,8 @@ div.dbg {
 
 .modal-body img
 {
-	height: 650px;
+	max-width: 568px;
+	max-height: 650px;
 }
 
 
