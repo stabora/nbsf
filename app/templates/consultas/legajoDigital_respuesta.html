@@ -47,7 +47,9 @@
 
 						<div class="panel-body">
 							{% for archivo in version.archivos %}
-							{% if archivo.tipo == 'image' %}
+							{% if archivo.tipo == 'unknown' %}
+							<img src="{{ url_for('static', filename='images/notfound.png') }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %} - No encontrado" class="document-thumbnail">
+							{% elif archivo.tipo == 'image' %}
 							<a href="javascript:;" rel="{{ archivo.url }}" class="image-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
 							{% else %}
 							<a href="{{ archivo.url }}" target="_blank"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>

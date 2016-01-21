@@ -213,7 +213,11 @@ class HTML:
                     if hasattr(version.Archivos, 'ArchivoOut'):
                         for archivo in version.Archivos.ArchivoOut:
                             archivoUrl = archivo.Permalink
-                            archivoTipo = urllib2.urlopen(archivoUrl).info().maintype
+
+                            try:
+                                archivoTipo = urllib2.urlopen(archivoUrl).info().maintype
+                            except:
+                                archivoTipo = 'unknown'
 
                             archivos.append({
                                 'id': archivo.IdArchivo,

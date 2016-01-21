@@ -57,10 +57,12 @@ SOAT_IP = '192.168.0.1'
 SOAT_USER = 'NBSF-PY'
 
 # Legajo digital
-LEGAJO_DIGITAL_HOST = 'http://legajodigitalwstest.nbsf.com.ar'
+# Testing: http://legajodigitalwstest.nbsf.com.ar - Usuario: legajodigital - Clave: legajodigital
+# Producción: http://legajodigitalws.nbsf.com.ar - Usuario: legajodigital - Clave: aNIf9Ufa
+LEGAJO_DIGITAL_HOST = 'http://legajodigitalws.nbsf.com.ar'
 LEGAJO_DIGITAL_WSDL = '/LegajoDigital.asmx?wsdl'
 LEGAJO_DIGITAL_USER = 'legajodigital'
-LEGAJO_DIGITAL_PASSWORD = 'l3g4j0d1g1t4l'
+LEGAJO_DIGITAL_PASSWORD = 'aNIf9Ufa'
 
 
 ##################################################

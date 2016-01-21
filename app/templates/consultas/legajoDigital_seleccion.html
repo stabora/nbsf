@@ -28,12 +28,17 @@
 
 						{% for archivo in version.archivos %}
 						{% if ultimaFecha == None or archivo.fecha == ultimaFecha %}
-						{% if archivo.tipo == 'image' %}
-						<a href="javascript:;" rel="{{ archivo.id }}" class="image-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
+						{% if archivo.tipo == 'unknown' %}
+							<img src="{{ url_for('static', filename='images/notfound.png') }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %} - No encontrado" class="document-thumbnail">
 						{% else %}
-						<a href="{{ archivo.url }}" rel="{{ archivo.id }}" target="_blank" class="document-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
+							{% if archivo.tipo == 'image' %}
+							<a href="javascript:;" rel="{{ archivo.id }}" class="image-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
+							{% else %}
+							<a href="{{ archivo.url }}" rel="{{ archivo.id }}" target="_blank" class="document-preview"><img src="{{ archivo.urlMiniatura }}" alt="{{ archivo.nombre }}" title="{{ documento.descripcion }}{% if documento.etiqueta %} [{{ documento.etiqueta }}]{% endif %}" class="document-thumbnail"></a>
+							{% endif %}
+
+							<input class="hidden" type="checkbox" disabled="true" rel="{{ documento.id }}" name="chk-{{ archivo.id }}">
 						{% endif %}
-						<input class="hidden" type="checkbox" disabled="true" rel="{{ documento.id }}" name="chk-{{ archivo.id }}">
 						{% endif %}
 						{% endfor %}
 					</div>
