@@ -13,7 +13,7 @@ HTTP_REQUESTS_TIMEOUT = 40
 PROXY_HOST = '172.16.1.107'
 PROXY_PORT = 80
 PROXY_USER = 'taboras'
-PROXY_PASSWORD = 'aXMwMzAzNjYzMQ=='
+PROXY_PASSWORD = 'aXMwMzAzNjYwMg=='
 
 
 ##################################################
@@ -59,10 +59,10 @@ SOAT_USER = 'NBSF-PY'
 # Legajo digital
 # Testing: http://legajodigitalwstest.nbsf.com.ar - Usuario: legajodigital - Clave: legajodigital
 # Producción: http://legajodigitalws.nbsf.com.ar - Usuario: legajodigital - Clave: aNIf9Ufa
-LEGAJO_DIGITAL_HOST = 'http://legajodigitalws.nbsf.com.ar'
+LEGAJO_DIGITAL_HOST = 'http://legajodigitalwstest.nbsf.com.ar'
 LEGAJO_DIGITAL_WSDL = '/LegajoDigital.asmx?wsdl'
 LEGAJO_DIGITAL_USER = 'legajodigital'
-LEGAJO_DIGITAL_PASSWORD = 'aNIf9Ufa'
+LEGAJO_DIGITAL_PASSWORD = 'legajodigital'
 
 
 ##################################################

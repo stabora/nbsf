@@ -7,9 +7,10 @@ from suds.sudsobject import asdict
 from app import app
 from app.helpers.util import Util
 from app.helpers.db import Db
-from app.helpers.xml import XML
 from app.helpers.html import HTML
+from app.helpers.xml import XML
 from app.helpers.mensajeria import Mensajeria
+from app.helpers.sudslogger import SudsLogger
 
 params = None
 
@@ -204,15 +205,15 @@ def consultarVeraz():
 
         if response.status_code == 200:
             response = response.content
-
-            Db.guardar_consulta(
-                consulta=str(request.url_rule)[1:],
-                tx=par_xml,
-                rx=response,
-                ip=request.remote_addr
-            )
         else:
             return render_template('error.html', texto_error=msg)
+
+    Db.guardar_consulta(
+        consulta=str(request.url_rule)[1:],
+        tx=par_xml,
+        rx=response,
+        ip=request.remote_addr
+    )
 
     if formato == 'html':
         return render_template('consultas/veraz_respuesta.html', **HTML.get_html_respuestaVeraz(response))
@@ -237,7 +238,8 @@ def consultarTarjetaSOAT():
         Util.check_parameters(['numeroTarjeta'], params)
 
     try:
-        ws = Client('{}{}'.format(app.config['SOAT_HOST'], app.config['SOAT_WSDL']))
+        ws_log = SudsLogger()
+        ws = Client('{}{}'.format(app.config['SOAT_HOST'], app.config['SOAT_WSDL']), plugins=[ws_log])
 
         ped = ws.factory.create('ConsultaEstadoTarjeta')
         ped.idEntidad = app.config['SOAT_ENTIDAD']
@@ -250,8 +252,8 @@ def consultarTarjetaSOAT():
 
         Db.guardar_consulta(
             consulta=str(request.url_rule)[1:],
-            tx=str(ws.last_sent()),
-            rx=str(ws.last_received()),
+            tx=str(ws_log.last_sent()),
+            rx=str(ws_log.last_received()),
             ip=request.remote_addr
         )
 
@@ -262,7 +264,7 @@ def consultarTarjetaSOAT():
                 variables=HTML.get_html_respuestaOperacionSoat(response)
             )
         else:
-            return Response(Util.format_removeXMLPrefixes(str(ws.last_received())), mimetype='text/xml')
+            return Response(Util.format_removeXMLPrefixes(str(ws_log.last_received())), mimetype='text/xml')
     except Exception, e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
@@ -327,7 +329,8 @@ def consultarLegajoDigital():
 
     try:
         url = '{}{}'.format(app.config['LEGAJO_DIGITAL_HOST'], app.config['LEGAJO_DIGITAL_WSDL'])
-        ws = Client(url)
+        ws_log = SudsLogger()
+        ws = Client(url, plugins=[ws_log])
     except Exception, e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
@@ -348,12 +351,12 @@ def consultarLegajoDigital():
 
         Db.guardar_consulta(
             consulta=str(request.url_rule)[1:],
-            tx=str(ws.last_sent()),
-            rx=str(ws.last_received()),
+            tx=str(ws_log.last_sent()),
+            rx=str(ws_log.last_received()),
             ip=request.remote_addr
         )
 
     if params.get('formato') == 'html':
         return render_template('consultas/legajoDigital_respuesta.html', variables=HTML.get_html_respuestaLegajoDigital(response))
     else:
-        return Response(Util.format_removeXMLPrefixes(str(ws.last_received())), mimetype='text/xml')
+        return Response(Util.format_removeXMLPrefixes(str(ws_log.last_received())), mimetype='text/xml')

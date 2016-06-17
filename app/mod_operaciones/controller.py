@@ -10,6 +10,7 @@ from app.helpers.db import Db
 from app.helpers.html import HTML
 from app.helpers.xml import XML
 from app.helpers.mensajeria import Mensajeria
+from app.helpers.sudslogger import SudsLogger
 
 params = None
 
@@ -152,7 +153,8 @@ def soatHabilitarTarjeta():
         Util.check_parameters(['numeroTarjeta'], params)
 
     try:
-        ws = Client('{}{}'.format(app.config['SOAT_HOST'], app.config['SOAT_WSDL']))
+        ws_log = SudsLogger()
+        ws = Client('{}{}'.format(app.config['SOAT_HOST'], app.config['SOAT_WSDL']), plugins=[ws_log])
 
         ped = ws.factory.create('HabilitacionDeTarjeta')
         ped.idEntidad = app.config['SOAT_ENTIDAD']
@@ -165,8 +167,8 @@ def soatHabilitarTarjeta():
 
         Db.guardar_consulta(
             consulta=str(request.url_rule)[1:],
-            tx=str(ws.last_sent()),
-            rx=str(ws.last_received()),
+            tx=str(ws_log.last_sent()),
+            rx=str(ws_log.last_received()),
             ip=request.remote_addr
         )
 
@@ -177,7 +179,7 @@ def soatHabilitarTarjeta():
                 variables=HTML.get_html_respuestaOperacionSoat(response)
             )
         else:
-            return Response(Util.format_removeXMLPrefixes(str(ws.last_received())), mimetype='text/xml')
+            return Response(Util.format_removeXMLPrefixes(str(ws_log.last_received())), mimetype='text/xml')
     except Exception, e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
