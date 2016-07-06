@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 from flask import Response, render_template, request, redirect, url_for
@@ -343,11 +344,18 @@ def consultarLegajoDigital():
         header.Username = app.config['LEGAJO_DIGITAL_USER']
         header.Password = app.config['LEGAJO_DIGITAL_PASSWORD']
 
-        cliente = ws.factory.create('GetCliente')
-        cliente.nroCliente = params.get('numeroCliente')
-
         ws.set_options(soapheaders=header)
-        response = ws.service.GetCliente(cliente)
+
+        numeroCliente = params.get('numeroCliente')
+
+        if numeroCliente[0:2] == '10':
+            cliente = ws.factory.create('GetClienteByCuit')
+            cliente.cuitcuil = numeroCliente[2:]
+            response = ws.service.GetClienteByCuit(cliente)
+        else:
+            cliente = ws.factory.create('GetCliente')
+            cliente.nroCliente = numeroCliente
+            response = ws.service.GetCliente(cliente)
 
         Db.guardar_consulta(
             consulta=str(request.url_rule)[1:],
