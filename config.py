@@ -22,6 +22,7 @@ PROXY_PASSWORD = 'aXMwMzAzNjYwMg=='
 
 # App database
 SQLALCHEMY_DATABASE_URI = 'mysql://nbsf:nTCWG2ubpRxssD8N@localhost/nbsf'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Oracle WF6
 ORACLE_NBSF_WF6_HOST = '172.16.9.29'
