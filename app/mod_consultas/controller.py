@@ -206,6 +206,7 @@ def consultarVeraz():
 
         if response.status_code == 200:
             response = response.content
+            response = response.decode('iso-8859-1', 'ignore')
         else:
             return render_template('error.html', texto_error=msg)
 

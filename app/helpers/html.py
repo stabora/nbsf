@@ -18,7 +18,8 @@ class HTML:
 
     @staticmethod
     def get_html_respuestaVeraz(xml):
-        xml_obj = etree.fromstring(xml)
+        parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
+        xml_obj = etree.fromstring(xml.encode('utf-8'), parser=parser)
         codigo_error = xml_obj.findtext('.//codigoError')
         variables = {}
         texto_informe = ''
