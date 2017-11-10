@@ -13,7 +13,7 @@ HTTP_REQUESTS_TIMEOUT = 40
 PROXY_HOST = '172.16.1.107'
 PROXY_PORT = 80
 PROXY_USER = 'taboras'
-PROXY_PASSWORD = 'aXMwMzAzNjYxMA=='
+PROXY_PASSWORD = 'aXMwMzAzNjYxOQ=='
 
 
 ##################################################
@@ -75,6 +75,10 @@ PRIETO_HOST = 'https://api.prietoyprieto.com'
 PRIETO_RESOURCE = '/dev.php/api/v1/lotes.xml'
 PRIETO_APIKEY = 'CJWSBaUXUjVAz6cV'
 
+# Padrón AFIP
+AFIP_URL = 'https://soa.afip.gob.ar'
+AFIP_RESOURCE = '/sr-padron/v2/persona'
+
 # Veraz
 VERAZ_HOST = 'https://online.org.veraz.com.ar'
 VERAZ_RESOURCE = '/pls/consulta817/wserv'
@@ -89,7 +93,7 @@ VERAZ_FORMATOINFORME = 'T'
 VERAZ_PRODUCTO = 'RISC:Experto'
 
 # Veraz - Modo debug
-VERAZ_DEBUG = False
+VERAZ_DEBUG = True
 VERAZ_DEBUG_SCORE_POBLACION = 'th'
 VERAZ_DEBUG_SCORE = 810
 VERAZ_DEBUG_BUREAU_PRESTAMOS_CUOTA_RES = 0
@@ -103,6 +107,7 @@ VERAZ_DEBUG_CONSULTAS_ENTIDADES_GRP_3 = 0
 VERAZ_DEBUG_CONSULTAS_ENTIDADES_GRP_4 = 0  # NBSF
 VERAZ_DEBUG_CONSULTAS_ENTIDADES_GRP_5 = 0
 VERAZ_DEBUG_INC_PRED = 'R5'
+VERAZ_DEBUG_MAXIMO_LIMITE = 4000
 
 VERAZ_DEBUG_SCORE_CASOS = {
   4197160: 701,

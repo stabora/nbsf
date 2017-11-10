@@ -369,3 +369,38 @@ def consultarLegajoDigital():
         return render_template('consultas/legajoDigital_respuesta.html', variables=HTML.get_html_respuestaLegajoDigital(response))
     else:
         return Response(Util.format_removeXMLPrefixes(str(ws_log.last_received())), mimetype='text/xml')
+
+
+@app.route('/consultarPadronAFIPForm', methods=['GET', 'POST'])
+def consultarPadronAFIPForm():
+    return render_template('consultas/padronAFIP_form.html')
+
+
+@app.route('/consultarPadronAFIP', methods=['GET', 'POST'], defaults={'cuit': None})
+@app.route('/consultarPadronAFIP/<cuit>', methods=['GET', 'POST'])
+def consultarPadronAFIP(cuit):
+    if params:
+        Util.check_parameters(['cuit'], params)
+        cuit = params.get('cuit')
+
+    if not cuit:
+        return redirect(url_for('consultarPadronAFIPForm'))
+
+    response, msg = Util.get_http_request(
+        '{}{}/{}'.format(app.config['AFIP_URL'], app.config['AFIP_RESOURCE'], cuit),
+        {},
+        method='GET',
+        use_proxy=True
+    )
+
+    Db.guardar_consulta(
+        consulta=str(request.url_rule)[1:],
+        tx=response.url,
+        rx=response.content,
+        ip=request.remote_addr
+    )
+
+    if response.status_code == 200:
+        return Response(response, mimetype='text/json')
+    else:
+        return render_template('error.html', texto_error='Error: {} - {}'.format(response.status_code, msg))

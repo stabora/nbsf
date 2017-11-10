@@ -369,6 +369,29 @@ $(document).ready(function()
 	});
 
 
+	// Formulario consulta padrón SOA
+
+	$('form[name=consulta-padron-soa]')
+	.bootstrapValidator(
+	{
+		feedbackIcons:
+		{
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+
+		fields:
+		{
+			cuit: { validators: { regexp: { regexp: /[0-9]{11}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+		}
+	})
+	.on('success.form.bv', function(e, data)
+	{
+		$('button[type="submit"]').toggleClass('active');
+	});
+
+
 	// Legajo digital - Selección de documentos
 
 	if($('div#legajoDigitalSeleccion').length)
