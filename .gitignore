@@ -1,3 +1,5 @@
-app/log*
 *.py[cod]
+app/log*
+app/certs*
+app/tmp*
 config.py

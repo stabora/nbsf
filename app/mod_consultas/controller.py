@@ -12,6 +12,7 @@ from app.helpers.html import HTML
 from app.helpers.xml import XML
 from app.helpers.mensajeria import Mensajeria
 from app.helpers.sudslogger import SudsLogger
+from app.helpers.afip import AFIP
 
 params = None
 
@@ -376,31 +377,21 @@ def consultarPadronAFIPForm():
     return render_template('consultas/padronAFIP_form.html')
 
 
-@app.route('/consultarPadronAFIP', methods=['GET', 'POST'], defaults={'cuit': None})
-@app.route('/consultarPadronAFIP/<cuit>', methods=['GET', 'POST'])
-def consultarPadronAFIP(cuit):
-    if params:
-        Util.check_parameters(['cuit'], params)
-        cuit = params.get('cuit')
-
-    if not cuit:
+@app.route('/consultarPadronAFIP', methods=['GET', 'POST'])
+def consultarPadronAFIP():
+    if not params:
         return redirect(url_for('consultarPadronAFIPForm'))
+    else:
+        Util.check_parameters(['cuit'], params)
 
-    response, msg = Util.get_http_request(
-        '{}{}/{}'.format(app.config['AFIP_URL'], app.config['AFIP_RESOURCE'], cuit),
-        {},
-        method='GET',
-        use_proxy=True
-    )
+    cuit = params.get('cuit')
+    res = AFIP.get_persona(cuit)
 
     Db.guardar_consulta(
         consulta=str(request.url_rule)[1:],
-        tx=response.url,
-        rx=response.content,
+        tx='CUIT: {}'.format(cuit),
+        rx=res,
         ip=request.remote_addr
     )
 
-    if response.status_code == 200:
-        return Response(response, mimetype='text/json')
-    else:
-        return render_template('error.html', texto_error='Error: {} - {}'.format(response.status_code, msg))
+    return Response(res, mimetype='text/xml')

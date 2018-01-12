@@ -371,7 +371,7 @@ $(document).ready(function()
 
 	// Formulario consulta padrón SOA
 
-	$('form[name=consulta-padron-soa]')
+	$('form[name=consulta-padron-afip]')
 	.bootstrapValidator(
 	{
 		feedbackIcons:

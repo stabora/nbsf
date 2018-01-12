@@ -3,9 +3,9 @@
 {% block title %}Consultar padr&oacute;n AFIP{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form" name="consulta-padron-soa" action="{{ url_for('consultarPadronAFIP') }}" method="POST">
+<form class="form-horizontal" role="form" name="consulta-padron-afip" action="{{ url_for('consultarPadronAFIP') }}" method="POST">
 	<div class="form-group">
-		<label class="control-label col-sm-2" for="numeroDocumento">CUIT:</label>
+		<label class="control-label col-sm-2" for="cuit">CUIT:</label>
   	<div class="col-sm-10">
 			<input class="form-control" type="text" name="cuit" \>
 		</div>
