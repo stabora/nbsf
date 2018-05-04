@@ -252,3 +252,121 @@ class HTML:
         }
 
         return variables
+
+    @staticmethod
+    def get_html_respuestaPadronAFIP(response):
+        if response:
+            xml = etree.fromstring(response)
+            generales = {}
+            contactos = {}
+            actividades = {}
+            impuestos = {}
+            categorias = {}
+            titular = ''
+
+            if not xml.findtext('.//faultstring'):
+                if xml.findtext('.//persona/tipoPersona') == 'FISICA':
+                    denominacion = '{}, {}'.format(xml.findtext('.//persona/apellido'), xml.findtext('.//persona/nombre'))
+                else:
+                    denominacion = xml.findtext('.//persona/razonSocial')
+
+                titular = '{} ({})'.format(
+                    denominacion,
+                    xml.findtext('.//persona/idPersona')
+                )
+
+                for valor in xml.find('.//persona'):
+                    if len(valor) == 0:
+                        generales[valor.tag] = valor.text
+
+                c = 0
+
+                for padre in xml.findall('.//domicilio'):
+                    titulo = ''
+                    valores = {}
+
+                    for nodo in padre.getchildren():
+                        if nodo.tag == 'direccion':
+                            c += 1
+                            titulo = u'Domicilio #{} - {}'.format(c, nodo.text)
+                        else:
+                            valores[nodo.tag] = nodo.text
+
+                    contactos[titulo] = valores
+
+                c = 0
+
+                for padre in xml.findall('.//telefono'):
+                    titulo = ''
+                    valores = {}
+
+                    for nodo in padre.getchildren():
+                        if nodo.tag == 'numero':
+                            c += 1
+                            titulo = u'Teléfono #{} - {}'.format(c, nodo.text)
+                        else:
+                            valores[nodo.tag] = nodo.text
+
+                    contactos[titulo] = valores
+
+                c = 0
+
+                for padre in xml.findall('.//email'):
+                    titulo = ''
+                    valores = {}
+
+                    for nodo in padre.getchildren():
+                        if nodo.tag == 'direccion':
+                            c += 1
+                            titulo = u'e-mail #{count} - <a href="mailto:{email}">{email}</a>'.format(count=c, email=nodo.text)
+                        else:
+                            valores[nodo.tag] = nodo.text
+
+                    contactos[titulo] = valores
+
+                for padre in xml.findall('.//actividad'):
+                    titulo = ''
+                    valores = {}
+
+                    for nodo in padre.getchildren():
+                        if 'descripcion' in nodo.tag:
+                            titulo = nodo.text
+                        else:
+                            valores[nodo.tag] = nodo.text
+
+                    actividades[titulo] = valores
+
+                for padre in xml.findall('.//impuesto'):
+                    titulo = ''
+                    valores = {}
+
+                    for nodo in padre.getchildren():
+                        if 'descripcion' in nodo.tag:
+                            titulo = nodo.text
+                        else:
+                            valores[nodo.tag] = nodo.text
+
+                    impuestos[titulo] = valores
+
+                for padre in xml.findall('.//categoria'):
+                    titulo = ''
+                    valores = {}
+
+                    for nodo in padre.getchildren():
+                        if 'descripcion' in nodo.tag:
+                            titulo = nodo.text
+                        else:
+                            valores[nodo.tag] = nodo.text
+
+                    categorias[titulo] = valores
+
+        variables = {
+            'titular': titular,
+            'generales': generales,
+            'contactos': contactos,
+            'actividades': actividades,
+            'impuestos': impuestos,
+            'categorias': categorias,
+        }
+
+        return variables

@@ -385,13 +385,16 @@ def consultarPadronAFIP():
         Util.check_parameters(['cuit'], params)
 
     cuit = params.get('cuit')
-    res = AFIP.get_persona(cuit)
+    response = AFIP.get_persona(cuit)
 
     Db.guardar_consulta(
         consulta=str(request.url_rule)[1:],
         tx='CUIT: {}'.format(cuit),
-        rx=res,
+        rx=response,
         ip=request.remote_addr
     )
 
-    return Response(res, mimetype='text/xml')
+    if params.get('formato') == 'html':
+        return render_template('consultas/padronAFIP_respuesta.html', variables=HTML.get_html_respuestaPadronAFIP(response))
+    else:
+        return Response(response, mimetype='text/xml')

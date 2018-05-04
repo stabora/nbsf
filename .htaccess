@@ -1,4 +1,4 @@
 #AuthType basic
 #AuthName "Acceso restringido"
-#AuthUserFile /home/taboras/Webs/nbsf/.htpasswd
+#AuthUserFile /home/taboras/PythonProjects/nbsf/.htpasswd
 #Require valid-user
