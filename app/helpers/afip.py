@@ -23,17 +23,18 @@ xmlped_login = (
     '<generationTime>{}</generationTime>'
     '<expirationTime>{}</expirationTime>'
     '</header>'
-    '<service>ws_sr_padron_a4</service>'
+    '<service>{}</service>'
     '</loginTicketRequest>'
 ).format(
     datetime.now().strftime('%Y%m%d'),
     datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-    (datetime.now() + timedelta(hours=10)).strftime('%Y-%m-%dT%H:%M:%S')
+    (datetime.now() + timedelta(hours=10)).strftime('%Y-%m-%dT%H:%M:%S'),
+    '{}'
 )
 
 xmlped_padron = (
     '<?xml version="1.0" encoding="UTF-8"?>'
-    '<SOAP-ENV:Envelope xmlns:ns0="http://a4.soap.ws.server.puc.sr/" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">'
+    '<SOAP-ENV:Envelope xmlns:ns0="http://{}.soap.ws.server.puc.sr/" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">'
     '<SOAP-ENV:Header/>'
     '<ns1:Body>'
     '<ns0:getPersona>'
@@ -46,6 +47,20 @@ xmlped_padron = (
     '</SOAP-ENV:Envelope>'
 )
 
+xmlped_deuda = (
+    '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sud="http://afip.gob.ar/ws/sud">'
+    '<soapenv:Header/>'
+    '<soapenv:Body>'
+    '<sud:tieneDeudaRequest>'
+    '<sud:cuit>{}</sud:cuit>'
+    '<sud:cuitRepresentado>{}</sud:cuitRepresentado>'
+    '<sud:token>{}</sud:token>'
+    '<sud:sign>{}</sud:sign>'
+    '</sud:tieneDeudaRequest>'
+    '</soapenv:Body>'
+    '</soapenv:Envelope>'
+)
+
 
 ##############################
 # Main class
@@ -54,7 +69,8 @@ xmlped_padron = (
 class AFIP:
 
     @staticmethod
-    def sign_tra(content=xmlped_login, key=app.config['AFIP_FILE_KEY'], cert=app.config['AFIP_FILE_CERT']):
+    def sign_tra(padron, content=xmlped_login, key=app.config['AFIP_FILE_KEY'], cert=app.config['AFIP_FILE_CERT']):
+        content = content.format(padron)
         buf = BIO.MemoryBuffer(content)
         key = BIO.MemoryBuffer(open(key).read())
         cert = BIO.MemoryBuffer(open(cert).read())
@@ -77,12 +93,13 @@ class AFIP:
         return cms
 
     @staticmethod
-    def verify_login():
+    def verify_login(padron):
         token = None
         sign = None
+        filename = app.config['AFIP_FILE_TRA'].format(padron)
 
-        if os.path.exists(app.config['AFIP_FILE_TRA']):
-            xmlres = etree.fromstring(open(app.config['AFIP_FILE_TRA']).read().encode('utf-8'), parser=etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8'))
+        if os.path.exists(filename):
+            xmlres = etree.fromstring(open(filename).read().encode('utf-8'), parser=etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8'))
             expiration = datetime.strptime(xmlres.find('header/expirationTime').text, '%Y-%m-%dT%H:%M:%S.%f-03:00')
         else:
             expiration = datetime.now()
@@ -94,15 +111,16 @@ class AFIP:
         return token, sign
 
     @staticmethod
-    def get_login():
-        token, sign = AFIP.verify_login()
+    def get_login(padron):
+        token, sign = AFIP.verify_login(padron)
+        filename = app.config['AFIP_FILE_TRA'].format(padron)
 
         if not token or not sign:
-            cms = AFIP.sign_tra()
+            cms = AFIP.sign_tra(padron)
             ws = Client(app.config['AFIP_URL_LOGIN'], proxy=Util.get_proxies())
             res = ws.service.loginCms(cms)
 
-            tra = open(app.config['AFIP_FILE_TRA'], 'w')
+            tra = open(filename, 'w')
             tra.write(res)
 
             xmlres = etree.fromstring(res.encode('utf-8'), parser=etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8'))
@@ -112,13 +130,14 @@ class AFIP:
         return token, sign
 
     @staticmethod
-    def get_persona(cuit_consultada, cuit_representada=app.config['AFIP_CUIT_REPRESENTADA']):
-        token, sign = AFIP.get_login()
+    def get_persona(cuit_consultada, cuit_representada=app.config['AFIP_CUIT_REPRESENTADA'], padron=app.config['AFIP_PADRON']):
+        token, sign = AFIP.get_login('ws_sr_padron_' + padron.lower())
 
         if token and sign:
             res = requests.post(
-                app.config['AFIP_URL_PADRON'],
+                app.config['AFIP_URL_PADRON'].format(padron.upper()),
                 data=xmlped_padron.format(
+                    padron.lower(),
                     token,
                     sign,
                     cuit_representada,
@@ -128,5 +147,26 @@ class AFIP:
             )
 
             return res.content.decode('iso-8859-1')
+        else:
+            return '<error>Error de autenticación con el servicio WSAA de AFIP.</error>'
+
+    @staticmethod
+    def tiene_deuda(cuit_consultada, cuit_representada=app.config['AFIP_CUIT_REPRESENTADA']):
+        token, sign = AFIP.get_login('sud_restricciones')
+
+        if token and sign:
+            res = requests.post(
+                app.config['AFIP_URL_DEUDA'],
+                data=xmlped_deuda.format(
+                    cuit_consultada,
+                    cuit_representada,
+                    token,
+                    sign
+                ),
+                proxies=Util.get_proxies(),
+                verify=False
+            )
+
+            return res.content
         else:
             return '<error>Error de autenticación con el servicio WSAA de AFIP.</error>'

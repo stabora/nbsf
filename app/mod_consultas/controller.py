@@ -398,3 +398,32 @@ def consultarPadronAFIP():
         return render_template('consultas/padronAFIP_respuesta.html', variables=HTML.get_html_respuestaPadronAFIP(response))
     else:
         return Response(response, mimetype='text/xml')
+
+
+@app.route('/consultarDeudaAFIPForm', methods=['GET', 'POST'])
+def consultarDeudaAFIPForm():
+    return render_template('consultas/deudaAFIP_form.html')
+
+
+@app.route('/consultarDeudaAFIP', methods=['GET', 'POST'])
+def consultarDeudaAFIP():
+    if not params:
+        return redirect(url_for('consultarDeudaAFIPForm'))
+    else:
+        Util.check_parameters(['cuit'], params)
+
+    cuit = params.get('cuit')
+    response = AFIP.tiene_deuda(cuit)
+
+    Db.guardar_consulta(
+        consulta=str(request.url_rule)[1:],
+        tx='CUIT: {}'.format(cuit),
+        rx=response,
+        ip=request.remote_addr
+    )
+
+    if params.get('formato') == 'html':
+        return 'No implementado'
+        # render_template('consultas/deudaAFIP_respuesta.html', variables=HTML.get_html_respuestaDeudaAFIP(response))
+    else:
+        return Response(response, mimetype='application/json')

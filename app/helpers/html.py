@@ -262,27 +262,28 @@ class HTML:
             actividades = {}
             impuestos = {}
             categorias = {}
+            regimenes = {}
             titular = ''
 
             if not xml.findtext('.//faultstring'):
-                if xml.findtext('.//persona/tipoPersona') == 'FISICA':
-                    denominacion = '{}, {}'.format(xml.findtext('.//persona/apellido'), xml.findtext('.//persona/nombre'))
+                if xml.findtext('.//datosGenerales/tipoPersona') == 'FISICA':
+                    denominacion = '{}, {}'.format(xml.findtext('.//datosGenerales/apellido'), xml.findtext('.//datosGenerales/nombre'))
                 else:
-                    denominacion = xml.findtext('.//persona/razonSocial')
+                    denominacion = xml.findtext('.//datosGenerales/razonSocial')
 
                 titular = '{} ({})'.format(
                     denominacion,
-                    xml.findtext('.//persona/idPersona')
+                    '{}{}-{}{}{}{}{}{}{}{}-{}'.format(*xml.findtext('.//datosGenerales/idPersona'))
                 )
 
-                for valor in xml.find('.//persona'):
+                for valor in xml.find('.//datosGenerales'):
                     if len(valor) == 0:
                         generales[valor.tag] = valor.text
 
                 c = 0
 
-                for padre in xml.findall('.//domicilio'):
-                    titulo = ''
+                for padre in xml.findall('.//domicilioFiscal'):
+                    titulo = 'N/D'
                     valores = {}
 
                     for nodo in padre.getchildren():
@@ -296,36 +297,8 @@ class HTML:
 
                 c = 0
 
-                for padre in xml.findall('.//telefono'):
-                    titulo = ''
-                    valores = {}
-
-                    for nodo in padre.getchildren():
-                        if nodo.tag == 'numero':
-                            c += 1
-                            titulo = u'Teléfono #{} - {}'.format(c, nodo.text)
-                        else:
-                            valores[nodo.tag] = nodo.text
-
-                    contactos[titulo] = valores
-
-                c = 0
-
-                for padre in xml.findall('.//email'):
-                    titulo = ''
-                    valores = {}
-
-                    for nodo in padre.getchildren():
-                        if nodo.tag == 'direccion':
-                            c += 1
-                            titulo = u'e-mail #{count} - <a href="mailto:{email}">{email}</a>'.format(count=c, email=nodo.text)
-                        else:
-                            valores[nodo.tag] = nodo.text
-
-                    contactos[titulo] = valores
-
                 for padre in xml.findall('.//actividad'):
-                    titulo = ''
+                    titulo = 'N/D'
                     valores = {}
 
                     for nodo in padre.getchildren():
@@ -336,8 +309,20 @@ class HTML:
 
                     actividades[titulo] = valores
 
+                for padre in xml.findall('.//actividadMonotributista'):
+                    titulo = 'N/D'
+                    valores = {}
+
+                    for nodo in padre.getchildren():
+                        if 'descripcionActividad' in nodo.tag:
+                            titulo = nodo.text
+                        else:
+                            valores[nodo.tag] = nodo.text
+
+                    actividades[titulo] = valores
+
                 for padre in xml.findall('.//impuesto'):
-                    titulo = ''
+                    titulo = 'N/D'
                     valores = {}
 
                     for nodo in padre.getchildren():
@@ -348,12 +333,24 @@ class HTML:
 
                     impuestos[titulo] = valores
 
-                for padre in xml.findall('.//categoria'):
-                    titulo = ''
+                for padre in xml.findall('.//regimen'):
+                    titulo = 'N/D'
                     valores = {}
 
                     for nodo in padre.getchildren():
                         if 'descripcion' in nodo.tag:
+                            titulo = nodo.text
+                        else:
+                            valores[nodo.tag] = nodo.text
+
+                    regimenes[titulo] = valores
+
+                for padre in xml.findall('.//categoriaMonotributo'):
+                    titulo = 'N/D'
+                    valores = {}
+
+                    for nodo in padre.getchildren():
+                        if 'descripcionCategoria' in nodo.tag:
                             titulo = nodo.text
                         else:
                             valores[nodo.tag] = nodo.text
@@ -366,6 +363,7 @@ class HTML:
             'contactos': contactos,
             'actividades': actividades,
             'impuestos': impuestos,
+            'regimenes': regimenes,
             'categorias': categorias,
         }
 

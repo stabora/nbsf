@@ -11,6 +11,7 @@ from app.helpers.html import HTML
 from app.helpers.xml import XML
 from app.helpers.mensajeria import Mensajeria
 from app.helpers.sudslogger import SudsLogger
+import json
 
 params = None
 
@@ -183,3 +184,42 @@ def soatHabilitarTarjeta():
     except Exception, e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
+
+
+@app.route('/serviciosbsf/prestamos/calificar', methods=['GET', 'POST'])
+def calificarPrestamo():
+    if not params:
+        return redirect(url_for('/'))
+    else:
+        ped = json.loads(params.get('pedido'))
+
+        res = {
+            "estado": 1,
+            "detalle": "OK",
+            "respuesta": {
+                "nit": ped['pedido']['nit'],
+                "nombre": '{}, {}'.format(ped['pedido']['apellido'], ped['pedido']['nombres']),
+                "fechaNacimiento": 19461114,
+                "evaluacion": "S",
+                "observaciones": "",
+                "haber1": 49583.15,
+                "haber2": 48421.79,
+                "haber3": 50264.33,
+                "periodoUltimoHaber": 201807,
+                "promedioIngresos": 49002.47,
+                "variacionIngresos": 2.4,
+                "numeroTarjeta": 4062900169576020,
+                "maximoPrestable": 398130.0,
+                "montoCuota": 19600.98,
+                "plazo": 72
+            }
+        }
+
+        Db.guardar_consulta(
+            consulta=str(request.url_rule)[1:],
+            tx=json.dumps(ped),
+            rx=json.dumps(res),
+            ip=request.remote_addr
+        )
+
+        return Response(json.dumps(res), mimetype='application/json')

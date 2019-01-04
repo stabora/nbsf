@@ -9,13 +9,14 @@
 	<li><a href="#contacto" data-toggle="tab">Datos de contacto</a></li>
 	<li><a href="#actividades" data-toggle="tab">Actividades</a></li>
 	<li><a href="#impuestos" data-toggle="tab">Impuestos</a></li>
+	<li><a href="#regimenes" data-toggle="tab">Reg&iacute;menes</a></li>
 	<li><a href="#categorias" data-toggle="tab">Categor&iacute;as</a></li>
 	<li><a href="?">Volver</a></li>
 </ul>
 
 <div class="tab-content">
 	<div class="tab-pane active" id="generales">
-    <h3>Datos generales</h3>
+	    <h3>Datos generales</h3>
 
 		<div class="panel panel-default">
 			<table class="table table-striped table-condensed table-hover">
@@ -30,7 +31,7 @@
 	</div>
 
 	<div class="tab-pane" id="contacto">
-    <h3>Datos de contacto</h3>
+	    <h3>Datos de contacto</h3>
 
 		{% if variables.contactos %}
 		{% for descripcion, datos in variables.contactos|dictsort %}
@@ -59,7 +60,7 @@
 	</div>
 
 	<div class="tab-pane" id="actividades">
-    <h3>Actividades</h3>
+	    <h3>Actividades</h3>
 
 		{% if variables.actividades %}
 		{% for descripcion, datos in variables.actividades|dictsort %}
@@ -88,7 +89,7 @@
 	</div>
 
 	<div class="tab-pane" id="impuestos">
-    <h3>Impuestos</h3>
+	    <h3>Impuestos</h3>
 
 		{% if variables.impuestos %}
 		{% for descripcion, datos in variables.impuestos|dictsort %}
@@ -116,8 +117,37 @@
 		{% endif %}
 	</div>
 
+	<div class="tab-pane" id="regimenes">
+	    <h3>Reg&iacute;menes</h3>
+
+		{% if variables.regimenes %}
+		{% for descripcion, datos in variables.regimenes|dictsort %}
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">{{descripcion}}</h3>
+		  </div>
+
+			<table class="table table-striped table-condensed table-hover">
+				{% for nombre, valor in datos|dictsort %}
+				<tr>
+					<td class="active"><strong>{{ nombre }}</strong></td>
+					<td>{{ valor }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+		{% endfor %}
+		{% else %}
+		<div class="alert alert-danger" role="alert">
+			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			<span class="sr-only">Error:</span>
+			No se encontraron datos
+		</div>
+		{% endif %}
+	</div>
+
 	<div class="tab-pane" id="categorias">
-    <h3>Categor&iacute;as</h3>
+	    <h3>Categor&iacute;as</h3>
 
 		{% if variables.categorias %}
 		{% for descripcion, datos in variables.categorias|dictsort %}
