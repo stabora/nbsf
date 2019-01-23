@@ -132,6 +132,7 @@ class AFIP:
     @staticmethod
     def get_persona(cuit_consultada, cuit_representada=app.config['AFIP_CUIT_REPRESENTADA'], padron=app.config['AFIP_PADRON']):
         token, sign = AFIP.get_login('ws_sr_padron_' + padron.lower())
+        print token
 
         if token and sign:
             res = requests.post(

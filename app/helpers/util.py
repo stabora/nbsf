@@ -76,7 +76,7 @@ class Util:
                 url,
                 data=payload if method == 'POST' else None,
                 params=payload if method == 'GET' else None,
-                headers=headers,
+                headers=headers
             )
 
             prepped = request.prepare()
