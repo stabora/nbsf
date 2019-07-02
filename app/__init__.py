@@ -8,3 +8,4 @@ db = SQLAlchemy(app)
 from app import controller
 from mod_consultas import controller
 from mod_operaciones import controller
+from mod_reportes import controller

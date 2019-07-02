@@ -8,8 +8,10 @@
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrapValidator.min.css') }}"/>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.min.css') }}"/>
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+		{% block styles %}{% endblock %}
 		<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}"/>
 
 		<!--[if lt IE 9]>
@@ -31,11 +33,17 @@
 				</button>
 
 				<div class="navbar-header">
+					{% if '/reportes' not in url_for(request.endpoint) %}
 					<a class="navbar-brand" href="{{ url_for('/') }}"><img src="{{ url_for('static', filename='images/isologo.png') }}" alt="NBSF" title="Inicio"></a>
+					{% else %}
+					<a class="navbar-brand"><img src="{{ url_for('static', filename='images/isologo.png') }}" alt="NBSF" title="Inicio"></a>
+					{% endif %}
 				</div>
 
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					{% if '/reportes' not in url_for(request.endpoint) %}
 					{% include "includes/navigation.inc.html" %}
+					{% endif %}
 				</div>
 			</div>
 		</nav>
@@ -68,10 +76,12 @@
 			</div>
 		</footer>
 
-		<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-		<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-		<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrapValidator.min.js') }}"></script>
-		<script type="text/javascript" src="{{ url_for('static', filename='js/functions.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/jauqey-ui.datepicker.es.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/bootstrapValidator.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/functions.js') }}"></script>
 		{% block scripts %}{% endblock %}
 	</body>
 </html>

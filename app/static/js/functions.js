@@ -392,6 +392,37 @@ $(document).ready(function()
 	});
 
 
+	// Formulario reporte WF Solicitudes masivas - Cuentas QR procesadas
+
+	$('form[name=reporte-wf-cuentasqr]')
+	.bootstrapValidator(
+	{
+		fields:
+		{
+			fechaDesde: { validators: { date: { format: 'DD/MM/YYYY', message: 'Valor incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } },
+			fechaHasta: {
+				validators: { 
+					date: { format: 'DD/MM/YYYY', message: 'Valor incorrecto' }, 
+					notEmpty: { message: 'Ingrese un valor' }, 
+					callback: {
+						message: 'Rango de fechas incorrecto: el intervalo no puede ser mayor a 30 días',
+						callback: function() {
+							var diasMaximos = 30;
+							var dias = diasEntreFechas($('#datepicker-from').val(), $('#datepicker-to').val());
+							return dias > 0 && dias <= diasMaximos;
+						}
+					}
+				}
+			}
+		}
+	})
+	.on('error.form.bv', function(e, data)
+	{
+		$('button[type="submit"]').attr('disabled', false);
+		setTimeout(function() { $('#ui-datepicker-div').hide(); }, 50);
+	});
+
+
 	// Legajo digital - Selección de documentos
 
 	if($('div#legajoDigitalSeleccion').length)
@@ -446,9 +477,14 @@ $(document).ready(function()
 	});
 
 
-	// Foco en el primer campo del formulario activo
+	// Inicialización de elementos datepicker
 
-	$("form input:text, form textarea").first().focus();
+	$('.datepicker').datepicker({
+		changeMonth: true,
+		changeYear: true,
+		showButtonPanel: true,
+		onClose: function() { $("form").data('bootstrapValidator').resetForm(); },
+	});
 
 
 	// Image preview
@@ -460,6 +496,12 @@ $(document).ready(function()
 		$('#image-preview-link').attr('href', $(this).find('img').attr('src').replace('FileMiniature', 'File'));
 		$('#image-preview-modal').modal('show');
 	});
+
+
+	// Foco en el primer campo del formulario activo
+
+	$("form:not(.no-focus) input:text, form textarea").first().focus();
+
 });
 
 
@@ -556,4 +598,14 @@ function mostrarAvisoModal(texto, estilo, titulo)
 	$('#avisoModal').remove();
 	generarAvisoModal(texto, estilo, titulo);
 	$('#avisoModal').modal({ show: true });
+}
+
+function diasEntreFechas(fechaDesde, fechaHasta) {
+	var fechaDesde = fechaDesde.split('/');
+	var fechaDesde = new Date(fechaDesde[2], fechaDesde[1], fechaDesde[0]);
+	var fechaHasta = fechaHasta.split('/');
+	var fechaHasta = new Date(fechaHasta[2], fechaHasta[1], fechaHasta[0]);
+	var dias = Math.round((fechaHasta-fechaDesde)/(1000*60*60*24))
+
+	return dias;
 }

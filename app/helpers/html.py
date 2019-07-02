@@ -187,7 +187,7 @@ class HTML:
             db.close()
 
             return variables, None
-        except Exception, e:
+        except Exception , e:
             return variables, 'Error al realizar la consulta - Motivo: {}'.format(e.message)
 
     @staticmethod
@@ -254,7 +254,7 @@ class HTML:
         return variables
 
     @staticmethod
-    def get_html_respuestaPadronAFIP(response):
+    def get_html_respuestaPadronAFIP_A13(response):
         if response:
             xml = etree.fromstring(response)
             generales = {}
@@ -266,6 +266,62 @@ class HTML:
             titular = ''
 
             if not xml.findtext('.//faultstring'):
+                if xml.findtext('.//persona/tipoPersona') == 'FISICA':
+                    denominacion = '{}, {}'.format(xml.findtext('.//persona/apellido'), xml.findtext('.//persona/nombre'))
+                else:
+                    denominacion = xml.findtext('.//persona/razonSocial')
+
+                titular = '{} ({})'.format(
+                    denominacion,
+                    '{}{}-{}{}{}{}{}{}{}{}-{}'.format(*xml.findtext('.//persona/idPersona'))
+                )
+
+                for valor in xml.find('.//persona'):
+                    if len(valor) == 0:
+                        generales[valor.tag] = valor.text
+
+                c = 0
+
+                for padre in xml.findall('.//persona/domicilio'):
+                    titulo = 'N/D'
+                    valores = {}
+
+                    for nodo in padre.getchildren():
+                        if nodo.tag == 'direccion':
+                            c += 1
+                            titulo = u'Domicilio #{} - {}'.format(c, nodo.text)
+                        else:
+                            valores[nodo.tag] = nodo.text
+
+                    contactos[titulo] = valores
+
+                c = 0
+
+        variables = {
+            'titular': titular,
+            'generales': generales,
+            'contactos': contactos,
+            'actividades': actividades,
+            'impuestos': impuestos,
+            'regimenes': regimenes,
+            'categorias': categorias,
+        }
+
+        return variables
+
+    @staticmethod
+    def get_html_respuestaPadronAFIP(response):
+        if response:
+            xml = etree.fromstring(response)
+            generales = {}
+            contactos = {}
+            actividades = {}
+            impuestos = {}
+            categorias = {}
+            regimenes = {}
+            titular = ''
+
+            if not xml.findtext('.//faultstring') and not xml.findtext('.//error'):
                 if xml.findtext('.//datosGenerales/tipoPersona') == 'FISICA':
                     denominacion = '{}, {}'.format(xml.findtext('.//datosGenerales/apellido'), xml.findtext('.//datosGenerales/nombre'))
                 else:

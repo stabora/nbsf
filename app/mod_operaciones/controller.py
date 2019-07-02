@@ -181,7 +181,7 @@ def soatHabilitarTarjeta():
             )
         else:
             return Response(Util.format_removeXMLPrefixes(str(ws_log.last_received())), mimetype='text/xml')
-    except Exception, e:
+    except Exception , e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
 

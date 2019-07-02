@@ -87,7 +87,7 @@ class Util:
             )
 
             session.close()
-        except Exception, e:
+        except Exception , e:
             response = Response()
             response.raise_for_status()
             return response, 'Error al realizar la consulta - Motivo: {}'.format(e.message)

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.dataTables.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/buttons.dataTables.min.css') }}">
+{% endblock %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+{% if resultados %}
+<div class="tab-content">
+	<table id="reportTable" class="compact stripe hover order-column nowrap">
+		<thead>
+			<tr>
+				{% for columna in encabezados %}
+				<th>{{ columna[0]|safe }}</th>
+				{% endfor %}
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for fila in resultados %}
+			<tr>
+				{% for valor in fila %}
+				<td>
+				{% if valor %}
+				{{ valor.decode('utf-8') if valor is string else valor }}
+				{% endif %}
+				</td>
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+{% else %}
+
+<div class="alert alert-danger" role="alert">
+	<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+	<span class="sr-only">Error:</span>
+	No se encontraron resultados
+</div>
+
+<a href="?" class="btn btn-primary">Volver</a>
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/buttons.flash.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jszip.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pdfmake.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vfs_fonts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/buttons.html5.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/buttons.print.min.js') }}"></script>
+
+<script>
+	$(document).ready(function () {
+		$('#reportTable').DataTable({
+			dom: 'lfrtB<"clear">ip',
+			buttons: [
+				{ extend: 'excelHtml5', text: 'Excel' },
+				{ extend: 'pdfHtml5', text: 'PDF', orientation: 'landscape' },
+				'csv',
+				{ extend: 'copy', fieldSeparator: ';' },
+				'print',
+				{ text: 'Volver', action: function() { window.location.href = '?'; } }
+			],
+			language: {
+				url: "{{ url_for('static', filename='l18n/dataTables.es.json') }}"
+			},
+			lengthMenu: [ [20, 50, 100, 200, 500, -1], [20, 50, 100, 200, 500, 'Todos'] ],
+			scrollX: true,
+			scrollY: 600,
+			scrollCollapse: true
+		});
+
+		$('.dataTables_length').addClass('bs-select');
+	});	
+</script>
+{% endblock %}
+
+{% endif %}
+{% endblock %}

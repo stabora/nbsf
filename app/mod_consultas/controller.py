@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 
 from flask import Response, render_template, request, redirect, url_for
@@ -268,7 +267,7 @@ def consultarTarjetaSOAT():
             )
         else:
             return Response(Util.format_removeXMLPrefixes(str(ws_log.last_received())), mimetype='text/xml')
-    except Exception, e:
+    except Exception , e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
 
@@ -334,7 +333,7 @@ def consultarLegajoDigital():
         url = '{}{}'.format(app.config['LEGAJO_DIGITAL_HOST'], app.config['LEGAJO_DIGITAL_WSDL'])
         ws_log = SudsLogger()
         ws = Client(url, plugins=[ws_log])
-    except Exception, e:
+    except Exception , e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
 

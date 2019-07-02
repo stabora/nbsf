@@ -193,3 +193,16 @@ td.active
 {
 		width: 16px;
 }
+
+
+/* Data Tables */
+
+.dataTables_scroll {
+	margin-bottom: 10px;
+}
+
+/* Icons */
+
+.fa-calendar {
+	cursor: pointer;
+}

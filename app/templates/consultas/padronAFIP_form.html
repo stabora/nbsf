@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Consultar padr&oacute;n AFIP{% endblock %}
+{% block title %}Consultar padr&oacute;n {{ config['AFIP_PADRON'] }} AFIP{% endblock %}
 
 {% block content %}
 <form class="form-horizontal" role="form" name="consulta-padron-afip" action="{{ url_for('consultarPadronAFIP') }}" method="POST">
