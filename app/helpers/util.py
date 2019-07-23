@@ -5,6 +5,7 @@ from requests import Session, Request, Response
 from requests.auth import HTTPProxyAuth
 from base64 import b64decode
 from app import app
+from wtforms.validators import ValidationError
 
 
 class Util:
@@ -87,9 +88,16 @@ class Util:
             )
 
             session.close()
-        except Exception , e:
+        except Exception, e:
             response = Response()
             response.raise_for_status()
             return response, 'Error al realizar la consulta - Motivo: {}'.format(e.message)
 
         return response, None
+
+    @staticmethod
+    def user_password_validator(form, field):
+        password = field.data
+
+        if len(password) < 6:
+            raise ValidationError('La clave debe tener al menos 6 caracteres')

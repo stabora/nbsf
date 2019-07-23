@@ -12,7 +12,7 @@ class Db:
     @staticmethod
     def guardar_consulta(**kwargs):
         con = Log(
-            programa=kwargs['consulta'],
+            program=kwargs['consulta'],
             tx=kwargs['tx'],
             rx=kwargs['rx'],
             ip=kwargs['ip']

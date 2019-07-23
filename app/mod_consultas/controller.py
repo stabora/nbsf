@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Response, render_template, request, redirect, url_for
+from flask_user import login_required
 from lxml import etree
 from suds.client import Client
 from suds.sudsobject import asdict
@@ -28,11 +29,13 @@ def handle_errore(e):
 
 
 @app.route('/consultarPadronForm')
+@login_required
 def consultarPadronForm():
     return render_template('consultas/padronElectoral_form.html')
 
 
 @app.route('/consultarPadron', methods=['POST', 'GET'])
+@login_required
 def consultarPadron():
     if not params:
         return redirect(url_for('consultarPadronForm'))
@@ -69,11 +72,13 @@ def consultarPadron():
 
 
 @app.route('/consultarClienteForm')
+@login_required
 def consultarClienteForm():
     return render_template('consultas/datosCliente_form.html')
 
 
 @app.route('/consultarCliente', methods=['GET', 'POST'])
+@login_required
 def consultarCliente():
     if not params:
         return redirect(url_for('consultarClienteForm'))
@@ -101,11 +106,13 @@ def consultarCliente():
 
 
 @app.route('/consultarCuotaMAForm')
+@login_required
 def consultarCuotaMAForm():
     return render_template('consultas/cuotaMA_form.html')
 
 
 @app.route('/consultarCuotaMA', methods=['GET', 'POST'])
+@login_required
 def consultarCuotaMA():
     if not params:
         return redirect(url_for('consultarCuotaMAForm'))
@@ -128,11 +135,13 @@ def consultarCuotaMA():
 
 
 @app.route('/consultarCupoCUADForm')
+@login_required
 def consultarCupoCUADForm():
     return render_template('consultas/cupoCUAD_form.html')
 
 
 @app.route('/consultarCupoCUAD', methods=['GET', 'POST'])
+@login_required
 def consultarCupoCUAD():
     if not params:
         return redirect(url_for('consultarCupoCUADForm'))
@@ -165,11 +174,13 @@ def consultarCupoCUAD():
 
 
 @app.route('/consultarPrestamosPendientesForm')
+@login_required
 def consultarPrestamosPendientesForm():
     return render_template('consultas/prestamosPendientes_form.html')
 
 
 @app.route('/consultarVerazForm', methods=['GET', 'POST'])
+@login_required
 def consultarVerazForm():
     return render_template('consultas/veraz_form.html')
 
@@ -224,6 +235,7 @@ def consultarVeraz():
 
 
 @app.route('/consultarTarjetaSOATForm', methods=['GET', 'POST'])
+@login_required
 def consultarTarjetaSOATForm():
     return render_template(
         'operaciones/soatOperacionTarjeta_form.html',
@@ -233,6 +245,7 @@ def consultarTarjetaSOATForm():
 
 
 @app.route('/consultarTarjetaSOAT', methods=['GET', 'POST'])
+@login_required
 def consultarTarjetaSOAT():
     if not params:
         return redirect(url_for('consultarTarjetaSOATForm'))
@@ -273,11 +286,13 @@ def consultarTarjetaSOAT():
 
 
 @app.route('/consultarApiPrietoForm', methods=['GET', 'POST'])
+@login_required
 def consultarApiPrietoForm():
     return render_template('consultas/apiPrieto_form.html')
 
 
 @app.route('/consultarApiPrieto', methods=['GET', 'POST'])
+@login_required
 def consultarApiPrieto():
     if not params:
         return redirect(url_for('consultarApiPrietoForm'))
@@ -318,11 +333,13 @@ def consultarApiPrieto():
 
 
 @app.route('/consultarLegajoDigitalForm', methods=['GET', 'POST'])
+@login_required
 def consultarLegajoDigitalForm():
     return render_template('consultas/legajoDigital_form.html')
 
 
 @app.route('/consultarLegajoDigital', methods=['GET', 'POST'])
+@login_required
 def consultarLegajoDigital():
     if not params:
         return redirect(url_for('consultarLegajoDigitalForm'))
@@ -372,11 +389,13 @@ def consultarLegajoDigital():
 
 
 @app.route('/consultarPadronAFIPForm', methods=['GET', 'POST'])
+@login_required
 def consultarPadronAFIPForm():
     return render_template('consultas/padronAFIP_form.html')
 
 
 @app.route('/consultarPadronAFIP', methods=['GET', 'POST'])
+@login_required
 def consultarPadronAFIP():
     if not params:
         return redirect(url_for('consultarPadronAFIPForm'))
@@ -400,11 +419,13 @@ def consultarPadronAFIP():
 
 
 @app.route('/consultarDeudaAFIPForm', methods=['GET', 'POST'])
+@login_required
 def consultarDeudaAFIPForm():
     return render_template('consultas/deudaAFIP_form.html')
 
 
 @app.route('/consultarDeudaAFIP', methods=['GET', 'POST'])
+@login_required
 def consultarDeudaAFIP():
     if not params:
         return redirect(url_for('consultarDeudaAFIPForm'))

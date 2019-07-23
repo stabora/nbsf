@@ -33,17 +33,11 @@
 				</button>
 
 				<div class="navbar-header">
-					{% if '/reportes' not in url_for(request.endpoint) %}
 					<a class="navbar-brand" href="{{ url_for('/') }}"><img src="{{ url_for('static', filename='images/isologo.png') }}" alt="NBSF" title="Inicio"></a>
-					{% else %}
-					<a class="navbar-brand"><img src="{{ url_for('static', filename='images/isologo.png') }}" alt="NBSF" title="Inicio"></a>
-					{% endif %}
 				</div>
 
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					{% if '/reportes' not in url_for(request.endpoint) %}
 					{% include "includes/navigation.inc.html" %}
-					{% endif %}
 				</div>
 			</div>
 		</nav>
@@ -72,7 +66,7 @@
 
 		<footer class="footer">
 			<div class="container">
-				<p class="text-muted">Nuevo Banco de Santa Fe - Servicio de consultas</p>
+				<p class="text-muted">Banco Santa Fe - Servicio de consultas</p>
 			</div>
 		</footer>
 

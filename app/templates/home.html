@@ -4,7 +4,11 @@
 
 {% block content %}
 <div class="jumbotron">
-  <h1>Bienvenido!</h1>
+  <h1>Bienvenido {{ current_user.first_name }}!</h1>
+  {% if current_user.is_authenticated %}
   <p>Seleccione la consulta que desea realizar</p>
+  {% else %}
+  <p><a href="{{ url_for('user.login') }}">Ingrese</a> con su usuario y clave para acceder al servicio.</p>
+  {% endif %}
 </div>
 {% endblock %}

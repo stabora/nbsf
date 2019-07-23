@@ -14,7 +14,7 @@
 		<thead>
 			<tr>
 				{% for columna in encabezados %}
-				<th>{{ columna[0]|safe }}</th>
+				<th>{{ columna|safe }}</th>
 				{% endfor %}
 			</tr>
 		</thead>
@@ -72,8 +72,10 @@
 			},
 			lengthMenu: [ [20, 50, 100, 200, 500, -1], [20, 50, 100, 200, 500, 'Todos'] ],
 			scrollX: true,
+			autoWidth: false,
 			scrollY: 600,
-			scrollCollapse: true
+			scrollCollapse: true,
+			deferRender: true
 		});
 
 		$('.dataTables_length').addClass('bs-select');

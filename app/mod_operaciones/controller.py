@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Response, render_template, request, redirect, url_for
+from flask_user import login_required
 from lxml import etree
 from suds.client import Client
 from suds.sudsobject import asdict
@@ -23,11 +24,13 @@ def init():
 
 
 @app.route('/as400BloqueoClienteForm')
+@login_required
 def as400BloqueoClienteForm():
     return render_template('operaciones/as400BloqueoCliente_form.html')
 
 
 @app.route('/as400BloqueoCliente', methods=['GET', 'POST'])
+@login_required
 def as400BloqueoCliente():
     if not params:
         return redirect(url_for('as400BloqueoClienteForm'))
@@ -57,11 +60,13 @@ def as400BloqueoCliente():
 
 
 @app.route('/brokerOperacionPrestamosForm')
+@login_required
 def brokerOperacionPrestamosForm():
     return render_template('operaciones/brokerOperacionPrestamos_form.html')
 
 
 @app.route('/brokerOperacionPrestamos', methods=['GET', 'POST'])
+@login_required
 def brokerOperacionPrestamos():
     if not params:
         return redirect(url_for('brokerOperacionPrestamosForm'))
@@ -102,6 +107,7 @@ def brokerOperacionPrestamos():
 
 
 @app.route('/brokerBajaMasivaPrestamos', methods=['GET', 'POST'])
+@login_required
 def brokerBajaMasivaPrestamos():
     if not params:
         return redirect(url_for('brokerOperacionPrestamosForm'))
@@ -138,6 +144,7 @@ def brokerBajaMasivaPrestamos():
 
 
 @app.route('/soatHabilitarTarjetaForm', methods=['GET', 'POST'])
+@login_required
 def soatHabilitarTarjetaForm():
     return render_template(
         'operaciones/soatOperacionTarjeta_form.html',
@@ -147,6 +154,7 @@ def soatHabilitarTarjetaForm():
 
 
 @app.route('/soatHabilitarTarjeta', methods=['GET', 'POST'])
+@login_required
 def soatHabilitarTarjeta():
     if not params:
         return redirect(url_for('soatHabilitarTarjetaForm'))
@@ -187,6 +195,7 @@ def soatHabilitarTarjeta():
 
 
 @app.route('/serviciosbsf/prestamos/calificar', methods=['GET', 'POST'])
+@login_required
 def calificarPrestamo():
     if not params:
         return redirect(url_for('/'))
