@@ -187,7 +187,7 @@ class HTML:
             db.close()
 
             return variables, None
-        except Exception , e:
+        except Exception, e:
             return variables, 'Error al realizar la consulta - Motivo: {}'.format(e.message)
 
     @staticmethod

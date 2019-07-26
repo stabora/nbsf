@@ -3,7 +3,7 @@
 {% block title %}Desbloquear cliente{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form" name="desbloqueo-cliente" action="as400BloqueoCliente" method="POST">
+<form class="form-horizontal" role="form" name="desbloqueo-cliente" action="{{ url_for('as400_gestionarBloqueoCliente') }}" method="POST" target="_blank">
 	<input type="hidden" name="numeroCliente" \>
 
 	{% include "includes/form_tipo_documento.inc.html" %}

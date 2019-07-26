@@ -3,11 +3,11 @@
 {% block title %}Consultar cupo CUAD{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form" name="consulta-cupo-cuad" action="consultarCupoCUAD" method="POST">
+<form class="form-horizontal" role="form" name="consulta-cupo-cuad" action="{{ url_for('broker_consultarCupoCUAD') }}" method="POST">
 	<div class="form-group">
-		<label class="control-label col-sm-2" for="numeroCuit">Nro. CUIT:</label>
+		<label class="control-label col-sm-2" for="cuit">Nro. CUIT:</label>
 			<div class="col-sm-10">
-				<input class="form-control" type="text" name="numeroCuit" maxlength="11" \>
+				<input class="form-control" type="text" name="cuit" \>
 			</div>
 	</div>
 

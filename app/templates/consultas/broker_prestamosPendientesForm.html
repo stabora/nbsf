@@ -3,7 +3,7 @@
 {% block title %}Consultar pr&eacute;stamos pendientes{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form" name="consulta-prestamos-pendientes" action="{{ url_for('brokerOperacionPrestamos') }}" method="POST">
+<form class="form-horizontal" role="form" name="consulta-prestamos-pendientes" action="{{ url_for('broker_gestionarPrestamos') }}" method="POST">
 	{% include "includes/form_tipo_documento.inc.html" %}
 
 	<div class="form-group">

@@ -12,7 +12,6 @@ from app.helpers.html import HTML
 from app.helpers.xml import XML
 from app.helpers.mensajeria import Mensajeria
 from app.helpers.sudslogger import SudsLogger
-import json
 
 params = None
 
@@ -23,17 +22,11 @@ def init():
     params = request.form if request.method == 'POST' else request.args
 
 
-@app.route('/as400BloqueoClienteForm')
+@app.route('/operaciones/as400/gestionarBloqueoCliente', methods=['GET', 'POST'])
 @login_required
-def as400BloqueoClienteForm():
-    return render_template('operaciones/as400BloqueoCliente_form.html')
-
-
-@app.route('/as400BloqueoCliente', methods=['GET', 'POST'])
-@login_required
-def as400BloqueoCliente():
+def as400_gestionarBloqueoCliente():
     if not params:
-        return redirect(url_for('as400BloqueoClienteForm'))
+        return render_template('operaciones/as400_gestionarBloqueoClienteForm.html')
     else:
         Util.check_parameters(['numeroCliente', 'usuario', 'operacion'], params)
 
@@ -59,22 +52,16 @@ def as400BloqueoCliente():
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/brokerOperacionPrestamosForm')
+@app.route('/operaciones/broker/gestionarPrestamos', methods=['GET', 'POST'])
 @login_required
-def brokerOperacionPrestamosForm():
-    return render_template('operaciones/brokerOperacionPrestamos_form.html')
-
-
-@app.route('/brokerOperacionPrestamos', methods=['GET', 'POST'])
-@login_required
-def brokerOperacionPrestamos():
+def broker_gestionarPrestamos():
     if not params:
-        return redirect(url_for('brokerOperacionPrestamosForm'))
+        return render_template('operaciones/broker_operacionPrestamosForm.html')
     else:
         Util.check_parameters(['tipoDocumento', 'numeroDocumento', 'accion'], params)
 
     if params.get('accion') == 'BajaEnWF' and not params.get('uidPrestamo', 0):
-        return redirect(url_for('brokerBajaMasivaPrestamos', tipoDocumento=params.get('tipoDocumento'), numeroDocumento=params.get('numeroDocumento')), code=307)
+        return redirect(url_for('broker_bajaMasivaPrestamos', tipoDocumento=params.get('tipoDocumento'), numeroDocumento=params.get('numeroDocumento')), code=307)
 
     par_xml = XML.get_xml_broker_consultarPrestamos(
         params.get('accion'),
@@ -99,18 +86,18 @@ def brokerOperacionPrestamos():
         )
 
         if params.get('formato') == 'html':
-            return render_template('consultas/prestamosPendientes_respuesta.html', variables=HTML.get_html_respuestaPrestamosPendientes(response))
+            return render_template('consultas/broker_prestamosPendientes.html', variables=HTML.get_html_respuestaPrestamosPendientes(response))
         else:
             return Response(response, mimetype="text/xml")
     else:
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/brokerBajaMasivaPrestamos', methods=['GET', 'POST'])
+@app.route('/operaciones/broker/bajaMasivaPrestamos', methods=['GET', 'POST'])
 @login_required
-def brokerBajaMasivaPrestamos():
+def broker_bajaMasivaPrestamos():
     if not params:
-        return redirect(url_for('brokerOperacionPrestamosForm'))
+        return redirect(url_for('broker_gestionarPrestamosForm'))
     else:
         Util.check_parameters(['tipoDocumento', 'numeroDocumento'], params)
 
@@ -138,26 +125,20 @@ def brokerBajaMasivaPrestamos():
             else:
                 prestamos[idPrestamo] = msgBaja
 
-        return render_template('operaciones/brokerBajaMasivaPrestamos_respuesta.html', prestamos=prestamos)
+        return render_template('operaciones/broker_bajaMasivaPrestamos.html', prestamos=prestamos)
     else:
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/soatHabilitarTarjetaForm', methods=['GET', 'POST'])
+@app.route('/operaciones/soat/habilitarTarjeta', methods=['GET', 'POST'])
 @login_required
-def soatHabilitarTarjetaForm():
-    return render_template(
-        'operaciones/soatOperacionTarjeta_form.html',
-        title=u'Habilitar tarjeta de débito',
-        formAction='soatHabilitarTarjeta'
-    )
-
-
-@app.route('/soatHabilitarTarjeta', methods=['GET', 'POST'])
-@login_required
-def soatHabilitarTarjeta():
+def soat_habilitarTarjeta():
     if not params:
-        return redirect(url_for('soatHabilitarTarjetaForm'))
+        return render_template(
+            'operaciones/soat_habilitarTarjetaForm.html',
+            title=u'Habilitar tarjeta de débito',
+            formAction='soat_habilitarTarjeta'
+        )
     else:
         Util.check_parameters(['numeroTarjeta'], params)
 
@@ -170,7 +151,7 @@ def soatHabilitarTarjeta():
         ped.canal = app.config['SOAT_CANAL']
         ped.ip = app.config['SOAT_IP']
         ped.usuario = app.config['SOAT_USER']
-        ped.numeroTarjeta = params.get('numeroTarjeta')
+        ped.numeroTarjeta = params.get('numeroTarjeta').replace('-', '')
 
         response = ws.service.HabilitacionDeTarjeta(**asdict(ped))
 
@@ -183,52 +164,12 @@ def soatHabilitarTarjeta():
 
         if params.get('formato') == 'html':
             return render_template(
-                'operaciones/soatOperacionTarjeta_respuesta.html',
+                'operaciones/soat_habilitarTarjeta.html',
                 title=u'Habilitar tarjeta de débito',
                 variables=HTML.get_html_respuestaOperacionSoat(response)
             )
         else:
             return Response(Util.format_removeXMLPrefixes(str(ws_log.last_received())), mimetype='text/xml')
-    except Exception , e:
+    except Exception, e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
-
-
-@app.route('/serviciosbsf/prestamos/calificar', methods=['GET', 'POST'])
-@login_required
-def calificarPrestamo():
-    if not params:
-        return redirect(url_for('/'))
-    else:
-        ped = json.loads(params.get('pedido'))
-
-        res = {
-            "estado": 1,
-            "detalle": "OK",
-            "respuesta": {
-                "nit": ped['pedido']['nit'],
-                "nombre": '{}, {}'.format(ped['pedido']['apellido'], ped['pedido']['nombres']),
-                "fechaNacimiento": 19461114,
-                "evaluacion": "S",
-                "observaciones": "",
-                "haber1": 49583.15,
-                "haber2": 48421.79,
-                "haber3": 50264.33,
-                "periodoUltimoHaber": 201807,
-                "promedioIngresos": 49002.47,
-                "variacionIngresos": 2.4,
-                "numeroTarjeta": 4062900169576020,
-                "maximoPrestable": 398130.0,
-                "montoCuota": 19600.98,
-                "plazo": 72
-            }
-        }
-
-        Db.guardar_consulta(
-            consulta=str(request.url_rule)[1:],
-            tx=json.dumps(ped),
-            rx=json.dumps(res),
-            ip=request.remote_addr
-        )
-
-        return Response(json.dumps(res), mimetype='application/json')

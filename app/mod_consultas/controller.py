@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Response, render_template, request, redirect, url_for
+from flask import Response, render_template, request
 from flask_user import login_required
 from lxml import etree
 from suds.client import Client
@@ -28,17 +28,11 @@ def handle_errore(e):
     return Response(XML.get_xml_error(e.message), mimetype='text/xml')
 
 
-@app.route('/consultarPadronForm')
+@app.route('/consultas/as400/padronElectoral', methods=['POST', 'GET'])
 @login_required
-def consultarPadronForm():
-    return render_template('consultas/padronElectoral_form.html')
-
-
-@app.route('/consultarPadron', methods=['POST', 'GET'])
-@login_required
-def consultarPadron():
+def as400_consultarPadronElectoral():
     if not params:
-        return redirect(url_for('consultarPadronForm'))
+        return render_template('consultas/as400_padronElectoralForm.html')
     else:
         Util.check_parameters(['numeroDocumento'], params)
 
@@ -64,24 +58,18 @@ def consultarPadron():
         )
 
         if params.get('formato') == 'html':
-            return render_template('consultas/padronElectoral_respuesta.html', variables=HTML.get_html_respuestaPadronElectoral(response))
+            return render_template('consultas/as400_padronElectoral.html', variables=HTML.get_html_respuestaPadronElectoral(response))
         else:
             return Response(response, mimetype="text/xml")
     else:
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/consultarClienteForm')
+@app.route('/consultas/as400/cliente', methods=['GET', 'POST'])
 @login_required
-def consultarClienteForm():
-    return render_template('consultas/datosCliente_form.html')
-
-
-@app.route('/consultarCliente', methods=['GET', 'POST'])
-@login_required
-def consultarCliente():
+def as400_consultarCliente():
     if not params:
-        return redirect(url_for('consultarClienteForm'))
+        return render_template('consultas/as400_clienteForm.html')
     else:
         Util.check_parameters(['numeroCliente'], params)
 
@@ -98,24 +86,18 @@ def consultarCliente():
         )
 
         if params.get('formato') == 'html':
-            return render_template('consultas/datosCliente_respuesta.html', variables=HTML.get_html_respuestaDatosCliente(response))
+            return render_template('consultas/as400_cliente.html', variables=HTML.get_html_respuestaDatosCliente(response))
         else:
             return Response(response, mimetype='text/xml')
     else:
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/consultarCuotaMAForm')
+@app.route('/consultas/wf/cuotaMA', methods=['GET', 'POST'])
 @login_required
-def consultarCuotaMAForm():
-    return render_template('consultas/cuotaMA_form.html')
-
-
-@app.route('/consultarCuotaMA', methods=['GET', 'POST'])
-@login_required
-def consultarCuotaMA():
+def wf_consultarCuotaMA():
     if not params:
-        return redirect(url_for('consultarCuotaMAForm'))
+        return render_template('consultas/wf_cuotaMAForm.html')
     else:
         Util.check_parameters(['uidPrestamo'], params)
 
@@ -129,26 +111,20 @@ def consultarCuotaMA():
             ip=request.remote_addr
         )
 
-        return render_template('consultas/cuotaMA_respuesta.html', variables=response)
+        return render_template('consultas/wf_cuotaMA.html', variables=response)
     else:
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/consultarCupoCUADForm')
+@app.route('/consultas/broker/cupoCUAD', methods=['GET', 'POST'])
 @login_required
-def consultarCupoCUADForm():
-    return render_template('consultas/cupoCUAD_form.html')
-
-
-@app.route('/consultarCupoCUAD', methods=['GET', 'POST'])
-@login_required
-def consultarCupoCUAD():
+def broker_consultarCupoCUAD():
     if not params:
-        return redirect(url_for('consultarCupoCUADForm'))
+        return render_template('consultas/broker_cupoCUADForm.html')
     else:
-        Util.check_parameters(['numeroCuit'], params)
+        Util.check_parameters(['cuit'], params)
 
-    xml_ped = XML.get_xml_broker_consultarCupoCUAD(params.get('numeroCuit'))
+    xml_ped = XML.get_xml_broker_consultarCupoCUAD(params.get('cuit').replace('-', ''))
 
     response, msg = Util.get_http_request(
         '{}{}'.format(app.config['BROKERWS_HOST'], app.config['BROKERWS_RESOURCE']),
@@ -166,29 +142,24 @@ def consultarCupoCUAD():
         )
 
         if params.get('formato') == 'html':
-            return render_template('consultas/cupoCUAD_respuesta.html', variables=HTML.get_html_respuestaCupoCUAD(response))
+            return render_template('consultas/broker_cupoCUAD.html', variables=HTML.get_html_respuestaCupoCUAD(response))
         else:
             return Response(response, mimetype='text/xml')
     else:
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/consultarPrestamosPendientesForm')
+@app.route('/consultas/broker/prestamosPendientes')
 @login_required
-def consultarPrestamosPendientesForm():
-    return render_template('consultas/prestamosPendientes_form.html')
+def broker_consultarPrestamosPendientes():
+    return render_template('consultas/broker_prestamosPendientesForm.html')
 
 
-@app.route('/consultarVerazForm', methods=['GET', 'POST'])
-@login_required
-def consultarVerazForm():
-    return render_template('consultas/veraz_form.html')
-
-
+@app.route('/consultas/veraz', methods=['GET', 'POST'])
 @app.route('/consultarVeraz', methods=['GET', 'POST'])
 def consultarVeraz():
     if not params:
-        return redirect(url_for('consultarVerazForm'))
+        return render_template('consultas/verazForm.html')
 
     par_xml = params.get('par_xml', '')
     formato = params.get('formato')
@@ -229,26 +200,20 @@ def consultarVeraz():
     )
 
     if formato == 'html':
-        return render_template('consultas/veraz_respuesta.html', **HTML.get_html_respuestaVeraz(response))
+        return render_template('consultas/veraz.html', **HTML.get_html_respuestaVeraz(response))
     else:
         return Response(response, mimetype='text/xml')
 
 
-@app.route('/consultarTarjetaSOATForm', methods=['GET', 'POST'])
+@app.route('/consultas/SOAT', methods=['GET', 'POST'])
 @login_required
-def consultarTarjetaSOATForm():
-    return render_template(
-        'operaciones/soatOperacionTarjeta_form.html',
-        title=u'Consultar estado de tarjeta de débito',
-        formAction='consultarTarjetaSOAT'
-    )
-
-
-@app.route('/consultarTarjetaSOAT', methods=['GET', 'POST'])
-@login_required
-def consultarTarjetaSOAT():
+def consultarSOAT():
     if not params:
-        return redirect(url_for('consultarTarjetaSOATForm'))
+        return render_template(
+            'operaciones/soat_habilitarTarjetaForm.html',
+            title=u'Consultar estado de tarjeta de débito',
+            formAction='consultarSOAT'
+        )
     else:
         Util.check_parameters(['numeroTarjeta'], params)
 
@@ -261,7 +226,7 @@ def consultarTarjetaSOAT():
         ped.canal = app.config['SOAT_CANAL']
         ped.ip = app.config['SOAT_IP']
         ped.usuario = app.config['SOAT_USER']
-        ped.numeroTarjeta = params.get('numeroTarjeta')
+        ped.numeroTarjeta = params.get('numeroTarjeta').replace('-', '')
 
         response = ws.service.ConsultaEstadoTarjeta(**asdict(ped))
 
@@ -274,28 +239,22 @@ def consultarTarjetaSOAT():
 
         if params.get('formato') == 'html':
             return render_template(
-                'operaciones/soatOperacionTarjeta_respuesta.html',
+                'operaciones/soat_habilitarTarjeta.html',
                 title=u'Consultar estado de tarjeta de débito',
                 variables=HTML.get_html_respuestaOperacionSoat(response)
             )
         else:
             return Response(Util.format_removeXMLPrefixes(str(ws_log.last_received())), mimetype='text/xml')
-    except Exception , e:
+    except Exception, e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/consultarApiPrietoForm', methods=['GET', 'POST'])
+@app.route('/consultas/prieto', methods=['GET', 'POST'])
 @login_required
-def consultarApiPrietoForm():
-    return render_template('consultas/apiPrieto_form.html')
-
-
-@app.route('/consultarApiPrieto', methods=['GET', 'POST'])
-@login_required
-def consultarApiPrieto():
+def consultarPrieto():
     if not params:
-        return redirect(url_for('consultarApiPrietoForm'))
+        return render_template('consultas/prietoForm.html')
     else:
         Util.check_parameters(['doc'], params)
 
@@ -332,17 +291,11 @@ def consultarApiPrieto():
         return render_template('error.html', texto_error=msg)
 
 
-@app.route('/consultarLegajoDigitalForm', methods=['GET', 'POST'])
-@login_required
-def consultarLegajoDigitalForm():
-    return render_template('consultas/legajoDigital_form.html')
-
-
-@app.route('/consultarLegajoDigital', methods=['GET', 'POST'])
+@app.route('/consultas/legajoDigital', methods=['GET', 'POST'])
 @login_required
 def consultarLegajoDigital():
     if not params:
-        return redirect(url_for('consultarLegajoDigitalForm'))
+        return render_template('consultas/legajoDigitalForm.html')
     else:
         Util.check_parameters(['numeroCliente'], params)
 
@@ -350,7 +303,7 @@ def consultarLegajoDigital():
         url = '{}{}'.format(app.config['LEGAJO_DIGITAL_HOST'], app.config['LEGAJO_DIGITAL_WSDL'])
         ws_log = SudsLogger()
         ws = Client(url, plugins=[ws_log])
-    except Exception , e:
+    except Exception, e:
         msg = 'Error al realizar la consulta - Motivo: {}'.format(str(e))
         return render_template('error.html', texto_error=msg)
 
@@ -383,26 +336,20 @@ def consultarLegajoDigital():
         )
 
     if params.get('formato') == 'html':
-        return render_template('consultas/legajoDigital_respuesta.html', variables=HTML.get_html_respuestaLegajoDigital(response))
+        return render_template('consultas/legajoDigital.html', variables=HTML.get_html_respuestaLegajoDigital(response))
     else:
         return Response(Util.format_removeXMLPrefixes(str(ws_log.last_received())), mimetype='text/xml')
-
-
-@app.route('/consultarPadronAFIPForm', methods=['GET', 'POST'])
-@login_required
-def consultarPadronAFIPForm():
-    return render_template('consultas/padronAFIP_form.html')
 
 
 @app.route('/consultarPadronAFIP', methods=['GET', 'POST'])
 @login_required
 def consultarPadronAFIP():
     if not params:
-        return redirect(url_for('consultarPadronAFIPForm'))
+        return render_template('consultas/padronAFIPForm.html')
     else:
         Util.check_parameters(['cuit'], params)
 
-    cuit = params.get('cuit')
+    cuit = params.get('cuit').replace('-', '')
     response = AFIP.get_persona(cuit)
 
     Db.guardar_consulta(
@@ -413,37 +360,6 @@ def consultarPadronAFIP():
     )
 
     if params.get('formato') == 'html':
-        return render_template('consultas/padronAFIP_respuesta.html', variables=HTML.get_html_respuestaPadronAFIP(response))
+        return render_template('consultas/padronAFIP.html', variables=HTML.get_html_respuestaPadronAFIP(response))
     else:
         return Response(response, mimetype='text/xml')
-
-
-@app.route('/consultarDeudaAFIPForm', methods=['GET', 'POST'])
-@login_required
-def consultarDeudaAFIPForm():
-    return render_template('consultas/deudaAFIP_form.html')
-
-
-@app.route('/consultarDeudaAFIP', methods=['GET', 'POST'])
-@login_required
-def consultarDeudaAFIP():
-    if not params:
-        return redirect(url_for('consultarDeudaAFIPForm'))
-    else:
-        Util.check_parameters(['cuit'], params)
-
-    cuit = params.get('cuit')
-    response = AFIP.tiene_deuda(cuit)
-
-    Db.guardar_consulta(
-        consulta=str(request.url_rule)[1:],
-        tx='CUIT: {}'.format(cuit),
-        rx=response,
-        ip=request.remote_addr
-    )
-
-    if params.get('formato') == 'html':
-        return 'No implementado'
-        # render_template('consultas/deudaAFIP_respuesta.html', variables=HTML.get_html_respuestaDeudaAFIP(response))
-    else:
-        return Response(response, mimetype='application/json')

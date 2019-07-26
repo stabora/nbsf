@@ -2,8 +2,77 @@
 /* Init */
 /*------*/
 
+$(window).on('focus', function() {
+	if($('button[type=submit]').length) {
+		$('button[type="submit"]').removeClass('active');
+		$('button[type="submit"]').attr('disabled', false);
+	}
+});
+
 $(document).ready(function()
 {
+
+	/*-----------*/
+	/* Generales */
+
+	// Inicialización de elementos tooltip
+
+	$('a[data-toggle="tooltip"]').tooltip();
+
+
+	// Inicialización de confirmación modal
+
+	$('a[data-confirm]').click(function(ev)
+	{
+		mostrarConfirmacionModal($(this).attr('data-confirm'), 'alert-danger');
+		$('#confirmacionOK').attr('href', $(this).attr('href'));
+
+		return false;
+	});
+
+
+	// Inicialización de elementos datepicker
+
+	$('.datepicker').datepicker({
+		changeMonth: true,
+		changeYear: true,
+		showButtonPanel: true,
+		onClose: function() { $("form").data('bootstrapValidator').resetForm(); },
+	});
+
+
+	// Image preview
+
+	$('.image-preview').on('click', function()
+	{
+		$('#image-preview').attr('src', $(this).find('img').attr('src').replace('FileMiniature', 'File'));
+		$('#image-preview-title').html($(this).find('img').attr('title'));
+		$('#image-preview-link').attr('href', $(this).find('img').attr('src').replace('FileMiniature', 'File'));
+		$('#image-preview-modal').modal('show');
+	});
+
+
+	// Foco en el primer campo del formulario activo
+
+	$('form:not(.no-focus) input:text, form textarea').first().focus();
+
+
+	// Inicialización de elemento formato de respuesta
+
+	$('input[name=formato]').click(function() {
+		switch($(this).val()) {
+			case 'xml':
+				$('form').attr('target', '_blank');
+				break;
+			default:
+				$('form').removeAttr('target');
+				break;
+		}
+	});
+
+
+	/*-------------*/
+	/* Formularios */
 
 	// Formulario consulta Veraz
 
@@ -40,7 +109,7 @@ $(document).ready(function()
 			if($(this).val())
 			{
 				$.get(
-					'./consultarPadron?entorno=TESTING&numeroDocumento=' + $(this).val(),
+					'./consultas/as400/padronElectoral?entorno=TESTING&numeroDocumento=' + $(this).val(),
 					function(data)
 					{
 						nombre = $(data).find('Nombre1').text()
@@ -77,9 +146,10 @@ $(document).ready(function()
 
 		fields:
 		{
-			numeroCuit: { validators: { regexp: { regexp: /[0-9]{11}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+			cuit: { validators: { notEmpty: { message: 'Ingrese un valor' } } }
 		}
 	})
+	.find('input[name="cuit"]').mask('99-99999999-9')
 	.on('success.form.bv', function(e, data)
 	{
 		$('button[type="submit"]').toggleClass('active');
@@ -156,29 +226,6 @@ $(document).ready(function()
 		fields:
 		{
 			numeroDocumento: { validators: { regexp: { regexp: /[0-9]{7,12}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
-		}
-	})
-	.on('success.form.bv', function(e, data)
-	{
-		$('button[type="submit"]').toggleClass('active');
-	});
-
-
-	// Formulario consulta CUAD
-
-	$('form[name=consulta-cupo-cuad]')
-	.bootstrapValidator(
-	{
-		feedbackIcons:
-		{
-			valid: 'glyphicon glyphicon-ok',
-			invalid: 'glyphicon glyphicon-remove',
-			validating: 'glyphicon glyphicon-refresh'
-		},
-
-		fields:
-		{
-			numeroCuit: { validators: { regexp: { regexp: /[0-9]{11}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
 		}
 	})
 	.on('success.form.bv', function(e, data)
@@ -303,9 +350,10 @@ $(document).ready(function()
 
 		fields:
 		{
-			numeroTarjeta: { validators: { regexp: { regexp: /[0-9]{16}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+			numeroTarjeta: { validators: { notEmpty: { message: 'Ingrese un valor' } } }
 		}
 	})
+	.find('input[name="numeroTarjeta"]').mask('9999-9999-9999-9999')
 	.on('success.form.bv', function(e, data)
 	{
 		$('button[type="submit"]').toggleClass('active');
@@ -369,7 +417,7 @@ $(document).ready(function()
 	});
 
 
-	// Formulario consulta padrón SOA
+	// Formulario consulta padrón AFIP
 
 	$('form[name=consulta-padron-afip]')
 	.bootstrapValidator(
@@ -383,9 +431,10 @@ $(document).ready(function()
 
 		fields:
 		{
-			cuit: { validators: { regexp: { regexp: /[0-9]{11}/, message: 'Número incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } }
+			cuit: { validators: { notEmpty: { message: 'Ingrese un valor' } } }
 		}
 	})
+	.find('input[name="cuit"]').mask('99-99999999-9')
 	.on('success.form.bv', function(e, data)
 	{
 		$('button[type="submit"]').toggleClass('active');
@@ -421,86 +470,6 @@ $(document).ready(function()
 		$('button[type="submit"]').attr('disabled', false);
 		setTimeout(function() { $('#ui-datepicker-div').hide(); }, 50);
 	});
-
-
-	// Legajo digital - Selección de documentos
-
-	if($('div#legajoDigitalSeleccion').length)
-	{
-		$('input[type="radio"][value="D"]').click(function()
-		{
-			if($('input[rel="' + $(this).attr('name') + '"]').not(':checked').size() == 0)
-			{
-				return true;
-			} else {
-				mostrarAvisoModal('Debe revisar la versión digital para poder seleccionarla.', 'alert-danger');
-				return false;
-			}
-		});
-
-
-		$('.image-preview, .document-preview').click(function()
-		{
-			if($(this).attr('rel'))
-			{
-				$(document).find('input[name="chk-' + $(this).attr('rel') + '"]').attr('checked', 'true');
-				$(this).css('opacity', '0.5');
-			}
-		});
-
-
-		$('.verificar-seleccion').click(function()
-		{
-			if($('input[type="radio"]:checked').size() == $('input[type="radio"]').size() / 2)
-			{
-				mostrarAvisoModal('Documentación seleccionada.\n', 'alert-success');
-			} else {
-				mostrarAvisoModal('Debe seleccionar toda la documentación.', 'alert-danger');
-			}
-		});
-	}
-
-
-	// Inicialización de elementos tooltip
-
-	$('a[data-toggle="tooltip"]').tooltip();
-
-
-	// Inicialización de confirmación modal
-
-	$('a[data-confirm]').click(function(ev)
-	{
-		mostrarConfirmacionModal($(this).attr('data-confirm'), 'alert-danger');
-		$('#confirmacionOK').attr('href', $(this).attr('href'));
-
-		return false;
-	});
-
-
-	// Inicialización de elementos datepicker
-
-	$('.datepicker').datepicker({
-		changeMonth: true,
-		changeYear: true,
-		showButtonPanel: true,
-		onClose: function() { $("form").data('bootstrapValidator').resetForm(); },
-	});
-
-
-	// Image preview
-
-	$('.image-preview').on('click', function()
-	{
-		$('#image-preview').attr('src', $(this).find('img').attr('src').replace('FileMiniature', 'File'));
-		$('#image-preview-title').html($(this).find('img').attr('title'));
-		$('#image-preview-link').attr('href', $(this).find('img').attr('src').replace('FileMiniature', 'File'));
-		$('#image-preview-modal').modal('show');
-	});
-
-
-	// Foco en el primer campo del formulario activo
-
-	$("form:not(.no-focus) input:text, form textarea").first().focus();
 
 });
 

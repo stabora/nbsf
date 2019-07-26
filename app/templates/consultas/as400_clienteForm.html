@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Consultar padr&oacute;n electoral{% endblock %}
+{% block title %}Consultar datos del cliente{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form" name="consulta-padron" action="{{ url_for('consultarPadron') }}" method="POST">
+<form class="form-horizontal" role="form" name="consulta-cliente" action="{{ url_for('as400_consultarCliente') }}" method="POST">
+	<input type="hidden" name="numeroCliente" \>
+
 	{% include "includes/form_tipo_documento.inc.html" %}
 
 	<div class="form-group">

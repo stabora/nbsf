@@ -3,7 +3,7 @@
 {% block title %}Consultar API Prieto{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form" name="consulta-api-prieto" action="consultarApiPrieto" method="POST">
+<form class="form-horizontal" role="form" name="consulta-api-prieto" action="{{ url_for('consultarPrieto') }}" method="POST">
 	<div class="form-group">
 		<label class="control-label col-sm-2" for="doc">Nro. de documento:</label>
 		<div class="col-sm-10">

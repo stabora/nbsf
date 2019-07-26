@@ -3,7 +3,7 @@
 {% block title %}Alta / baja de pr&eacute;stamos{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form" name="alta-baja-prestamos" action="{{ url_for('brokerOperacionPrestamos') }}" method="POST">
+<form class="form-horizontal" role="form" name="alta-baja-prestamos" action="{{ url_for('broker_gestionarPrestamos') }}" method="POST">
 	{% include "includes/form_tipo_documento.inc.html" %}
 
 	<div class="form-group">

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request
 from app import app
 from app.helpers.db import Db
 from app.helpers.util import Util
@@ -22,17 +22,12 @@ def init():
     params = request.form if request.method == 'POST' else request.args
 
 
-@app.route('/reportes/cuentasQRProcesadasForm')
-def cuentasQRProcesadasForm():
-    dias_pasados = 1
-    return render_template('reportes/cuentaQRProcesadas_form.html', fecha_desde=(datetime.now() - timedelta(days=dias_pasados)).strftime('%d/%m/%Y'), fecha_hasta=datetime.now().strftime('%d/%m/%Y'))
-
-
-@app.route('/reportes/cuentasQRProcesadas', methods=['GET', 'POST'])
-def cuentasQRProcesadas():
+@app.route('/reportes/wf/cuentasQRProcesadas', methods=['GET', 'POST'])
+def wf_cuentasQRProcesadas():
     try:
         if not params:
-            return redirect(url_for('cuentasQRProcesadasForm'))
+            dias_pasados = 1
+            return render_template('reportes/wf_cuentaQRProcesadasForm.html', fecha_desde=(datetime.now() - timedelta(days=dias_pasados)).strftime('%d/%m/%Y'), fecha_hasta=datetime.now().strftime('%d/%m/%Y'))
 
         Util.check_parameters(['fechaDesde', 'fechaHasta'], params)
         os.environ["NLS_LANG"] = ".UTF8"

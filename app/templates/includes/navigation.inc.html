@@ -1,17 +1,17 @@
 <ul class="nav navbar-nav navbar-right">
 	{% if current_user.is_authenticated %}
 	<li class="dropdown">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Utilidades <span class="caret"></span></a>
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Operaciones <span class="caret"></span></a>
 
 		<ul class="dropdown-menu" role="menu">
 			<li role="presentation" class="dropdown-header">AS-400</li>
-			<li><a href="{{ url_for('as400BloqueoClienteForm') }}">Bloquear / desbloquear cliente</a></li>
+			<li><a href="{{ url_for('as400_gestionarBloqueoCliente') }}">Bloquear / desbloquear cliente</a></li>
 			<li class="divider"></li>
 			<li role="presentation" class="dropdown-header">Broker</li>
-			<li><a href="{{ url_for('brokerOperacionPrestamosForm') }}">Alta / baja de pr&eacute;stamos</a></li>
+			<li><a href="{{ url_for('broker_gestionarPrestamos') }}">Alta / baja de pr&eacute;stamos</a></li>
 			<li class="divider"></li>
 			<li role="presentation" class="dropdown-header">Externas</li>
-			<li><a href="{{ url_for('soatHabilitarTarjetaForm') }}">SOAT - Habilitar tarjeta de d&eacute;bito</a></li>
+			<li><a href="{{ url_for('soat_habilitarTarjeta') }}">SOAT - Habilitar tarjeta de d&eacute;bito</a></li>
 		</ul>
 	</li>
 
@@ -20,26 +20,25 @@
 
 		<ul class="dropdown-menu" role="menu">
 			<li role="presentation" class="dropdown-header">AS-400</li>
-			<li><a href="{{ url_for('consultarClienteForm') }}">Datos del cliente</a></li>
-			<li><a href="{{ url_for('consultarPadronForm') }}">Padr&oacute;n electoral</a></li>
+			<li><a href="{{ url_for('as400_consultarCliente') }}">Datos del cliente</a></li>
+			<li><a href="{{ url_for('as400_consultarPadronElectoral') }}">Padr&oacute;n electoral</a></li>
 			<li class="divider"></li>
 
 			<li role="presentation" class="dropdown-header">Broker</li>
-			<li><a href="{{ url_for('consultarCupoCUADForm') }}">Cupo CUAD (APP)</a></li>
-			<li><a href="{{ url_for('consultarPrestamosPendientesForm') }}">Pr&eacute;stamos pendientes</a></li>
+			<li><a href="{{ url_for('broker_consultarCupoCUAD') }}">Cupo CUAD (APP)</a></li>
+			<li><a href="{{ url_for('broker_consultarPrestamosPendientes') }}">Pr&eacute;stamos pendientes</a></li>
 			<li class="divider"></li>
 
 			<li role="presentation" class="dropdown-header">Externas</li>
-			<li><a href="{{ url_for('consultarApiPrieto') }}">API Prieto</a></li>
+			<li><a href="{{ url_for('consultarPadronAFIP') }}">AFIP - Padr&oacute;n</a></li>
 			<li><a href="{{ url_for('consultarLegajoDigital') }}">Legajo digital</a></li>
-			<li><a href="{{ url_for('consultarPadronAFIPForm') }}">AFIP - Padr&oacute;n</a></li>
-			<li><a href="{{ url_for('consultarDeudaAFIPForm') }}">AFIP - Servicio de deuda</a></li>
-			<li><a href="{{ url_for('consultarTarjetaSOATForm') }}">SOAT - Estado tarjeta de d&eacute;bito</a></li>
-			<li><a href="{{ url_for('consultarVerazForm') }}">Veraz</a></li>
+			<li><a href="{{ url_for('consultarPrieto') }}">Prieto</a></li>
+			<li><a href="{{ url_for('consultarSOAT') }}">SOAT - Estado tarjeta de d&eacute;bito</a></li>
+			<li><a href="{{ url_for('consultarVeraz') }}">Veraz</a></li>
 			<li class="divider"></li>
 
 			<li role="presentation" class="dropdown-header">Workflow</li>
-			<li><a href="{{ url_for('consultarCuotaMAForm') }}">An&aacute;lisis cuota m&aacute;xima mercado abierto</a></li>
+			<li><a href="{{ url_for('wf_consultarCuotaMA') }}">An&aacute;lisis cuota m&aacute;xima mercado abierto</a></li>
 		</ul>
 	</li>
 
@@ -48,7 +47,7 @@
 
 		<ul class="dropdown-menu" role="menu">
 			<li role="presentation" class="dropdown-header">Workflow</li>
-			<li><a href="{{ url_for('cuentasQRProcesadasForm') }}">WF Solicitudes masivas - Cuentas QR procesadas</a></li>
+			<li><a href="{{ url_for('wf_cuentasQRProcesadas') }}">WF Solicitudes masivas - Cuentas QR procesadas</a></li>
 		</ul>
 	</li>
 	{% endif %}

@@ -1,17 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}SOAT - {{ title }}{% endblock %}
+{% block title %}An&aacute;lisis cuota m&aacute;xima mercado abierto{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form" name="consulta-soat-estado" action="{{ url_for(formAction) }}" method="POST">
+<form class="form-horizontal" role="form" name="consulta-cuota-ma" action="{{ url_for('wf_consultarCuotaMA') }}" method="POST">
 	<div class="form-group">
-		<label class="control-label col-sm-2" for="numeroTarjeta">Nro. de tarjeta:</label>
+		<label class="control-label col-sm-2" for="uidPrestamo">UID pr&eacute;stamo:</label>
   	<div class="col-sm-10">
-			<input class="form-control" type="text" name="numeroTarjeta" maxlength="16" \>
+			<input class="form-control" type="text" name="uidPrestamo" maxlength="20" \>
 		</div>
 	</div>
-
-	{% include "includes/form_tipo_respuesta.inc.html" %}
 
 	<div class="form-group">
   	<div class="col-sm-offset-2 col-sm-10">
