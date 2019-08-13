@@ -47,20 +47,6 @@ xmlped_padron = (
     '</SOAP-ENV:Envelope>'
 )
 
-xmlped_deuda = (
-    '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sud="http://afip.gob.ar/ws/sud">'
-    '<soapenv:Header/>'
-    '<soapenv:Body>'
-    '<sud:tieneDeudaRequest>'
-    '<sud:cuit>{}</sud:cuit>'
-    '<sud:cuitRepresentado>{}</sud:cuitRepresentado>'
-    '<sud:token>{}</sud:token>'
-    '<sud:sign>{}</sud:sign>'
-    '</sud:tieneDeudaRequest>'
-    '</soapenv:Body>'
-    '</soapenv:Envelope>'
-)
-
 
 ##############################
 # Main class
@@ -147,26 +133,5 @@ class AFIP:
             )
 
             return res.content.decode('iso-8859-1')
-        else:
-            return '<error>Error de autenticación con el servicio WSAA de AFIP.</error>'
-
-    @staticmethod
-    def tiene_deuda(cuit_consultada, cuit_representada=app.config['AFIP_CUIT_REPRESENTADA']):
-        token, sign = AFIP.get_login('sud_restricciones')
-
-        if token and sign:
-            res = requests.post(
-                app.config['AFIP_URL_DEUDA'],
-                data=xmlped_deuda.format(
-                    cuit_consultada,
-                    cuit_representada,
-                    token,
-                    sign
-                ),
-                proxies=Util.get_proxies(),
-                verify=False
-            )
-
-            return res.content
         else:
             return '<error>Error de autenticación con el servicio WSAA de AFIP.</error>'

@@ -363,6 +363,9 @@ class HTML:
                         else:
                             valores[nodo.tag] = nodo.text
 
+                            if 'orden' in nodo.tag:
+                                titulo = u'{} - {}'.format(nodo.text, titulo)
+
                     actividades[titulo] = valores
 
                 for padre in xml.findall('.//actividadMonotributista'):

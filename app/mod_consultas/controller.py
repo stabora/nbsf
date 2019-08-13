@@ -73,7 +73,7 @@ def as400_consultarCliente():
     else:
         Util.check_parameters(['numeroCliente'], params)
 
-    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(1, params.get('numeroCliente'), entorno=params.get('entorno', 'DESARROLLO').upper())
+    response, xml_ped, msg = Mensajeria.cliConsBlqDesblq(1, params.get('numeroCliente'), entorno=params.get('entorno', 'TESTING').upper())
 
     if response.status_code == 200:
         response = Util.format_replaceXMLEntities(response.content)

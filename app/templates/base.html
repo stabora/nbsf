@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-		<title>NBSF{% if self.title() %} - {% endif %}{% block title %}{% endblock %}</title>
+		<title>BSF{% if self.title() %} - {% endif %}{% block title %}{% endblock %}</title>
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrapValidator.min.css') }}"/>
@@ -33,7 +33,7 @@
 				</button>
 
 				<div class="navbar-header">
-					<a class="navbar-brand" href="{{ url_for('/') }}"><img src="{{ url_for('static', filename='images/isologo.png') }}" alt="NBSF" title="Inicio"></a>
+					<a class="navbar-brand" href="{{ url_for('/') }}"><img src="{{ url_for('static', filename='images/isologo.png') }}" alt="BSF" title="Inicio"></a>
 				</div>
 
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -73,7 +73,7 @@
 		<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 		<script src="{{ url_for('static', filename='js/jquery.mask.min.js') }}"></script>
 		<script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
-		<script src="{{ url_for('static', filename='js/jauqey-ui.datepicker.es.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/jquery-ui.datepicker.es.js') }}"></script>
 		<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 		<script src="{{ url_for('static', filename='js/bootstrapValidator.min.js') }}"></script>
 		<script src="{{ url_for('static', filename='js/functions.js') }}"></script>
