@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}WF Tr&aacute;mites - Reporte de gesi&oacute;n{% endblock %}
+
+{% block content %}
+<form class="form-horizontal no-focus" role="form" name="reporte-wf-gestiontramites" action="{{ url_for('wf_gestionTramites') }}" method="POST">
+	<div class="form-group">
+		<label class="control-label col-sm-2" for="fechaDesde">Per&iacute;odo:</label>
+		<div class="col-sm-5">
+			<div class="input-group has-feedback">
+				<input class="form-control datepicker" id="datepicker-from" type="text" name="fechaDesde" value="{{ fecha_desde }}" placeholder="Desde" \>
+				<span class="input-group-addon transparent"><i class="fa fa-calendar fa-lg" id ="calendar-from" aria-hidden='true'></i></span>
+				<span class="input-group-addon transparent">-</span>
+				<input class="form-control datepicker" id="datepicker-to" type="text" name="fechaHasta" value="{{ fecha_hasta }}" placeholder="Hasta" \>
+				<span class="input-group-addon transparent"><i class="fa fa-calendar fa-lg" id="calendar-to" aria-hidden='true'></i></span>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			<button type="submit" class="btn btn-primary has-spinner" name="consultar">
+				<span class="spinner"><i class="fa fa-refresh fa-spin"></i></span>
+				Consultar
+			</button>
+		</div>
+	</div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+	$('#calendar-from').click(function() {
+		$("#datepicker-from").focus();
+	});
+
+	$('#calendar-to').click(function() {
+		$("#datepicker-to").focus();
+	});
+</script>
+{% endblock %}
