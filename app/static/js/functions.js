@@ -458,7 +458,37 @@ $(document).ready(function()
 						callback: function() {
 							var diasMaximos = 30;
 							var dias = diasEntreFechas($('#datepicker-from').val(), $('#datepicker-to').val());
-							return dias > 0 && dias <= diasMaximos;
+							return dias >= 0 && dias <= diasMaximos;
+						}
+					}
+				}
+			}
+		}
+	})
+	.on('error.form.bv', function(e, data)
+	{
+		$('button[type="submit"]').attr('disabled', false);
+		setTimeout(function() { $('#ui-datepicker-div').hide(); }, 50);
+	});
+
+	// Formulario reporte WF Trámites - Reporte de gestión
+
+	$('form[name=reporte-wf-gestiontramites]')
+	.bootstrapValidator(
+	{
+		fields:
+		{
+			fechaDesde: { validators: { date: { format: 'DD/MM/YYYY', message: 'Valor incorrecto' }, notEmpty: { message: 'Ingrese un valor' } } },
+			fechaHasta: {
+				validators: { 
+					date: { format: 'DD/MM/YYYY', message: 'Valor incorrecto' }, 
+					notEmpty: { message: 'Ingrese un valor' }, 
+					callback: {
+						message: 'Rango de fechas incorrecto: el intervalo no puede ser mayor a 1 día',
+						callback: function() {
+							var diasMaximos = 1;
+							var dias = diasEntreFechas($('#datepicker-from').val(), $('#datepicker-to').val());
+							return dias >= 0 && dias <= diasMaximos;
 						}
 					}
 				}
